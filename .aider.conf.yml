@@ -1,0 +1,21 @@
+# Configuration for Aider optimized for Cloudflare OpenRouter Proxy
+# Place this file in your project root directory sebaris dengan package.json
+
+# 1. Tetapan Model Utama & Lemah (Wajib paksa guna prefiks openai/)
+model: openai/poolside/laguna-xs-2.1:free
+weak-model: openai/poolside/laguna-xs-2.1:free
+
+# 2. Kawalan Kestabilan & Penjimatan API (Anti-429)
+auto-commits: false
+auto-test: false
+analytics: false
+suggest-shell-commands: false
+
+# 3. Pengurusan Memori & Peta Konteks Kod
+map-tokens: 1024
+cache-prompts: true
+
+# 4. Antaramuka Aliran Koding
+stream: true
+dark-mode: true
+gui: false
