@@ -67,7 +67,7 @@ export default function SignInPage() {
   };
   // End: Handle Form Submission
 
-  // Start: Render SignIn Page
+  // Start: Render SignInPage Component
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900 py-12 px-4 sm:px-6">
       <div className="max-w-md w-full space-y-8">
@@ -127,6 +127,24 @@ export default function SignInPage() {
               {loading ? 'Signing in...' : 'Sign in'}
             </button>
           </div>
+          
+          {/* Start: Password Recovery Links */}
+          <div className="text-center text-sm">
+            <a
+              href="/password_reset"
+              className="text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300"
+            >
+              Set Semula Kata Laluan
+            </a>
+            <span className="mx-2 text-gray-500">|</span>
+            <a
+              href="/forgot_username"
+              className="text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300"
+            >
+              Lupa Nama Pengguna
+            </a>
+          </div>
+          {/* End: Password Recovery Links */}
         </form>
       </div>
     </div>

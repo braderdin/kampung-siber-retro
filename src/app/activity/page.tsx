@@ -2,6 +2,8 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { ActivityEntry } from '@/components/LiveActivityFeed';
+import ProfileUpdateBox from '@/components/ProfileUpdateBox';
+import CommunityInteraction from '@/components/CommunityInteraction';
 // End: Imports
 
 // Start: Type Definitions
@@ -23,7 +25,28 @@ export default function ActivityPage({ className }: ActivityPageProps) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [refreshInterval, setRefreshInterval] = useState<NodeJS.Timeout | null>(null);
+  const [username, setUsername] = useState('Pengguna');
   // End: State Management
+
+  // Start: Component Lifecycle
+  useEffect(() => {
+    // Check for hash flag
+    if (typeof window !== 'undefined' && window.location.hash === '#new') {
+      console.log('New post detected from hash');
+    }
+    
+    fetchActivityFeed();
+    
+    const interval = setInterval(fetchActivityFeed, 30000);
+    setRefreshInterval(interval);
+    
+    return () => {
+      if (interval) {
+        clearInterval(interval);
+      }
+    };
+  }, []);
+  // End: Component Lifecycle
 
   // Start: Fetch Activity Feed
   const fetchActivityFeed = async () => {
@@ -47,21 +70,6 @@ export default function ActivityPage({ className }: ActivityPageProps) {
     }
   };
   // End: Fetch Activity Feed
-
-  // Start: Component Lifecycle
-  useEffect(() => {
-    fetchActivityFeed();
-    
-    const interval = setInterval(fetchActivityFeed, 30000);
-    setRefreshInterval(interval);
-    
-    return () => {
-      if (interval) {
-        clearInterval(interval);
-      }
-    };
-  }, []);
-  // End: Component Lifecycle
 
   // Start: Format Timestamp
   const formatTimestamp = (timestamp: string): string => {
@@ -127,6 +135,18 @@ export default function ActivityPage({ className }: ActivityPageProps) {
 
       {/* Start: Window Content */}
       <div className="p-3">
+        {/* Start: Profile Update Box */}
+        <div className="mb-4">
+          <ProfileUpdateBox username={username} />
+        </div>
+        {/* End: Profile Update Box */}
+
+        {/* Start: Community Interaction */}
+        <div className="mb-4">
+          <CommunityInteraction username={username} />
+        </div>
+        {/* End: Community Interaction */}
+
         {loading ? (
           <div className="text-center py-4">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-2"></div>
