@@ -68,8 +68,8 @@ export default function CodeMirrorEditor({
   };
 
   // Handle code changes and auto-save to store
-  const handleCodeChange = (newValue: string) => {
-    setCurrentCode(newValue);
+  const handleCodeChange = (value: string) => {
+    setCurrentCode(value);
   };
 
   return (
