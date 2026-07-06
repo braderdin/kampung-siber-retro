@@ -1,7 +1,7 @@
 // Start: Imports
 'use client';
 import { useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 // End: Imports
 
 // Start: Type Definitions
@@ -15,14 +15,10 @@ interface PageInfo {
 }
 // End: Type Definitions
 
-// Start: DashboardPage Component
-export default function DashboardPage({ className }: DashboardProps) {
-  // Start: State Management
+function DashboardContent({ className }: DashboardProps) {
   const searchParams = useSearchParams();
   const [pageInfo, setPageInfo] = useState<PageInfo>({ number: 1, totalPages: 10 });
-  // End: State Management
 
-  // Start: Handle SearchParams
   useEffect(() => {
     const pageParam = searchParams.get('page');
     if (pageParam) {
@@ -35,9 +31,7 @@ export default function DashboardPage({ className }: DashboardProps) {
       }
     }
   }, [searchParams]);
-  // End: Handle SearchParams
 
-  // Start: Render Dashboard Page
   return (
     <div className={`p-6 max-w-7xl mx-auto ${className || ''}`}>
       <div className="mb-6">
@@ -97,6 +91,14 @@ export default function DashboardPage({ className }: DashboardProps) {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function DashboardPage({ className }: DashboardProps) {
+  return (
+    <Suspense fallback={<div className="p-6 max-w-7xl mx-auto">Loading dashboard...</div>}>
+      <DashboardContent className={className} />
+    </Suspense>
   );
 }
 // End: DashboardPage Component

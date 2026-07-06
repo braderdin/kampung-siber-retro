@@ -43,7 +43,7 @@ export default function SiteFilesPage() {
 
       try {
         const { data, error: fetchError } = await supabase
-          .from<SiteFile[]>('site_files')
+          .from('site_files')
           .select('*')
           .order('uploadedAt', { ascending: false });
 
@@ -51,7 +51,8 @@ export default function SiteFilesPage() {
           throw fetchError;
         }
 
-        setFiles(data || []);
+        const typedFiles = (data as SiteFile[] | null) ?? [];
+        setFiles(typedFiles);
       } catch (err) {
         const errorMessage = err instanceof Error ? err.message : 'Failed to fetch files';
         setError(errorMessage);
