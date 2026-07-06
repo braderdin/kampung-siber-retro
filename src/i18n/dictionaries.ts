@@ -1,4 +1,7 @@
 export const enDictionary = {
+  greetings: {
+    hello: 'Hello',
+  },
   workspaceTitle: 'Kampung Siber Retro Editor',
   assetsButton: 'Assets',
   resetButton: 'Reset',
@@ -38,6 +41,9 @@ export const enDictionary = {
 };
 
 export const msDictionary = {
+  greetings: {
+    hello: 'Halo',
+  },
   workspaceTitle: 'Penyunting Retro Kampung Siber',
   assetsButton: 'Aset',
   resetButton: 'Set Semula',

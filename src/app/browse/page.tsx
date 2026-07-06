@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import ModernRetroCard from '@/components/ModernRetroCard';
 import PaginationButton from '@/components/PaginationButton';
+import HumanFeedbackToast from '@/components/HumanFeedbackToast';
 // End: Imports
 
 // Start: Type Definitions
@@ -50,6 +51,8 @@ export default function BrowsePage({ className }: BrowsePageProps) {
   });
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [toastType, setToastType] = useState<'success' | 'error' | 'info' | 'warning'>('info');
   const router = useRouter();
   // End: State Management
 
@@ -73,10 +76,14 @@ export default function BrowsePage({ className }: BrowsePageProps) {
         setItems(data.data);
       } else {
         setError(data.error || 'Gagal memuat sumber');
+        setToastMessage(data.error || 'Gagal memuat sumber');
+        setToastType('error');
       }
     } catch (err) {
       console.error('Error fetching items:', err);
       setError('Gagal memuat sumber');
+      setToastMessage('Gagal memuat sumber');
+      setToastType('error');
     } finally {
       setLoading(false);
     }

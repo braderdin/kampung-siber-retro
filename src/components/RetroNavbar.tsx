@@ -1,26 +1,68 @@
+// Start: Imports
 "use client";
 
 import { usePathname, useRouter } from 'next/navigation';
 import { useLanguageStore } from '@/store/useLanguageStore';
-import { msDictionary } from '@/i18n/dictionaries';
+import { enDictionary, msDictionary } from '@/i18n/dictionaries';
+import { useEffect, useState } from 'react';
+// End: Imports
 
+// Start: Type Definitions
+interface NavItem {
+  name: string;
+  href: string;
+  icon: string;
+}
+// End: Type Definitions
+
+// Start: RetroNavbar Component
 export default function RetroNavbar() {
   const pathname = usePathname();
   const router = useRouter();
   const { language, setLanguage } = useLanguageStore();
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
+  const t = language === 'ms' ? msDictionary : enDictionary;
   
-  const t = msDictionary;
-  
-  const navItems = [
+  // Start: Navigation Items
+  const navItems: NavItem[] = [
     { name: t.dashboardTitle, href: '/dashboard', icon: '🏠' },
     { name: t.fileEditor, href: '/site_files/text_editor', icon: '📝' },
     { name: t.guestbookTitle, href: '/guestbook', icon: '📘' },
     { name: t.settings, href: '/settings', icon: '⚙️' },
   ];
+  // End: Navigation Items
 
+  // Start: Dark Mode Initialization
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark') {
+      setIsDarkMode(true);
+      document.documentElement.classList.add('dark');
+    }
+  }, []);
+  // End: Dark Mode Initialization
+
+  // Start: Handle Language Change
   const handleLanguageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setLanguage(e.target.value as 'en' | 'ms');
   };
+  // End: Handle Language Change
+
+  // Start: Handle Dark Mode Toggle
+  const handleDarkModeToggle = () => {
+    const newDarkMode = !isDarkMode;
+    setIsDarkMode(newDarkMode);
+    
+    if (newDarkMode) {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    }
+  };
+  // End: Handle Dark Mode Toggle
 
   // Start: Handle Navigation Click
   const handleNavClick = (href: string) => {
@@ -28,6 +70,7 @@ export default function RetroNavbar() {
   };
   // End: Handle Navigation Click
 
+  // Start: Render Navbar
   return (
     <nav className="retro-nav bg-gray-100 dark:bg-gray-900 border-b border-gray-300 dark:border-gray-700">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -61,20 +104,35 @@ export default function RetroNavbar() {
           </div>
           {/* End: Navigation Items */}
 
-          {/* Start: Language Selector */}
-          <div className="ml-auto">
-            <select
-              value={language}
-              onChange={handleLanguageChange}
-              className="retro-input w-auto text-sm"
+          {/* Start: Controls Container */}
+          <div className="flex items-center space-x-4">
+            {/* Start: Language Selector */}
+            <div>
+              <select
+                value={language}
+                onChange={handleLanguageChange}
+                className="retro-input w-auto text-sm"
+              >
+                <option value="en">EN</option>
+                <option value="ms">MS</option>
+              </select>
+            </div>
+            {/* End: Language Selector */}
+
+            {/* Start: Dark Mode Toggle */}
+            <button
+              onClick={handleDarkModeToggle}
+              className="retro-btn-secondary text-xs px-3 py-1 flex items-center space-x-1"
             >
-              <option value="en">EN</option>
-              <option value="ms">MS</option>
-            </select>
+              <span>{isDarkMode ? '🌙' : '☀️'}</span>
+              <span>{isDarkMode ? t.greetings.hello : 'Mod Gelap'}</span>
+            </button>
+            {/* End: Dark Mode Toggle */}
           </div>
-          {/* End: Language Selector */}
+          {/* End: Controls Container */}
         </div>
       </div>
     </nav>
   );
 }
+// End: RetroNavbar Component

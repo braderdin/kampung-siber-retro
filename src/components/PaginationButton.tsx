@@ -35,9 +35,46 @@ export default function PaginationButton({
   };
   // End: Handle Next Page
 
+  // Start: Handle Page Click
+  const handlePageClick = (page: number) => {
+    onPageChange(page);
+  };
+  // End: Handle Page Click
+
+  // Start: Render Page Numbers
+  const renderPageNumbers = () => {
+    const pages = [];
+    const maxPagesToShow = 5;
+    let startPage = Math.max(1, currentPage - 2);
+    let endPage = Math.min(totalPages, startPage + maxPagesToShow - 1);
+    
+    if (endPage - startPage < maxPagesToShow - 1) {
+      startPage = Math.max(1, endPage - maxPagesToShow + 1);
+    }
+    
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(
+        <button
+          key={i}
+          onClick={() => handlePageClick(i)}
+          className={`w-8 h-8 flex items-center justify-center rounded-md text-sm font-medium transition-colors ${
+            i === currentPage
+              ? 'bg-blue-600 text-white retro-btn-active'
+              : 'retro-btn-secondary hover:bg-gray-200 dark:hover:bg-gray-700'
+          }`}
+        >
+          {i}
+        </button>
+      );
+    }
+    
+    return pages;
+  };
+  // End: Render Page Numbers
+
   // Start: Render Pagination Button
   return (
-    <div className={`flex items-center justify-center space-x-2 ${className}`}>
+    <div className={`flex items-center justify-center space-x-1 ${className}`}>
       <button
         onClick={handlePrevious}
         disabled={currentPage === 1}
@@ -45,9 +82,9 @@ export default function PaginationButton({
       >
         ← Sebelum
       </button>
-      <span className="text-xs text-gray-600 dark:text-gray-400 px-2">
-        Halaman {currentPage} dari {totalPages}
-      </span>
+      
+      {renderPageNumbers()}
+      
       <button
         onClick={handleNext}
         disabled={currentPage === totalPages}
