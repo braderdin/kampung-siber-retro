@@ -56,6 +56,26 @@ export default function FileManagerActions({
   };
   // End: Handle Create Folder
 
+  // Start: Handle Create File via Prompt
+  const handleCreateFilePrompt = () => {
+    const fileName = window.prompt('Masukkan nama fail:', 'index.html');
+    if (fileName && fileName.trim()) {
+      setNewFileName(fileName.trim());
+      setShowCreateFileModal(true);
+    }
+  };
+  // End: Handle Create File via Prompt
+
+  // Start: Handle Create Folder via Prompt
+  const handleCreateFolderPrompt = () => {
+    const folderName = window.prompt('Masukkan nama folder:', 'folder_baru');
+    if (folderName && folderName.trim()) {
+      setNewFolderName(folderName.trim());
+      setShowCreateFolderModal(true);
+    }
+  };
+  // End: Handle Create Folder via Prompt
+
   // Start: Render Action Buttons
   return (
     <div className={`flex items-center space-x-2 mb-4 ${className || ''}`}>
@@ -67,14 +87,14 @@ export default function FileManagerActions({
         📋 Pilih
       </button>
       <button
-        onClick={() => setShowCreateFileModal(true)}
+        onClick={handleCreateFilePrompt}
         className="retro-btn-secondary text-sm px-3 py-1"
         title="New File"
       >
         📄 Fail Baru
       </button>
       <button
-        onClick={() => setShowCreateFolderModal(true)}
+        onClick={handleCreateFolderPrompt}
         className="retro-btn-secondary text-sm px-3 py-1"
         title="New Folder"
       >

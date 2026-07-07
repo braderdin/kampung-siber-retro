@@ -113,7 +113,8 @@ export default function SiteFilesPage() {
   const handleFileAction = (file: FileManagerItem, action: FileAction, newName?: string) => {
     if (action === 'edit' && file.type === 'file') {
       setActiveFileName(file.filename);
-      setActiveFileContent(`/* Content of ${file.filename} */\n\n`);
+      const mockContent = `/* Content of ${file.filename} */\n\n`;
+      setActiveFileContent(mockContent);
     } else if (action === 'navigate' && file.type === 'folder') {
       console.log('Navigating to folder:', file.name);
     } else if (action === 'rename' && newName) {
