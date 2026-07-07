@@ -1,12 +1,27 @@
 // Start: Imports
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { createClient } from '@supabase/supabase-js';
 // End: Imports
+
+// Start: Supabase Client Configuration
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co';
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_KEY || 'placeholder-key';
+const supabase = createClient(supabaseUrl, supabaseAnonKey);
+// End: Supabase Client Configuration
 
 // Start: Type Definitions
 interface CommunityInteractionProps {
   username: string;
   className?: string;
+}
+
+interface Interaction {
+  id: number;
+  username: string;
+  type: 'like' | 'follow' | 'comment';
+  content?: string;
+  created_at: string;
 }
 // End: Type Definitions
 
@@ -17,26 +32,106 @@ export default function CommunityInteraction({ username, className }: CommunityI
   const [following, setFollowing] = useState(false);
   const [comments, setComments] = useState<string[]>([]);
   const [newComment, setNewComment] = useState('');
+  const [loading, setLoading] = useState(false);
   // End: State Management
 
+  // Start: Fetch Initial Interactions
+  useEffect(() => {
+    const fetchInteractions = async () => {
+      const { data, error } = await supabase
+        .from('interactions')
+        .select('*')
+        .eq('username', username)
+        .order('created_at', { ascending: false });
+
+      if (data) {
+        const likes = data.filter((item: Interaction) => item.type === 'like').length;
+        const follows = data.filter((item: Interaction) => item.type === 'follow').length;
+        const userComments = data.filter((item: Interaction) => item.type === 'comment');
+        
+        setLiked(likes > 0);
+        setFollowing(follows > 0);
+        setComments(userComments.map((item: Interaction) => item.content || ''));
+      }
+    };
+
+    fetchInteractions();
+  }, [username]);
+  // End: Fetch Initial Interactions
+
   // Start: Handle Like
-  const handleLike = () => {
-    setLiked(!liked);
+  const handleLike = async () => {
+    setLoading(true);
+    try {
+      if (!liked) {
+        await supabase.from('interactions').insert({
+          username,
+          type: 'like',
+          created_at: new Date().toISOString(),
+        });
+        setLiked(true);
+      } else {
+        await supabase
+          .from('interactions')
+          .delete()
+          .eq('username', username)
+          .eq('type', 'like');
+        setLiked(false);
+      }
+    } catch (err) {
+      console.error('Error updating like:', err);
+    } finally {
+      setLoading(false);
+    }
   };
   // End: Handle Like
 
   // Start: Handle Follow
-  const handleFollow = () => {
-    setFollowing(!following);
+  const handleFollow = async () => {
+    setLoading(true);
+    try {
+      if (!following) {
+        await supabase.from('interactions').insert({
+          username,
+          type: 'follow',
+          created_at: new Date().toISOString(),
+        });
+        setFollowing(true);
+      } else {
+        await supabase
+          .from('interactions')
+          .delete()
+          .eq('username', username)
+          .eq('type', 'follow');
+        setFollowing(false);
+      }
+    } catch (err) {
+      console.error('Error updating follow:', err);
+    } finally {
+      setLoading(false);
+    }
   };
   // End: Handle Follow
 
   // Start: Handle Comment Submission
-  const handleSubmitComment = (e: React.FormEvent) => {
+  const handleSubmitComment = async (e: React.FormEvent) => {
     e.preventDefault();
     if (newComment.trim()) {
-      setComments([...comments, newComment.trim()]);
-      setNewComment('');
+      setLoading(true);
+      try {
+        await supabase.from('interactions').insert({
+          username,
+          type: 'comment',
+          content: newComment.trim(),
+          created_at: new Date().toISOString(),
+        });
+        setComments([...comments, newComment.trim()]);
+        setNewComment('');
+      } catch (err) {
+        console.error('Error adding comment:', err);
+      } finally {
+        setLoading(false);
+      }
     }
   };
   // End: Handle Comment Submission
@@ -59,12 +154,14 @@ export default function CommunityInteraction({ username, className }: CommunityI
         <div className="flex space-x-2 mb-4">
           <button
             onClick={handleLike}
+            disabled={loading}
             className={`retro-btn-secondary text-xs ${liked ? 'bg-green-500 text-white' : ''}`}
           >
             ❤️ Suka
           </button>
           <button
             onClick={handleFollow}
+            disabled={loading}
             className={`retro-btn-secondary text-xs ${following ? 'bg-blue-500 text-white' : ''}`}
           >
             👤 Ikut
@@ -96,9 +193,11 @@ export default function CommunityInteraction({ username, className }: CommunityI
               onChange={(e) => setNewComment(e.target.value)}
               placeholder="Tulis komen anda..."
               className="flex-1 retro-input text-xs"
+              disabled={loading}
             />
             <button
               type="submit"
+              disabled={loading}
               className="retro-btn-primary text-xs"
             >
               Hantar

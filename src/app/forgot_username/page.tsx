@@ -1,8 +1,14 @@
 // Start: Imports
 'use client';
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { createClient } from '@supabase/supabase-js';
 // End: Imports
+
+// Start: Supabase Client Configuration
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co';
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_KEY || 'placeholder-key';
+const supabase = createClient(supabaseUrl, supabaseAnonKey);
+// End: Supabase Client Configuration
 
 // Start: Type Definitions
 interface ForgotUsernameFormData {
@@ -23,7 +29,6 @@ export default function ForgotUsernamePage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [username, setUsername] = useState<string | null>(null);
-  const router = useRouter();
   // End: State Management
 
   // Start: Handle Input Changes
@@ -39,23 +44,24 @@ export default function ForgotUsernamePage() {
     setError(null);
 
     try {
-      const response = await fetch('/api/auth/forgot-username', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email: formData.email }),
-      });
+      const { data, error: fetchError } = await supabase
+        .from('profiles')
+        .select('username')
+        .eq('email', formData.email)
+        .single();
 
-      const data: ForgotUsernameResponse = await response.json();
+      if (fetchError) {
+        throw new Error('Emel tidak ditemui dalam pelayan');
+      }
 
-      if (data.success) {
-        setUsername(data.username || null);
+      if (data) {
+        setUsername(data.username);
       } else {
-        setError(data.error || 'Gagal mendapatkan nama pengguna');
+        setError('Tidak dapat menemui nama pengguna untuk emel ini');
       }
     } catch (err) {
-      setError('Ralat berkaitan rangkaian');
+      const errorMessage = err instanceof Error ? err.message : 'Gagal mendapatkan nama pengguna';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -82,12 +88,6 @@ export default function ForgotUsernamePage() {
                 Nama pengguna anda ialah: <strong>{username}</strong>
               </p>
             </div>
-            <button
-              onClick={() => router.push('/signin')}
-              className="retro-btn-primary text-xs mt-4"
-            >
-              Log Masuk
-            </button>
           </div>
         ) : (
           <form className="mt-8 space-y-6" onSubmit={handleSubmit}>

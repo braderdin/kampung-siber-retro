@@ -1,8 +1,14 @@
 // Start: Imports
 'use client';
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { createClient, type Session } from '@supabase/supabase-js';
 // End: Imports
+
+// Start: Supabase Client Configuration
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co';
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_KEY || 'placeholder-key';
+const supabase = createClient(supabaseUrl, supabaseAnonKey);
+// End: Supabase Client Configuration
 
 // Start: Type Definitions
 interface PasswordResetFormData {
@@ -28,8 +34,18 @@ export default function PasswordResetPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
-  const router = useRouter();
+  const [session, setSession] = useState<Session | null>(null);
   // End: State Management
+
+  // Start: Check for Session on Mount
+  useEffect(() => {
+    const getSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      setSession(session);
+    };
+    getSession();
+  }, []);
+  // End: Check for Session on Mount
 
   // Start: Handle Input Changes
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -52,27 +68,25 @@ export default function PasswordResetPage() {
       return;
     }
 
+    if (!session) {
+      setError('Sila log masuk untuk set kata laluan');
+      setLoading(false);
+      return;
+    }
+
     try {
-      const response = await fetch('/api/auth/reset-password', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email: formData.email,
-          newPassword: formData.newPassword,
-        }),
+      const { error: updateError } = await supabase.auth.updateUser({
+        password: formData.newPassword,
       });
 
-      const data: PasswordResetResponse = await response.json();
-
-      if (data.success) {
-        setSuccess(true);
-      } else {
-        setError(data.error || 'Gagal set semula kata laluan');
+      if (updateError) {
+        throw updateError;
       }
+
+      setSuccess(true);
     } catch (err) {
-      setError('Ralat berkaitan rangkaian');
+      const errorMessage = err instanceof Error ? err.message : 'Gagal set kata laluan';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -88,7 +102,7 @@ export default function PasswordResetPage() {
             Set Semula Kata Laluan
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600 dark:text-gray-300">
-            Masukkan emel anda dan kata laluan baru
+            Masukkan kata laluan baru anda
           </p>
         </div>
         
@@ -99,12 +113,6 @@ export default function PasswordResetPage() {
                 Kata laluan berjaya diset semula!
               </p>
             </div>
-            <button
-              onClick={() => router.push('/signin')}
-              className="retro-btn-primary text-xs mt-4"
-            >
-              Log Masuk
-            </button>
           </div>
         ) : (
           <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
@@ -129,6 +137,7 @@ export default function PasswordResetPage() {
                   onChange={handleInputChange}
                   className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 dark:text-gray-100 dark:bg-gray-800 dark:border-gray-700 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
                   placeholder="Emel"
+                  disabled
                 />
               </div>
               <div>
