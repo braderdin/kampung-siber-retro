@@ -1,4 +1,5 @@
-// Start: Cloudflare R2 Storage API Handler
+﻿// Start: Cloudflare R2 Storage API Handler
+// Refactored to use true Presigned URL architecture
 import { NextRequest, NextResponse } from 'next/server';
 import { S3Client, PutObjectCommand, HeadObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
@@ -12,21 +13,35 @@ interface StorageMetadata {
   uploadedAt: string;
   contentType: string;
   bucketPath: string;
-  presignedUrl?: string;
+  presignedUrl: string;
+  objectKey: string;
 }
 
-interface UploadRequest {
+// Start: Presigned URL Request - Client only sends metadata, not file content
+interface PresignedUrlRequest {
   filename: string;
-  fileContent: string;
   contentType: string;
   size: number;
 }
+// End: Presigned URL Request
 
-interface StorageResponse {
+// Start: Presigned URL Response - API returns the PUT URL for direct client upload
+interface PresignedUrlResponse {
   success: boolean;
-  data?: StorageMetadata;
+  data?: {
+    presignedUrl: string;
+    objectKey: string;
+    url: string;
+    filename: string;
+    contentType: string;
+    size: number;
+    id: string;
+    bucketPath: string;
+    uploadedAt: string;
+  };
   error?: string;
 }
+// End: Presigned URL Response
 // End: Type Definitions
 
 // Start: Environment Configuration
@@ -39,7 +54,7 @@ const CLOUDFLARE_R2_BUCKET_NAME = process.env.CLOUDFLARE_R2_BUCKET_NAME || 'kamp
 // Start: S3 Client Configuration
 const s3Client = new S3Client({
   region: 'auto',
-  endpoint: `https://${CLOUDFLARE_R2_ACCOUNT_ID}.r2.cloudflaredevices.com`,
+  endpoint: `https://${CLOUDFLARE_R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
   credentials: {
     accessKeyId: CLOUDFLARE_R2_ACCESS_KEY_ID,
     secretAccessKey: CLOUDFLARE_R2_SECRET_ACCESS_KEY,
@@ -50,8 +65,8 @@ const s3Client = new S3Client({
 // Start: Metadata Token Generator
 function generateMetadataToken(filename: string, bucketPath: string): StorageMetadata {
   const id = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-  const url = `https://${CLOUDFLARE_R2_BUCKET_NAME}.${CLOUDFLARE_R2_ACCOUNT_ID}.r2.cloudflaredevices.com/${bucketPath}/${filename}`;
-  
+  const url = `https://${CLOUDFLARE_R2_BUCKET_NAME}.${CLOUDFLARE_R2_ACCOUNT_ID}.r2.cloudflarestorage.com/${bucketPath}/${filename}`;
+
   return {
     id,
     filename,
@@ -60,6 +75,8 @@ function generateMetadataToken(filename: string, bucketPath: string): StorageMet
     uploadedAt: new Date().toISOString(),
     contentType: '',
     bucketPath,
+    presignedUrl: '',
+    objectKey: '',
   };
 }
 // End: Metadata Token Generator
@@ -99,8 +116,8 @@ async function verifyObjectExists(key: string): Promise<boolean> {
 }
 // End: Verify Object Exists
 
-// Start: POST Handler
-export async function POST(request: NextRequest): Promise<NextResponse<StorageResponse>> {
+// Start: POST Handler - Generate Presigned PUT URL for direct client upload
+export async function POST(request: NextRequest): Promise<NextResponse<PresignedUrlResponse>> {
   // Start: Request Validation
   if (!CLOUDFLARE_R2_ACCOUNT_ID || !CLOUDFLARE_R2_ACCESS_KEY_ID || !CLOUDFLARE_R2_SECRET_ACCESS_KEY) {
     return NextResponse.json({
@@ -111,15 +128,15 @@ export async function POST(request: NextRequest): Promise<NextResponse<StorageRe
   // End: Request Validation
 
   try {
-    // Start: Parse Request Body
-    const body: UploadRequest = await request.json();
+    // Start: Parse Request Body - Only accepts filename, contentType, and size (no fileContent)
+    const body: PresignedUrlRequest = await request.json();
     // End: Parse Request Body
 
-    // Start: Validate Required Fields
-    if (!body.filename || !body.fileContent || !body.contentType || !body.size) {
+    // Start: Validate Required Fields - fileContent removed for presigned URL architecture
+    if (!body.filename || !body.contentType || !body.size) {
       return NextResponse.json({
         success: false,
-        error: 'Missing required fields: filename, fileContent, contentType, size',
+        error: 'Missing required fields: filename, contentType, size',
       }, { status: 400 });
     }
     // End: Validate Required Fields
@@ -160,6 +177,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<StorageRe
     try {
       const presignedUrl = await generatePresignedUrl(objectKey, body.contentType, body.size);
       metadata.presignedUrl = presignedUrl;
+      metadata.objectKey = objectKey;
     } catch (presignError) {
       console.error('Presigned URL Generation Error:', presignError);
       return NextResponse.json({
@@ -174,10 +192,20 @@ export async function POST(request: NextRequest): Promise<NextResponse<StorageRe
     metadata.contentType = body.contentType;
     // End: Update Metadata with Size
 
-    // Start: Success Response
+    // Start: Success Response - Return presigned URL for client direct upload
     return NextResponse.json({
       success: true,
-      data: metadata,
+      data: {
+        presignedUrl: metadata.presignedUrl,
+        objectKey: metadata.objectKey,
+        url: metadata.url,
+        filename: metadata.filename,
+        contentType: metadata.contentType,
+        size: metadata.size,
+        id: metadata.id,
+        bucketPath: metadata.bucketPath,
+        uploadedAt: metadata.uploadedAt,
+      },
     }, { status: 200 });
     // End: Success Response
 
@@ -185,7 +213,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<StorageRe
     // Start: Error Handling
     console.error('Storage API Error:', error);
     const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
-    
+
     return NextResponse.json({
       success: false,
       error: `Failed to process storage request: ${errorMessage}`,
