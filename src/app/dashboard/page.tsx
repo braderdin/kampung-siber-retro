@@ -9,6 +9,7 @@ import VisitorStatGraph from '@/components/VisitorStatGraph';
 import RetroMarqueeTicker from '@/components/RetroMarqueeTicker';
 import TopResidentsLeaderboard from '@/components/TopResidentsLeaderboard';
 import AccountAllocationBox from '@/components/AccountAllocationBox';
+import NewsletterSubscription from '@/components/NewsletterSubscription';
 import HydrationGuard from '@/components/HydrationGuard';
 
 type ActiveTab = 'main' | 'community';
@@ -24,7 +25,7 @@ export default function DashboardPage() {
     const timer = setTimeout(() => {
       setShowMarquee(true);
     }, 2000);
-    
+
     return () => clearTimeout(timer);
   }, []);
 
@@ -40,7 +41,7 @@ export default function DashboardPage() {
           <RetroMarqueeTicker 
             messages={[
               '🚀 Selamat datang di Kampung Siber Retro Dashboard!',
-              '🌟 Kunjungi komuniti kami untuk berkongsi ide dan proyek.',
+              '🌟 Kunjungi komuniti kami untuk berkongsi idea dan projek.',
               '🔧 Kami sentiasa memperbarui platform dengan ciri-ciri baru.',
             ]}
             speed={15}
@@ -60,6 +61,17 @@ export default function DashboardPage() {
           </p>
         </div>
         {/* End: Dashboard Header */}
+
+        {/* Start: Newsletter Subscription */}
+        <div className="mb-8">
+          <HydrationGuard>
+            <NewsletterSubscription 
+              triggerText="📧 Subscribe to Updates"
+              className="border-2 border-pink-400 bg-pink-500/10 hover:bg-pink-500/20"
+            />
+          </HydrationGuard>
+        </div>
+        {/* End: Newsletter Subscription */}
 
         {/* Start: Tab Navigation */}
         <div className="mb-6">
@@ -119,6 +131,7 @@ export default function DashboardPage() {
 
               {/* Start: Calendar Card */}
               <div className="lg:col-span-3 grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Start: Calendar Card */}
                 <HydrationGuard>
                   <RetroCalendar />
                 </HydrationGuard>

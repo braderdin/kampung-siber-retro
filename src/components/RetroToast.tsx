@@ -7,6 +7,12 @@ interface Toast {
   message: string;
   type: 'success' | 'error' | 'warning' | 'info';
   duration?: number;
+  hasUndo?: boolean;
+  onUndo?: () => void;
+  fileDeleted?: {
+    name: string;
+    path: string;
+  };
 }
 
 interface RetroToastProps {
@@ -23,13 +29,13 @@ const playSuccessSound = () => {
     const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
     const oscillator = audioContext.createOscillator();
     const gainNode = audioContext.createGain();
-    
+
     oscillator.connect(gainNode);
     gainNode.connect(audioContext.destination);
-    
+
     oscillator.frequency.setValueAtTime(523.25, audioContext.currentTime); // C5
     gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-    
+
     oscillator.start(audioContext.currentTime);
     oscillator.stop(audioContext.currentTime + 0.2);
   } catch (e) {
@@ -44,23 +50,26 @@ const notify = (message: string, type: Toast['type'], duration: number = 5000) =
     type,
     duration
   };
-  
+
   toastListeners.forEach(listener => {
     // This would be used in a real implementation
   });
 };
 
-export function showSuccess(message: string, duration?: number) {
+export function showSuccess(message: string, duration?: number, options?: { hasUndo?: boolean; onUndo?: () => void; fileDeleted?: { name: string; path: string } }) {
   const newToast: Toast = {
     id: `toast-${toastId++}`,
     message,
     type: 'success',
-    duration: duration || 5000
+    duration: duration || 5000,
+    hasUndo: options?.hasUndo,
+    onUndo: options?.onUndo,
+    fileDeleted: options?.fileDeleted
   };
-  
+
   // Play success sound
   playSuccessSound();
-  
+
   return newToast;
 }
 
@@ -144,21 +153,21 @@ export default function RetroToast({ className }: RetroToastProps) {
 
     try {
       const ctx = audioRef.current;
-      
+
       // Create dual-tone 8-bit chime melody
       const playTone = (frequency: number, duration: number) => {
         const oscillator = ctx.createOscillator();
         const gainNode = ctx.createGain();
-        
+
         oscillator.connect(gainNode);
         gainNode.connect(ctx.destination);
-        
+
         oscillator.type = 'square' as const;
         oscillator.frequency.setValueAtTime(frequency, ctx.currentTime);
-        
+
         gainNode.gain.setValueAtTime(0.1, ctx.currentTime);
         gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + duration / 1000);
-        
+
         oscillator.start(ctx.currentTime);
         oscillator.stop(ctx.currentTime + duration / 1000);
       };
@@ -202,6 +211,13 @@ export default function RetroToast({ className }: RetroToastProps) {
     }
   };
 
+  const handleUndo = (toast: Toast) => {
+    if (toast.onUndo) {
+      toast.onUndo();
+    }
+    setToasts(prev => prev.filter(t => t.id !== toast.id));
+  };
+
   if (toasts.length === 0) {
     return (
       <div className={`retro-toast-container ${className || ''}`} />
@@ -221,7 +237,19 @@ export default function RetroToast({ className }: RetroToastProps) {
         >
           <div className="flex items-center gap-2">
             <span className="text-xl">{getToastIcon(toast.type)}</span>
-            <span className="pixel-font text-sm">{toast.message}</span>
+            <span className="pixel-font text-sm flex-1">{toast.message}</span>
+            
+            {/* Start: Undo Button for File Deletions */}
+            {toast.hasUndo && toast.type === 'success' && (
+              <button
+                onClick={() => handleUndo(toast)}
+                className="px-2 py-1 bg-white/20 hover:bg-white/30 rounded font-mono text-xs text-white transition-colors"
+                title="Undo action"
+              >
+                UNDO
+              </button>
+            )}
+            {/* End: Undo Button for File Deletions */}
           </div>
         </div>
       ))}

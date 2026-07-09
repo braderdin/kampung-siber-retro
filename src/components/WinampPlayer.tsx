@@ -109,6 +109,19 @@ export default function WinampPlayer() {
     setIsPlaying(false);
   };
 
+  const shufflePlaylist = () => {
+    const shuffled = [...playlist];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    setPlaylist(shuffled);
+    setCurrentTrack(shuffled[0]);
+    setCurrentTime(0);
+    setDuration(0);
+    setIsPlaying(false);
+  };
+
   const playPause = () => {
     const audio = audioRef.current;
     if (!audio) return;
@@ -314,6 +327,14 @@ export default function WinampPlayer() {
               title="Next"
             >
               <span className="text-[8px] sm:text-[6px] xs:text-[5px]">⏭</span>
+            </button>
+
+            <button
+              onClick={shufflePlaylist}
+              className="w-5 h-5 sm:w-4 sm:h-4 xs:w-3 xs:h-3 flex items-center justify-center bg-green-500 hover:bg-green-400 rounded-full transition-colors border-2 border-yellow-300"
+              title="Shuffle Playlist"
+            >
+              <span className="text-[8px] sm:text-[6px] xs:text-[5px]">🔀</span>
             </button>
           </div>
 

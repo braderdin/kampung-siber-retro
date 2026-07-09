@@ -3,14 +3,10 @@
 
 import { useLanguageStore } from '@/store/useLanguageStore';
 import { enDictionary, msDictionary } from '@/i18n/dictionaries';
+import FooterLinks from './footer-links';
 // End: Imports
 
 // Start: Type Definitions
-interface FooterLink {
-  name: string;
-  href: string;
-}
-
 interface RetroFooterProps {
   className?: string;
 }
@@ -21,17 +17,9 @@ export default function RetroFooter({ className }: RetroFooterProps) {
   const { language } = useLanguageStore();
   const t = language === 'ms' ? msDictionary : enDictionary;
 
-  // Start: Footer Links
-  const footerLinks: FooterLink[] = [
-    { name: t.dashboardTitle, href: '/about' },
-    { name: t.settings, href: '/donate' },
-    { name: t.guestbookTitle, href: '/cli' },
-    { name: t.fileEditor, href: '/press' },
-    { name: t.analytics, href: '/status' },
-    { name: t.myFiles, href: '/terms' },
-    { name: t.dashboardTitle, href: '/contact' },
-  ];
-  // End: Footer Links
+  // Start: Get Footer Links
+  const footerLinks = FooterLinks();
+  // End: Get Footer Links
 
   // Start: Handle Navigation
   const handleNavigation = (href: string) => {

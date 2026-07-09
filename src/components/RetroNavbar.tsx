@@ -18,11 +18,13 @@ export default function RetroNavbar() {
   const { language, setLanguage } = useLanguageStore();
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [mobileMenuHeight, setMobileMenuHeight] = useState(0);
 
   const t = language === 'ms' ? msDictionary : enDictionary;
-  
+
   const navItems: NavItem[] = [
     { name: t.dashboardTitle, href: '/dashboard', icon: '🏠' },
+    { name: 'Directory', href: '/directory', icon: '👥' },
     { name: t.fileEditor, href: '/site_files', icon: '📝' },
     { name: t.guestbookTitle, href: '/guestbook', icon: '📘' },
     { name: t.settings, href: '/settings', icon: '⚙️' },
@@ -36,6 +38,19 @@ export default function RetroNavbar() {
     }
   }, []);
 
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      const menuElement = document.getElementById('mobile-nav');
+      if (menuElement) {
+        const itemsCount = navItems.length + 1;
+        const itemHeight = 48;
+        const totalHeight = itemsCount * itemHeight + 24;
+        setMobileMenuHeight(totalHeight);
+        menuElement.style.height = `${totalHeight}px`;
+      }
+    }
+  }, [mobileMenuOpen, navItems.length]);
+
   const handleLanguageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setLanguage(e.target.value as 'en' | 'ms');
   };
@@ -43,7 +58,7 @@ export default function RetroNavbar() {
   const handleDarkModeToggle = () => {
     const newDarkMode = !isDarkMode;
     setIsDarkMode(newDarkMode);
-    
+
     if (newDarkMode) {
       document.documentElement.classList.add('dark');
       localStorage.setItem('theme', 'dark');
@@ -146,10 +161,14 @@ export default function RetroNavbar() {
           {/* End: Controls Container */}
         </div>
       </div>
-      
+
       {/* Start: Mobile Navigation Menu */}
       {mobileMenuOpen && (
-        <div id="mobile-nav" className="md:hidden bg-black/50 border-t border-cyan-500/20">
+        <div 
+          id="mobile-nav" 
+          className="md:hidden bg-black/50 border-t border-cyan-500/20 transition-all duration-300 ease-out"
+          style={{ height: mobileMenuHeight ? `${mobileMenuHeight}px` : 'auto' }}
+        >
           <div className="px-2 pt-2 pb-3 space-y-1">
             {navItems.map((item) => (
               <button
