@@ -1,11 +1,12 @@
+import type { AppProps } from "next/app";
+import CrtThemeController from "../src/components/CrtThemeController";
 
-import { CrtThemeProvider } from '../components/CrtThemeController';
-
-function MyApp({ Component, pageProps }) {
+function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <CrtThemeProvider>
+    <>
       <Component {...pageProps} />
-    </CrtThemeProvider>
+      <CrtThemeController />
+    </>
   );
 }
 

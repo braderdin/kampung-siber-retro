@@ -3,7 +3,7 @@
 import { useSearchParams } from 'next/navigation';
 import { Suspense, useEffect, useState } from 'react';
 import { useLanguageStore } from "@/store/useLanguageStore";
-import { enDictionary, msDictionary } from "@/i18n/dictionaries";
+import { enDictionary, msDictionary } from "@/lib/dictionary";
 import ModernRetroCard from '@/components/ModernRetroCard';
 import PaginationButton from '@/components/PaginationButton';
 import HeroSignUpCard from '@/components/HeroSignUpCard';
@@ -125,6 +125,7 @@ function DashboardContent({ className }: DashboardProps) {
 
   // Start: Effect for URL Parameters
   useEffect(() => {
+    if (!searchParams) return;
     const pageParam = searchParams.get('page');
     if (pageParam) {
       const pageNumber = parseInt(pageParam, 10);
@@ -407,10 +408,10 @@ function DashboardContent({ className }: DashboardProps) {
 // End: DashboardContent Component
 
 // Start: Dashboard Page Export
-export default function DashboardPage({ className }: DashboardProps) {
+export default function DashboardPage() {
   return (
     <Suspense fallback={<div className="p-6 max-w-7xl mx-auto">Memuat papan pemuka...</div>}>
-      <DashboardContent className={className} />
+      <DashboardContent />
     </Suspense>
   );
 }

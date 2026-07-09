@@ -1,0 +1,31 @@
+# Open Interpreter Configuration Framework for Groq Free Tier Optimization
+# Place this file or apply these parameters to restrict token accumulation inflation
+
+# 1. Model & Endpoint Mapping
+model: "openai/llama-3.3-70b-versatile"
+
+# 2. Token Budget & Context Window Hard-Limits (Prevents Rate Limit 12000 TPM Exhaustion)
+context_window: 8000
+max_tokens: 2048
+
+# 3. Automation Execution Settings
+api_key: "sk-dummy-key" # Reads natively from your PowerShell environment variable setup
+verbose: false
+debug: false
+
+# 4. Interactive Flow Controls
+safe_mode: true
+disable_telemetry: true
+
+# Configuration for Aider optimized for Cloudflare OpenRouter Proxy & Poolside Laguna XS.2
+# Place this file in your project root directory sebaris dengan package-lock.json
+
+
+# 2. Kawalan Kestabilan & Penjimatan Kos API (Anti-429 Rate Limit)
+auto-commits: false
+cache-prompts: true
+
+# 4. Antaramuka Aliran Koding
+stream: true
+dark-mode: true
+gui: false

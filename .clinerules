@@ -1,2 +1,12 @@
-Respond concisely. Write code directly without long explanations.
-STRICT BACKGROUND RULE: You are strictly forbidden from running the 'code' command or invoking any shell commands that open graphic user interfaces (GUI) or text editors. Read and write all files silently using file system system-calls only.
+# STRICT CONTEXT & TOKEN BUDGET CONSTRAINTS FOR GROQ FREE TIER (12000 TPM LIMIT)
+
+1. RESPOND CONCISELY: Write code directly. Absolute zero long prose, conversational greetings, or conceptual explanations. Save your token budget entirely for functional code modifications.
+2. SEQUENTIAL EXECUTION RULE: You are strictly forbidden from editing or processing multiple files simultaneously. You must read, analyze, patch, and verify exactly ONE file at a time.
+3. NEXT.JS ARCHITECTURE COMPLIANCE: This workspace strictly utilizes Next.js App Router topology (located within 'app/'). Never attempt to invoke, generate, or modify a legacy 'pages/' directory structure or layout files.
+4. SILENT FILE OPERATIONS: Invoke your file system system-calls and patching tools silently. Do not describe what you are about to do; execute the modification instantly.
+5. CODE LENGTH CAP: Ensure no single file components exceed 500 lines of code. Prioritize modular separation of concerns.
+
+6. Respond concisely. Write code directly without long explanations.
+
+7. STRICT BACKGROUND RULE: You are strictly forbidden from running the 'code' command or invoking any shell commands that open graphic user interfaces (GUI) or text editors. Read and write all files silently using file system system-calls only.
+

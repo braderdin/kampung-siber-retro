@@ -9,42 +9,96 @@
 // End: DBP Terminology Sanitization
 
 // Start: Dictionary Export
-interface DictionarySchema {
-  navigation: {
-    home: string;
-    editor: string;
-    guestbook: string;
-    settings: string;
-  };
-  greetings: {
-    welcome: string;
-    hello: string;
-  };
-  upload: {
-    dropZone: string;
-    instructions: string;
-    browse: string;
-    uploading: string;
-    success: string;
-    failed: string;
-    imageSizeExceeded: string;
-    tierLimitations: string;
-    sizeLimit: string;
-  };
-  dashboardTitle: string;
-  dashboardSubtitle: string;
-  pageInfoTitle: string;
-  currentPage: string;
-  totalPages: string;
-  quickActions: string;
-  myFiles: string;
-  analytics: string;
-  settings: string;
-}
+const dictionary = {
+  en: {
+    navigation: {
+      home: "Home",
+      editor: "Editor",
+      guestbook: "Guestbook",
+      settings: "Settings",
+    },
+    greetings: {
+      welcome: "Welcome",
+      hello: "Hello",
+    },
+    upload: {
+      dropZone: "Drop files here or click to browse",
+      instructions: "Select files to upload",
+      browse: "Browse",
+      uploading: "Uploading...",
+      success: "Upload successful",
+      failed: "Upload failed",
+      imageSizeExceeded: "Image size exceeded",
+      tierLimitations: "Tier limitations",
+      sizeLimit: "Size limit",
+    },
+    dashboardTitle: "Dashboard",
+    dashboardSubtitle: "Your main hub",
+    pageInfoTitle: "Page Info",
+    currentPage: "Current Page",
+    totalPages: "Total Pages",
+    quickActions: "Quick Actions",
+    myFiles: "My Files",
+    analytics: "Analytics",
+    settings: "Settings",
+    fileEditor: "File Editor",
+    tutorials: "Tutorials",
+    guestbookTitle: "Guestbook",
+    modernTheme: "Modern Theme",
+    crtTheme: "CRT Theme",
+    loadingDashboard: "Loading dashboard...",
+    statsTitle: "Statistics",
+  },
+  ms: {
+    navigation: {
+      home: "Laman Utama",
+      editor: "Penyusun",
+      guestbook: "Buku Pelawat",
+      settings: "Set Ringan",
+    },
+    greetings: {
+      welcome: "Selamat Datang",
+      hello: "Halo",
+    },
+    upload: {
+      dropZone: "Jatuhkan fail di sini atau klik untuk semak",
+      instructions: "Pilih fail untuk dimuat naik",
+      browse: "Semak",
+      uploading: "Memuat naik...",
+      success: "Muat naik berjaya",
+      failed: "Muat naik gagal",
+      imageSizeExceeded: "Saiz imej melebihi had",
+      tierLimitations: "Had tier",
+      sizeLimit: "Had saiz",
+    },
+    dashboardTitle: "Papan Pengarah",
+    dashboardSubtitle: "Pusat utama anda",
+    pageInfoTitle: "Info Halaman",
+    currentPage: "Halaman Semasa",
+    totalPages: "Jumlah Halaman",
+    quickActions: "Tindakan Cepat",
+    myFiles: "Fail Saya",
+    analytics: "Analitik",
+    settings: "Set Ringan",
+    fileEditor: "Penyusun Fail",
+    tutorials: "Tutorial",
+    guestbookTitle: "Buku Pelawat",
+    modernTheme: "Tema Moden",
+    crtTheme: "Tema CRT",
+    loadingDashboard: "Memuatkan papan pengarah...",
+    statsTitle: "Statistik",
+  },
+};
 
 // No replacement needed
 // End: Dictionary Export
 
 // Start: Language Type Export
 export type Language = keyof typeof dictionary;
-// End: Language Type Export
+
+// Start: Named Exports
+export const enDictionary = dictionary.en;
+export const msDictionary = dictionary.ms;
+// End: Named Exports
+
+export { dictionary };

@@ -2,7 +2,7 @@
 import { useSearchParams } from 'next/navigation';
 import { Suspense, useEffect, useState } from 'react';
 import { useLanguageStore } from "@/store/useLanguageStore";
-import { enDictionary, msDictionary } from "@/i18n/dictionaries";
+import { enDictionary, msDictionary } from "@/lib/dictionary";
 import CodeMirrorEditor from "@/components/CodeMirrorEditor";
 
 interface TextEditorProps {
@@ -77,6 +77,7 @@ function TextEditorContent({ className }: TextEditorProps) {
 
   // Start: File Loading Handler
   useEffect(() => {
+    if (!searchParams) return;
     const filenameParam = searchParams.get('filename');
     if (filenameParam) {
       setFilename(filenameParam);
@@ -164,12 +165,12 @@ function TextEditorContent({ className }: TextEditorProps) {
   );
 }
 
-export default function TextEditorPage({ className }: TextEditorProps) {
+// Start: TextEditor Page Export
+export default function TextEditorPage() {
   return (
     <Suspense fallback={<div className="flex min-h-screen items-center justify-center">Loading editor...</div>}>
-      <TextEditorContent className={className} />
+      <TextEditorContent />
     </Suspense>
   );
 }
-
-
+// End: TextEditor Page Export

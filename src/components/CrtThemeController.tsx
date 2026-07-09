@@ -1,62 +1,60 @@
+"use client";
 
-import { useEffect, useState, createContext, useContext } from 'react';
+import { useEffect, useState } from "react";
 
-// Create a context for the theme state
-const CrtThemeContext = createContext();
+const LOCAL_STORAGE_KEY = "crtThemeEnabled";
 
-// Create a provider for the theme state
-export const CrtThemeProvider = ({ children }) => {
-  const [enabled, setEnabled] = useState(false);
-  const [isClient, setIsClient] = useState(false);
+interface CrtThemeControllerProps {
+  className?: string;
+}
 
+export default function CrtThemeController({ className }: CrtThemeControllerProps) {
+  // Hydration guard – start as null so the first render is skipped on the server
+  const [isCrtEnabled, setIsCrtEnabled] = useState<boolean | null>(null);
+
+  // Load persisted value from localStorage on the client
   useEffect(() => {
-    setIsClient(true);
-    const storedValue = window.localStorage.getItem('retro-crt-enabled');
-    if (storedValue !== null) {
-      setEnabled(storedValue === 'true');
-    }
+    const stored = localStorage.getItem(LOCAL_STORAGE_KEY);
+    const enabled = stored === "true";
+    setIsCrtEnabled(enabled);
+    document.documentElement.classList.toggle("crt-theme", enabled);
   }, []);
 
-  useEffect(() => {
-    if (!isClient) return;
-    const root = document.documentElement;
-    root.classList.toggle('crt-enabled', enabled);
-    window.localStorage.setItem('retro-crt-enabled', enabled ? 'true' : 'false');
-
-    if (enabled) {
-      root.style.setProperty('--neon-glow-protection', 'true');
-      root.style.setProperty('--shadow-clipping-fix', '0 0 15px rgba(255, 0, 127, 0.3)');
-    } else {
-      root.style.removeProperty('--neon-glow-protection');
-      root.style.removeProperty('--shadow-clipping-fix');
-    }
-  }, [enabled, isClient]);
-
-  return (
-    <CrtThemeContext.Provider value={{ enabled, setEnabled }}>
-      {children}
-    </CrtThemeContext.Provider>
-  );
-};
-
-// Use the context in the component
-export default function CrtThemeController() {
-  const { enabled, setEnabled } = useContext(CrtThemeContext);
-
-  const handleToggle = () => {
-    setEnabled((current) => !current);
+  // Toggle handler – persist & toggle class on <html>
+  const toggleTheme = () => {
+    const newVal = !(isCrtEnabled ?? false);
+    setIsCrtEnabled(newVal);
+    localStorage.setItem(LOCAL_STORAGE_KEY, String(newVal));
+    document.documentElement.classList.toggle("crt-theme", newVal);
   };
 
+  // While waiting for hydration, render nothing → avoids SSR mismatch
+  if (isCrtEnabled === null) return null;
+
   return (
-    <button
-      type="button"
-      aria-pressed={enabled}
-      onClick={handleToggle}
-      className={ounded border px-3 py-2 text-xs font-semibold transition-all duration-300 ${enabled
-        ? 'border-pink-400 bg-pink-500/20 text-pink-300 hover:bg-pink-500/30 shadow-[0_0_15px_rgba(255,0,127,0.3)]'
-        : 'border-cyan-400 bg-cyan-500/10 text-cyan-200 hover:bg-cyan-500/20'`}
-    >
-      {enabled ? 'Penapis CRT Aktif' : 'Aktifkan Penapis CRT'}
-    </button>
+    <div className={`fixed bottom-4 right-4 z-50 ${className || ""}`}>
+      <button
+        onClick={toggleTheme}
+        className={`
+          flex items-center justify-center w-12 h-6
+          bg-gray-800 border-2 border-gray-600 rounded
+          focus:outline-none focus:ring-2 focus:ring-green-400
+          hover:bg-gray-700 transition-colors
+        `}
+        aria-pressed={isCrtEnabled}
+        aria-label="Toggle CRT terminal theme"
+      >
+        <span
+          className={`
+            block w-5 h-5 bg-gray-300 rounded-full
+            transform transition-transform
+            ${isCrtEnabled ? "translate-x-6" : "translate-x-0"}
+          `}
+        />
+      </button>
+      <span className="sr-only">
+        CRT Theme {isCrtEnabled ? "Enabled" : "Disabled"}
+      </span>
+    </div>
   );
 }
