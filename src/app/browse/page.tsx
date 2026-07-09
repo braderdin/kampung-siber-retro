@@ -1,13 +1,10 @@
-// Start: Imports
-'use client';
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+"use client";
+import { useEffect, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import HumanFeedbackToast from '@/components/HumanFeedbackToast';
 import PaginationButton from '@/components/PaginationButton';
 import SiteDirectoryGrid from '@/components/SiteDirectoryGrid';
-// End: Imports
 
-// Start: Type Definitions
 interface BrowsePageProps {
   className?: string;
 }
@@ -36,36 +33,78 @@ interface FilterOptions {
   sortBy: 'popular' | 'newest' | 'rating';
   search: string;
 }
-// End: Type Definitions
 
-// Start: BrowsePage Component
 export default function BrowsePage({ className }: BrowsePageProps) {
-  // Start: State Management
   const [items, setItems] = useState<BrowseItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [filters, setFilters] = useState<FilterOptions>({
-    type: 'all',
-    sortBy: 'popular',
-    search: '',
-  });
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [toastType, setToastType] = useState<'success' | 'error' | 'info' | 'warning'>('info');
   const router = useRouter();
-  // End: State Management
+  const searchParams = useSearchParams();
 
-  // Start: Fetch Browse Items
+  const activeCategory = searchParams?.get('category') || 'all';
+  const activeSortBy = searchParams?.get('sortBy') || 'popular';
+  const activeSearch = searchParams?.get('search') || '';
+
+  const updateUrlParams = (updates: { category?: string; sortBy?: string; search?: string; page?: number }) => {
+    const params = new URLSearchParams(searchParams?.toString() || '');
+    
+    if (updates.category !== undefined) {
+      if (updates.category === 'all') {
+        params.delete('category');
+      } else {
+        params.set('category', updates.category);
+      }
+    }
+    
+    if (updates.sortBy !== undefined) {
+      params.set('sortBy', updates.sortBy);
+    }
+    
+    if (updates.search !== undefined) {
+      if (updates.search === '') {
+        params.delete('search');
+      } else {
+        params.set('search', updates.search);
+      }
+    }
+    
+    if (updates.page !== undefined) {
+      params.set('page', updates.page.toString());
+    }
+    
+    router.push(`/browse?${params.toString()}`);
+  };
+
+  const handleCategoryChange = (category: string) => {
+    updateUrlParams({ category });
+    setCurrentPage(1);
+    setToastMessage(`Kategori dipilih: ${category === 'all' ? 'Semua' : category}`);
+    setToastType('info');
+  };
+
+  const handleSortChange = (sortBy: string) => {
+    updateUrlParams({ sortBy });
+    setCurrentPage(1);
+  };
+
+  const handleSearchChange = (search: string) => {
+    updateUrlParams({ search });
+    setCurrentPage(1);
+  };
+
   const fetchItems = async () => {
     try {
       setLoading(true);
       setError(null);
 
       const queryParams = new URLSearchParams({
-        type: filters.type,
-        sortBy: filters.sortBy,
-        search: filters.search,
+        type: activeCategory,
+        sortBy: activeSortBy,
+        search: activeSearch,
         page: currentPage.toString(),
       });
 
@@ -88,28 +127,16 @@ export default function BrowsePage({ className }: BrowsePageProps) {
       setLoading(false);
     }
   };
-  // End: Fetch Browse Items
 
-  // Start: Component Lifecycle
   useEffect(() => {
     fetchItems();
-  }, [filters, currentPage]);
-  // End: Component Lifecycle
+    window.scrollTo(0, 0);
+  }, [activeCategory, activeSortBy, activeSearch, currentPage]);
 
-  // Start: Handle Filter Change
-  const handleFilterChange = (key: keyof FilterOptions, value: any) => {
-    setFilters(prev => ({ ...prev, [key]: value }));
-    setCurrentPage(1);
-  };
-  // End: Handle Filter Change
-
-  // Start: Handle Item Click
   const handleItemClick = (item: BrowseItem) => {
     router.push(item.url);
   };
-  // End: Handle Item Click
 
-  // Start: Map Browse Items
   const directorySites = items.map((item) => ({
     id: item.id,
     title: item.title,
@@ -117,9 +144,7 @@ export default function BrowsePage({ className }: BrowsePageProps) {
     tags: item.tags.slice(0, 3),
     href: item.url,
   }));
-  // End: Map Browse Items
 
-  // Start: Render Browse Page
   return (
     <div className={`retro-window flex flex-col ${className || ''}`}>
       {/* Start: Window Header */}
@@ -137,8 +162,8 @@ export default function BrowsePage({ className }: BrowsePageProps) {
         <div className="retro-filters mb-3 p-2 bg-gray-50 dark:bg-gray-900/20 rounded border border-gray-200 dark:border-gray-700">
           <div className="flex flex-wrap gap-2">
             <select
-              value={filters.type}
-              onChange={(e) => handleFilterChange('type', e.target.value)}
+              value={activeCategory}
+              onChange={(e) => handleCategoryChange(e.target.value)}
               className="retro-select text-xs"
             >
               <option value="all">Semua Jenis</option>
@@ -149,8 +174,8 @@ export default function BrowsePage({ className }: BrowsePageProps) {
             </select>
 
             <select
-              value={filters.sortBy}
-              onChange={(e) => handleFilterChange('sortBy', e.target.value)}
+              value={activeSortBy}
+              onChange={(e) => handleSortChange(e.target.value)}
               className="retro-select text-xs"
             >
               <option value="popular">Paling Popular</option>
@@ -161,8 +186,8 @@ export default function BrowsePage({ className }: BrowsePageProps) {
             <input
               type="text"
               placeholder="Cari..."
-              value={filters.search}
-              onChange={(e) => handleFilterChange('search', e.target.value)}
+              value={activeSearch}
+              onChange={(e) => handleSearchChange(e.target.value)}
               className="retro-input text-xs w-32"
             />
           </div>
@@ -199,7 +224,10 @@ export default function BrowsePage({ className }: BrowsePageProps) {
         <PaginationButton currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
       </div>
       {/* End: Window Footer */}
+
+      {toastMessage ? (
+        <HumanFeedbackToast message={toastMessage} type={toastType} duration={3000} onClose={() => setToastMessage(null)} />
+      ) : null}
     </div>
   );
 }
-// End: BrowsePage Component

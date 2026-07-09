@@ -1,4 +1,3 @@
-// Start: Imports
 "use client";
 import { useSearchParams } from 'next/navigation';
 import { Suspense, useEffect, useState } from 'react';
@@ -10,9 +9,7 @@ import HeroSignUpCard from '@/components/HeroSignUpCard';
 import FeaturedSitesGrid from '@/components/FeaturedSitesGrid';
 import FollowActivityFeed from '@/components/FollowActivityFeed';
 import TutorialCard from '@/components/TutorialCard';
-// End: Imports
 
-// Start: Type Definitions
 interface DashboardProps {
   className?: string;
 }
@@ -104,9 +101,7 @@ const mockTutorialPreviews: TutorialPreview[] = [
     completed: false,
   },
 ];
-// End: Type Definitions
 
-// Start: DashboardContent Component
 function DashboardContent({ className }: DashboardProps) {
   const searchParams = useSearchParams();
   const { language } = useLanguageStore();
@@ -121,9 +116,7 @@ function DashboardContent({ className }: DashboardProps) {
     remaining: 1000000,
   });
   const [userQuotes, setUserQuotes] = useState<UserQuote[]>(mockUserQuotes);
-  // End: State Management
 
-  // Start: Effect for URL Parameters
   useEffect(() => {
     if (!searchParams) return;
     const pageParam = searchParams.get('page');
@@ -145,17 +138,13 @@ function DashboardContent({ className }: DashboardProps) {
       setFiles([]);
     }
   }, [searchParams]);
-  // End: Effect for URL Parameters
 
-  // Start: Handle Editor Navigation
   const handleEditorNavigation = () => {
     window.location.href = '/site_files/text_editor';
   };
-  // End: Handle Editor Navigation
 
-  // Start: Render Dashboard Content
   return (
-    <div className={`p-6 max-w-7xl mx-auto ${className || ''}`}>
+    <div className={`overflow-x-hidden w-full p-6 max-w-7xl mx-auto ${className || ''}`}>
       <div className="mb-6">
         <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
           {t.dashboardTitle}
@@ -336,7 +325,7 @@ function DashboardContent({ className }: DashboardProps) {
       <div className="mt-6">
         <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6 border border-cyan-500/30 dark:border-pink-500/30">
           <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-3">
-            {t.dashboardTitle}
+            {t.fileEditor}
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             <ModernRetroCard
@@ -405,9 +394,7 @@ function DashboardContent({ className }: DashboardProps) {
     </div>
   );
 }
-// End: DashboardContent Component
 
-// Start: Dashboard Page Export
 export default function DashboardPage() {
   return (
     <Suspense fallback={<div className="p-6 max-w-7xl mx-auto">Memuat papan pemuka...</div>}>
@@ -415,4 +402,3 @@ export default function DashboardPage() {
     </Suspense>
   );
 }
-// End: Dashboard Page Export

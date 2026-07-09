@@ -1,12 +1,16 @@
-﻿'use client';
+'use client';
 
-// Start: Imports
 import { useState } from 'react';
-// End: Imports
 
-// Start: Type Definitions
 interface MovementValue {
   title: string;
+  description: string;
+  icon: string;
+}
+
+interface SystemStatus {
+  title: string;
+  value: string;
   description: string;
   icon: string;
 }
@@ -14,15 +18,10 @@ interface MovementValue {
 interface AboutPageProps {
   className?: string;
 }
-// End: Type Definitions
 
-// Start: AboutPage Component
 export default function AboutPage({ className }: AboutPageProps) {
-  // Start: State Management
   const [activeTab, setActiveTab] = useState<'mission' | 'values' | 'history'>('mission');
-  // End: State Management
 
-  // Start: Movement Values
   const movementValues: MovementValue[] = [
     {
       title: 'Pemeliharaan',
@@ -45,9 +44,46 @@ export default function AboutPage({ className }: AboutPageProps) {
       icon: '⚡',
     },
   ];
-  // End: Movement Values
 
-  // Start: Mission Tab
+  const systemStatuses: SystemStatus[] = [
+    {
+      title: 'Pelayan Utama',
+      value: 'Online',
+      description: 'Semua laman web berfungsi dengan betul',
+      icon: '🟢',
+    },
+    {
+      title: 'Pelayan API',
+      value: 'Online',
+      description: 'API semua modul berkaitan sedang aktif',
+      icon: '🟢',
+    },
+    {
+      title: 'Pelayan Simpan',
+      value: 'Online',
+      description: 'Sistem simpan fail R2 Cloudflare sedang berfungsi',
+      icon: '🟢',
+    },
+    {
+      title: 'Pelayan Email',
+      value: 'Offline',
+      description: 'Penyimpanan sementara menonaktifkan fungsi email',
+      icon: '🟡',
+    },
+    {
+      title: 'Pelayan Debug',
+      value: 'Offline',
+      description: 'Mod debug dimatikan untuk prestasi optimal',
+      icon: '🔴',
+    },
+    {
+      title: 'Penjimatan RAM',
+      value: 'Aktif',
+      description: 'Optimisasi memori diaktifkan untuk peranti berkesan',
+      icon: '🟢',
+    },
+  ];
+
   const renderMissionTab = () => (
     <div className="space-y-3">
       <p className="text-xs leading-relaxed text-gray-700">
@@ -59,9 +95,7 @@ export default function AboutPage({ className }: AboutPageProps) {
       </p>
     </div>
   );
-  // End: Mission Tab
 
-  // Start: Values Tab
   const renderValuesTab = () => (
     <div className="space-y-3">
       {movementValues.map((value) => (
@@ -77,9 +111,7 @@ export default function AboutPage({ className }: AboutPageProps) {
       ))}
     </div>
   );
-  // End: Values Tab
 
-  // Start: History Tab
   const renderHistoryTab = () => (
     <div className="space-y-3">
       <div className="retro-window border-2 border-gray-400 bg-white p-3 retro-shadow">
@@ -87,7 +119,7 @@ export default function AboutPage({ className }: AboutPageProps) {
         <div className="relative space-y-4 border-l-2 border-gray-300 pl-4">
           {[
             ['2023', 'Projek dimulakan untuk mengekalkan pembangunan web retro.'],
-            ['2024', 'Versi awam pertama dilancarkan dengan editor dan ruang ujian asas.'],
+            ['2024', 'Versi awal pertama dilancarkan dengan editor dan ruang ujian asas.'],
             ['2025', 'Komuniti, tutorial, dan alat penyokong diperluaskan dengan lebih luas.'],
           ].map(([year, detail]) => (
             <div key={year} className="relative">
@@ -101,19 +133,17 @@ export default function AboutPage({ className }: AboutPageProps) {
       </div>
     </div>
   );
-  // End: History Tab
 
-  // Start: Render About Page
   return (
-    <div className={`min-h-screen bg-gray-50 p-6 dark:bg-gray-900 ${className || ''}`}>
+    <div className={`min-h-screen bg-gray-50 p-4 sm:p-6 dark:bg-gray-900 ${className || ''}`}>
       <div className="mx-auto max-w-6xl">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Tentang Kampung Siber Retro</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100">Tentang Kampung Siber Retro</h1>
           <p className="mt-2 text-gray-600 dark:text-gray-300">Arkib hidup web awal yang disemak semula untuk pencipta moden.</p>
         </div>
 
         <div className="grid gap-6 lg:grid-cols-[2fr_1fr]">
-          <div className="retro-window border-2 border-gray-400 bg-white p-6 retro-shadow">
+          <div className="retro-window border-2 border-gray-400 bg-white p-4 sm:p-6 retro-shadow">
             <div className="mb-4 flex space-x-2 border-b border-gray-200 pb-3">
               {(['mission', 'values', 'history'] as const).map((tab) => (
                 <button
@@ -132,18 +162,38 @@ export default function AboutPage({ className }: AboutPageProps) {
           </div>
 
           <div className="space-y-4">
-            <div className="retro-window border-2 border-gray-400 bg-white p-4 retro-shadow">
-              <h2 className="mb-2 text-sm font-bold text-gray-800">Apa yang kita pertahankan</h2>
+            <div className="retro-window border-2 border-gray-400 bg-white p-4 sm:p-6 retro-shadow">
+              <h2 className="mb-3 text-sm font-bold text-gray-800">Apa yang kita pertahankan</h2>
               <p className="text-xs leading-relaxed text-gray-600">Kita mengekalkan kemahiran asas, mengajar prinsip teras, dan membina komuniti di sekeliling eksperimen yang menyeronokkan.</p>
             </div>
-            <div className="retro-window border-2 border-gray-400 bg-white p-4 retro-shadow">
-              <h2 className="mb-2 text-sm font-bold text-gray-800">Cara untuk mengambil bahagian</h2>
+            <div className="retro-window border-2 border-gray-400 bg-white p-4 sm:p-6 retro-shadow">
+              <h2 className="mb-3 text-sm font-bold text-gray-800">Cara untuk mengambil bahagian</h2>
               <p className="text-xs leading-relaxed text-gray-600">Terokai tutorial, ubah suai fail laman, dan kongsikan ciptaan retro anda bersama komuniti.</p>
             </div>
+          </div>
+        </div>
+
+        <div className="mt-8">
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">
+            Status Sistem
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {systemStatuses.map((status, index) => (
+              <div key={index} className="retro-window border-2 border-gray-400 bg-white p-4 retro-shadow">
+                <div className="flex items-center gap-3">
+                  <span className="text-2xl">{status.icon}</span>
+                  <div>
+                    <h3 className="text-sm font-bold text-gray-800">{status.title}</h3>
+                    <p className="text-xs text-gray-600">
+                      <span className="font-semibold">{status.value}</span> - {status.description}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>
     </div>
   );
 }
-// End: AboutPage Component

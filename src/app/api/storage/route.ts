@@ -1,4 +1,4 @@
-﻿// Start: Cloudflare R2 Storage API Handler
+// Start: Cloudflare R2 Storage API Handler
 // Refactored to use true Presigned URL architecture
 import { NextRequest, NextResponse } from 'next/server';
 import { S3Client, PutObjectCommand, HeadObjectCommand } from '@aws-sdk/client-s3';

@@ -1,12 +1,20 @@
-# STRICT CONTEXT & TOKEN BUDGET CONSTRAINTS FOR GROQ FREE TIER (12000 TPM LIMIT)
+# ==============================================================================
+# KAMPUNG SIBER RETRO WORKSPACE - HYBRID ENGINE OPTIMIZED RULES
+# TARGET: Groq Llama-3.3-70b (PLAN) & OpenRouter Laguna-XS-2.1:Free (ACT)
+# ==============================================================================
 
-1. RESPOND CONCISELY: Write code directly. Absolute zero long prose, conversational greetings, or conceptual explanations. Save your token budget entirely for functional code modifications.
-2. SEQUENTIAL EXECUTION RULE: You are strictly forbidden from editing or processing multiple files simultaneously. You must read, analyze, patch, and verify exactly ONE file at a time.
-3. NEXT.JS ARCHITECTURE COMPLIANCE: This workspace strictly utilizes Next.js App Router topology (located within 'app/'). Never attempt to invoke, generate, or modify a legacy 'pages/' directory structure or layout files.
-4. SILENT FILE OPERATIONS: Invoke your file system system-calls and patching tools silently. Do not describe what you are about to do; execute the modification instantly.
-5. CODE LENGTH CAP: Ensure no single file components exceed 500 lines of code. Prioritize modular separation of concerns.
+## 🚨 GROQ PLAN ENGINE CONSTRAINTS (CRITICAL: 12K TPM / 100K TPD LIMIT)
+1. ULTRA-CONCISE PLANNING: When in planning mode using Llama-3.3, you must output blueprints in strict bullet points (max 5 lines). Do not dump large source code chunks, repetitive documentation, or theoretical explanations. Every token matters.
+2. STATELESS ANALYSIS: Keep background explanations to an absolute zero to protect the 12K Tokens Per Minute budget from hitting HTTP 429 rate limits.
+3. PRE-READ FILTERING: Never read massive raw files if only checking tiny layout definitions. Use precise search tools or read targeted line scopes.
 
-6. Respond concisely. Write code directly without long explanations.
+## 🏗️ LAGUNA ACT ENGINE RULES (PRODUCTION-READY EXECUTION)
+4. FULL STRUCTURAL OUTPUT: When the actor engine modifies, builds, or refactors code, always return complete functional code blocks, types, or file logic components.
+5. ZERO LAZY PLACEHOLDERS: You are strictly prohibited from using lazy comments such as `// code remains the same`, `// ... rest of code`, or `// insert logic here`. Write out every clean script entirely for automated execution.
+6. SURGICAL DEBUGGING: When a compilation or build crash occurs, isolate the root cause methodically. Provide a one-sentence breakdown of the bug, then immediately execute the fix.
 
-7. STRICT BACKGROUND RULE: You are strictly forbidden from running the 'code' command or invoking any shell commands that open graphic user interfaces (GUI) or text editors. Read and write all files silently using file system system-calls only.
-
+## 📐 WORKSPACE ARCHITECTURE & DISCIPLINE
+7. SEQUENTIAL EXECUTION ARCHITECTURE: You must process exactly ONE file at a time. Read, analyze, patch, test, and commit that file completely before moving to any other component. Never open multiple files simultaneously.
+8. NEXT.JS 15 APP ROUTER COMPLIANCE: All new feature layouts must reside strictly within the modern Next.js App Router architecture ('src/app/'). Do not create legacy structure setups unless refactoring an existing specified file.
+9. THE 500-LINE HARD CEILING: No single file or component in this codebase shall exceed 500 lines of code. If your code additions push a file past 500 lines, you must sound a warning and suggest breaking it into modular components under 'src/components/'.
+10. SILENT FILE INTERACTION & GUI BAN: Run all file editing, creation, and reading operations silently via system calls. You are strictly forbidden from executing terminal commands that invoke graphical text editors or external browser GUIs.

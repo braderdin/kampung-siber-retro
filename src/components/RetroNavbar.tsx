@@ -1,4 +1,3 @@
-// Start: Imports
 "use client";
 
 import { usePathname, useRouter } from 'next/navigation';
@@ -6,17 +5,13 @@ import { useLanguageStore } from '@/store/useLanguageStore';
 import { enDictionary, msDictionary } from '@/i18n/dictionaries';
 import { useEffect, useState } from 'react';
 import UserDropdownMenu from '@/components/UserDropdownMenu';
-// End: Imports
 
-// Start: Type Definitions
 interface NavItem {
   name: string;
   href: string;
   icon: string;
 }
-// End: Type Definitions
 
-// Start: RetroNavbar Component
 export default function RetroNavbar() {
   const pathname = usePathname();
   const router = useRouter();
@@ -26,16 +21,13 @@ export default function RetroNavbar() {
 
   const t = language === 'ms' ? msDictionary : enDictionary;
   
-  // Start: Navigation Items
   const navItems: NavItem[] = [
     { name: t.dashboardTitle, href: '/dashboard', icon: '🏠' },
     { name: t.fileEditor, href: '/site_files', icon: '📝' },
     { name: t.guestbookTitle, href: '/browse', icon: '📘' },
     { name: t.settings, href: '/search', icon: '⚙️' },
   ];
-  // End: Navigation Items
 
-  // Start: Dark Mode Initialization
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme === 'dark') {
@@ -43,15 +35,11 @@ export default function RetroNavbar() {
       document.documentElement.classList.add('dark');
     }
   }, []);
-  // End: Dark Mode Initialization
 
-  // Start: Handle Language Change
   const handleLanguageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setLanguage(e.target.value as 'en' | 'ms');
   };
-  // End: Handle Language Change
 
-  // Start: Handle Dark Mode Toggle
   const handleDarkModeToggle = () => {
     const newDarkMode = !isDarkMode;
     setIsDarkMode(newDarkMode);
@@ -64,24 +52,21 @@ export default function RetroNavbar() {
       localStorage.setItem('theme', 'light');
     }
   };
-  // End: Handle Dark Mode Toggle
 
-  // Start: Handle Navigation Click
   const handleNavClick = (href: string) => {
     setMobileMenuOpen(false);
     router.push(href);
   };
-  // End: Handle Navigation Click
 
-  // Start: Render Navbar
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 retro-nav bg-black/30 backdrop-blur-md border-b border-cyan-500/20">
+    <nav className="fixed top-0 left-0 right-0 z-50 retro-nav bg-black/30 backdrop-blur-md border-b border-cyan-500/20 overflow-x-hidden w-full">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Start: Logo/Brand */}
           <div className="flex-shrink-0 flex items-center">
-            <span className="text-2xl font-pixel text-pink-500 dark:text-pink-400">
-              🖥️ Penjelajah Laman
+            <span className="text-2xl font-pixel text-pink-500 dark:text-pink-400 inline-flex items-center gap-2 align-middle">
+              <span className="inline-flex items-center justify-center w-8 h-8">🖥️</span>
+              <span className="hidden sm:inline">Penjelajah Laman</span>
             </span>
           </div>
           {/* End: Logo/Brand */}
@@ -99,8 +84,8 @@ export default function RetroNavbar() {
                       : 'text-gray-300 hover:text-white hover:bg-cyan-500/10 dark:text-gray-400 dark:hover:text-white dark:hover:bg-cyan-500/10'
                   }`}
                 >
-                  <span className="text-lg">{item.icon}</span>
-                  <span className="hidden sm:inline">{item.name}</span>
+                  <span className="text-lg inline-flex items-center justify-center w-5 h-5">{item.icon}</span>
+                  <span className="hidden sm:inline inline-flex items-center gap-1 align-middle">{item.name}</span>
                 </button>
               ))}
             </div>
@@ -111,7 +96,7 @@ export default function RetroNavbar() {
           <div className="md:hidden">
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="text-gray-300 hover:text-white focus:outline-none p-2"
+              className="text-gray-300 hover:text-white focus:outline-none p-2 min-w-[44px] min-h-[44px] flex items-center justify-center"
             >
               <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 {mobileMenuOpen ? (
@@ -131,7 +116,7 @@ export default function RetroNavbar() {
               <select
                 value={language}
                 onChange={handleLanguageChange}
-                className="retro-input w-auto text-sm bg-black/50 border-cyan-400 text-white min-w-[60px] max-w-[80px]"
+                className="retro-input w-auto text-sm bg-black/50 border-cyan-400 text-white min-w-[60px] max-w-[80px] inline-flex items-center justify-center"
               >
                 <option value="en">EN</option>
                 <option value="ms">MS</option>
@@ -148,8 +133,8 @@ export default function RetroNavbar() {
               onClick={handleDarkModeToggle}
               className="retro-btn-secondary text-xs px-2 py-1 flex items-center space-x-1 border-pink-400 hover:border-pink-300 min-w-[80px] justify-center"
             >
-              <span>{isDarkMode ? '🌙' : '☀️'}</span>
-              <span className="hidden sm:inline">{isDarkMode ? t.greetings.hello : 'Penapis CRT'}</span>
+              <span className="inline-flex items-center justify-center w-5 h-5">{isDarkMode ? '🌙' : '☀️'}</span>
+              <span className="hidden sm:inline inline-flex items-center gap-1 align-middle">{isDarkMode ? t.greetings.hello : 'Penapis CRT'}</span>
             </button>
             {/* End: Dark Mode Toggle */}
           </div>
@@ -171,8 +156,8 @@ export default function RetroNavbar() {
                     : 'text-gray-300 hover:text-white hover:bg-cyan-500/10'
                 }`}
               >
-                <span className="text-lg mr-2">{item.icon}</span>
-                {item.name}
+                <span className="text-lg mr-2 inline-flex items-center justify-center w-5 h-5">{item.icon}</span>
+                <span className="inline-flex items-center gap-1 align-middle">{item.name}</span>
               </button>
             ))}
           </div>
@@ -182,4 +167,3 @@ export default function RetroNavbar() {
     </nav>
   );
 }
-// End: RetroNavbar Component

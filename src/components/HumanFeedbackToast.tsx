@@ -20,12 +20,16 @@ export default function HumanFeedbackToast({
   onClose,
 }: HumanFeedbackToastProps) {
   const [isVisible, setIsVisible] = useState(true);
-  const [slideIn, setSlideIn] = useState(true);
+  const [animate, setAnimate] = useState(false);
 
-  // Start: Auto Close Effect
   useEffect(() => {
+    // Trigger hardware-accelerated fade-in
+    requestAnimationFrame(() => {
+      setAnimate(true);
+    });
+
     const timer = setTimeout(() => {
-      setSlideIn(false);
+      setAnimate(false);
       setTimeout(() => {
         setIsVisible(false);
         if (onClose) onClose();
@@ -34,11 +38,9 @@ export default function HumanFeedbackToast({
 
     return () => clearTimeout(timer);
   }, [duration, onClose]);
-  // End: Auto Close Effect
 
-  // Start: Get Toast Styles
   const getToastStyles = () => {
-    const baseStyles = 'fixed bottom-4 right-4 max-w-xs w-full px-4 py-3 rounded-lg shadow-lg flex items-center space-x-3 transition-all duration-300';
+    const baseStyles = 'fixed bottom-4 right-4 md:bottom-6 md:right-6 max-w-xs w-full px-4 py-3 rounded-lg shadow-lg flex items-center space-x-3 transition-all duration-300 ease-out';
     
     switch (type) {
       case 'success':
@@ -51,9 +53,7 @@ export default function HumanFeedbackToast({
         return `${baseStyles} bg-blue-500 text-white`;
     }
   };
-  // End: Get Toast Styles
 
-  // Start: Get Icon
   const getIcon = () => {
     switch (type) {
       case 'success':
@@ -66,14 +66,18 @@ export default function HumanFeedbackToast({
         return 'ℹ️';
     }
   };
-  // End: Get Icon
 
-  // Start: Render Toast
+  const getAnimationStyles = () => {
+    if (!animate) return 'opacity-0 translate-y-4';
+    return 'opacity-100 translate-y-0';
+  };
+
   if (!isVisible) return null;
 
   return (
     <div 
-      className={`${getToastStyles()} ${slideIn ? 'translate-y-0' : 'translate-y-10 opacity-0'}`}
+      className={`${getToastStyles()} ${getAnimationStyles()}`}
+      style={{ willChange: 'transform, opacity' }}
     >
       <div className="flex items-center space-x-2">
         <span className="text-lg">{getIcon()}</span>

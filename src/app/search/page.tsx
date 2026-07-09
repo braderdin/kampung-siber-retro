@@ -1,13 +1,11 @@
-// Start: Imports
-'use client';
+"use client";
 import { useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import useDebounce from '@/hooks/useDebounce';
 import HumanFeedbackToast from '@/components/HumanFeedbackToast';
 import ModernRetroCard from '@/components/ModernRetroCard';
 import TutorialCard from '@/components/TutorialCard';
-// End: Imports
 
-// Start: Type Definitions
 interface SearchPageProps {
   className?: string;
 }
@@ -23,19 +21,16 @@ interface SearchResult {
   category?: string;
   completed?: boolean;
 }
-// End: Type Definitions
 
-// Start: SearchPage Component
 export default function SearchPage({ className }: SearchPageProps) {
-  // Start: State Management
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<SearchResult[]>([]);
   const [loading, setLoading] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
   const router = useRouter();
-  // End: State Management
 
-  // Start: Demo Search Data
+  const debouncedQuery = useDebounce(query, { delay: 300 });
+
   const demoResults = useMemo<SearchResult[]>(() => [
     {
       id: '1',
@@ -87,9 +82,7 @@ export default function SearchPage({ className }: SearchPageProps) {
       completed: false,
     },
   ], []);
-  // End: Demo Search Data
 
-  // Start: Handle Search
   const handleSearch = (searchQuery: string) => {
     if (!searchQuery.trim()) {
       setResults([]);
@@ -108,15 +101,11 @@ export default function SearchPage({ className }: SearchPageProps) {
       setToast(filtered.length > 0 ? 'Carian berjaya dikemas kini.' : 'Tiada padanan untuk istilah ini.');
     }, 220);
   };
-  // End: Handle Search
 
-  // Start: Handle Result Click
   const handleResultClick = (url: string) => {
     router.push(url);
   };
-  // End: Handle Result Click
 
-  // Start: Render Search Page
   return (
     <div className={`rounded border border-gray-300 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-900 ${className || ''}`}>
       <div className="mb-4">
@@ -130,12 +119,6 @@ export default function SearchPage({ className }: SearchPageProps) {
           onChange={(event) => {
             const value = event.target.value;
             setQuery(value);
-            if (value.length > 2) {
-              handleSearch(value);
-            } else {
-              setResults([]);
-              setToast(null);
-            }
           }}
           className="w-full rounded border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
           placeholder="Carian dalam Carian"
@@ -144,38 +127,44 @@ export default function SearchPage({ className }: SearchPageProps) {
 
       {loading ? (
         <div className="rounded border border-dashed border-gray-300 p-4 text-sm text-gray-600 dark:border-gray-700 dark:text-gray-400">Memproses Carian...</div>
-      ) : results.length > 0 ? (
-        <div className="grid gap-3 md:grid-cols-2">
-          {results.map((result) => {
-            // Start: Tutorial Result Rendering with Glowing Badge
-            if (result.type === 'tutorial' && result.difficulty && result.category) {
+      ) : debouncedQuery.length > 2 ? (
+        <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+          {results.length > 0 ? (
+            results.map((result) => {
+              if (result.type === 'tutorial' && result.difficulty && result.category) {
+                return (
+                  <TutorialCard
+                    key={result.id}
+                    title={result.title}
+                    description={result.description}
+                    difficulty={result.difficulty}
+                    category={result.category}
+                    completed={result.completed || false}
+                    onStart={() => handleResultClick(result.url)}
+                  />
+                );
+              }
+              
               return (
-                <TutorialCard
+                <ModernRetroCard
                   key={result.id}
                   title={result.title}
                   description={result.description}
-                  difficulty={result.difficulty}
-                  category={result.category}
-                  completed={result.completed || false}
-                  onStart={() => handleResultClick(result.url)}
+                  icon={result.type === 'asset' ? '🧰' : result.type === 'project' ? '🛠️' : '📄'}
+                  onClick={() => handleResultClick(result.url)}
+                  badge={result.tags[0]}
                 />
               );
-            }
-            // End: Tutorial Result Rendering with Glowing Badge
-            
-            // Start: Other Result Types
-            return (
-              <ModernRetroCard
-                key={result.id}
-                title={result.title}
-                description={result.description}
-                icon={result.type === 'asset' ? '🧰' : result.type === 'project' ? '🛠️' : '📄'}
-                onClick={() => handleResultClick(result.url)}
-                badge={result.tags[0]}
-              />
-            );
-            // End: Other Result Types
-          })}
+            })
+          ) : (
+            <div className="col-span-full rounded border border-dashed border-gray-300 p-4 text-sm text-gray-600 dark:border-gray-700 dark:text-gray-400">
+              Tiada padanan untuk istilah "{debouncedQuery}".
+            </div>
+          )}
+        </div>
+      ) : debouncedQuery.length > 0 ? (
+        <div className="rounded border border-dashed border-gray-300 p-4 text-sm text-gray-600 dark:border-gray-700 dark:text-gray-400">
+          Sediang mencari...
         </div>
       ) : (
         <div className="rounded border border-dashed border-gray-300 p-4 text-sm text-gray-600 dark:border-gray-700 dark:text-gray-400">
@@ -187,4 +176,3 @@ export default function SearchPage({ className }: SearchPageProps) {
     </div>
   );
 }
-// End: SearchPage Component
