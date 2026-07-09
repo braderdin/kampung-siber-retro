@@ -23,6 +23,7 @@ export default function PixelCursorEffect() {
   const mousePositionRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
   const particleIdRef = useRef(0);
   const enabledRef = useRef(false);
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   useEffect(() => {
     const checkMobile = () => {
@@ -46,7 +47,7 @@ export default function PixelCursorEffect() {
     if (!isEnabled || isMobile) return;
 
     const createParticle = (x: number, y: number): Particle => {
-      const colors = ['#ffffff', '#00ffff', '#ff00ff', '#00ff00', '#ffff00', '#ff0000'];
+      const colors = ['#ffffff', '#00ffff', '#ff00ff', '#00ff00', '#ffff00', '#ff0000', '#ff007f', '#007fff'];
       const size = Math.random() * 3 + 1;
       
       return {
@@ -68,9 +69,11 @@ export default function PixelCursorEffect() {
       
       mousePositionRef.current = { x: e.clientX, y: e.clientY };
       
-      // Create particles at mouse position
-      for (let i = 0; i < 3; i++) {
-        particlesRef.current.push(createParticle(e.clientX, e.clientY));
+      // Create particles at mouse position every few frames
+      if (Math.random() < 0.3) {
+        for (let i = 0; i < 3; i++) {
+          particlesRef.current.push(createParticle(e.clientX, e.clientY));
+        }
       }
     };
 
@@ -96,21 +99,18 @@ export default function PixelCursorEffect() {
       }
 
       // Render particles
-      if (typeof document !== 'undefined') {
-        const canvas = document.getElementById('pixel-cursor-canvas');
-        if (canvas) {
-          const ctx = canvas.getContext('2d');
-          if (ctx) {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            particles.forEach(p => {
-              ctx.globalAlpha = p.opacity;
-              ctx.fillStyle = p.color;
-              ctx.fillRect(p.x, p.y, p.size, p.size);
-            });
-            
-            ctx.globalAlpha = 1;
-          }
+      if (canvasRef.current) {
+        const ctx = canvasRef.current.getContext('2d');
+        if (ctx) {
+          ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+          
+          particles.forEach(p => {
+            ctx.globalAlpha = p.opacity;
+            ctx.fillStyle = p.color;
+            ctx.fillRect(p.x, p.y, p.size, p.size);
+          });
+          
+          ctx.globalAlpha = 1;
         }
       }
 
@@ -118,10 +118,9 @@ export default function PixelCursorEffect() {
     };
 
     const resizeCanvas = () => {
-      const canvas = document.getElementById('pixel-cursor-canvas');
-      if (canvas) {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+      if (canvasRef.current) {
+        canvasRef.current.width = window.innerWidth;
+        canvasRef.current.height = window.innerHeight;
       }
     };
 
@@ -147,9 +146,10 @@ export default function PixelCursorEffect() {
 
   return (
     <canvas
+      ref={canvasRef}
       id="pixel-cursor-canvas"
       className="fixed top-0 left-0 w-full h-full pointer-events-none z-50"
-      style={{ display: isEnabled ? 'block' : 'none' }}
+      style={{ display: isEnabled ? 'block' : 'none', opacity: 0.7 }}
     />
   );
 }

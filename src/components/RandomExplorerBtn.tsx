@@ -2,7 +2,6 @@
 
 import { useRouter } from 'next/navigation';
 
-// Mock array of known active siber usernames for 90s-style surf network exploration
 const ACTIVE_SIBER_USERNAMES: string[] = [
   'cyber-pioneer',
   'pixel-warrior',
@@ -17,13 +16,13 @@ const ACTIVE_SIBER_USERNAMES: string[] = [
   'analog-dreamer',
   'floppy-disk',
   'modem-rider',
-  ' BBS-legend',
+  'BBS-legend',
   'phreaker-legend',
   'telnet-navigator',
   'gopher-guru',
   'usenet-explorer',
   'ftp-finder',
-  'irc-wanderer',
+  'irc-wanderer'
 ];
 
 interface RandomExplorerBtnProps {
@@ -31,16 +30,14 @@ interface RandomExplorerBtnProps {
   label?: string;
 }
 
-export default function RandomExplorerBtn({ className, label = 'Jelajah Rawak' }: RandomExplorerBtnProps) {
+export default function RandomExplorerBtn({ className, label = '🌐' }: RandomExplorerBtnProps) {
   const router = useRouter();
 
-  // Function to select a random username from the mock array
   const getRandomUsername = (): string => {
     const randomIndex = Math.floor(Math.random() * ACTIVE_SIBER_USERNAMES.length);
     return ACTIVE_SIBER_USERNAMES[randomIndex];
   };
 
-  // Click handler to trigger dynamic router redirection
   const handleRandomExplore = () => {
     const randomUser = getRandomUsername();
     router.push('/site/' + randomUser);

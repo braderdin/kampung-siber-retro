@@ -16,6 +16,27 @@ interface RetroToastProps {
 let toastId = 0;
 let toastListeners: ((toasts: Toast[]) => void)[] = [];
 
+// Simple success sound using Web Audio API
+const playSuccessSound = () => {
+  if (typeof window === 'undefined') return;
+  try {
+    const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+    
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+    
+    oscillator.frequency.setValueAtTime(523.25, audioContext.currentTime); // C5
+    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+    
+    oscillator.start(audioContext.currentTime);
+    oscillator.stop(audioContext.currentTime + 0.2);
+  } catch (e) {
+    // Audio not supported, silently fail
+  }
+};
+
 const notify = (message: string, type: Toast['type'], duration: number = 5000) => {
   const newToast: Toast = {
     id: `toast-${toastId++}`,

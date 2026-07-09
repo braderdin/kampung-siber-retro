@@ -1,147 +1,160 @@
-'use client';
+"use client";
 
 import { useState } from 'react';
 
 interface NoticeCardProps {
+  id: string;
   title: string;
   content: string;
-  author?: string;
-  timestamp?: string;
+  author: string;
+  date: string;
   priority?: 'high' | 'normal' | 'low';
-  className?: string;
+  isActive?: boolean;
 }
 
-export default function NoticeCard({ 
-  title, 
-  content, 
-  author = 'Penduduk',
-  timestamp,
+export default function NoticeCard({
+  id,
+  title,
+  content,
+  author,
+  date,
   priority = 'normal',
-  className
+  isActive = true
 }: NoticeCardProps) {
-  const [isHovered, setIsHovered] = useState(false);
-  const [isPressed, setIsPressed] = useState(false);
+  const [isTilted, setIsTilted] = useState(false);
 
   const getPriorityStyles = () => {
     switch (priority) {
       case 'high':
-        return {
-          border: 'border-red-400',
-          bg: 'bg-red-50 dark:bg-red-900/20',
-          accent: 'text-red-600 dark:text-red-400',
-          shadow: 'shadow-red-200 dark:shadow-red-900/30'
-        };
+        return 'border-red-400 bg-red-50 dark:bg-red-900/20';
       case 'normal':
-        return {
-          border: 'border-blue-400',
-          bg: 'bg-blue-50 dark:bg-blue-900/20',
-          accent: 'text-blue-600 dark:text-blue-400',
-          shadow: 'shadow-blue-200 dark:shadow-blue-900/30'
-        };
+        return 'border-blue-400 bg-blue-50 dark:bg-blue-900/20';
       case 'low':
-        return {
-          border: 'border-green-400',
-          bg: 'bg-green-50 dark:bg-green-900/20',
-          accent: 'text-green-600 dark:text-green-400',
-          shadow: 'shadow-green-200 dark:shadow-green-900/30'
-        };
+        return 'border-green-400 bg-green-50 dark:bg-green-900/20';
       default:
-        return {
-          border: 'border-gray-400',
-          bg: 'bg-gray-50 dark:bg-gray-900/20',
-          accent: 'text-gray-600 dark:text-gray-400',
-          shadow: 'shadow-gray-200 dark:shadow-gray-900/30'
-        };
+        return 'border-gray-400 bg-gray-50 dark:bg-gray-900/20';
     }
   };
 
-  const priorityStyles = getPriorityStyles();
+  const handleTouchStart = () => {
+    setIsTilted(true);
+  };
+
+  const handleTouchEnd = () => {
+    setIsTilted(false);
+  };
+
+  const formatDate = (dateString: string): string => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('ms-MY', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric'
+    });
+  };
 
   return (
     <div
       className={`
         notice-card
-        ${priorityStyles.border}
-        ${priorityStyles.bg}
-        ${priorityStyles.shadow}
-        rounded-lg
-        p-4
-        cursor-pointer
-        transition-all duration-200
-        ${isHovered ? 'scale-105 rotate-1' : ''}
-        ${isPressed ? 'scale-95' : ''}
-        ${className || ''}
+        retro-card
+        border-l-4 ${getPriorityStyles()}
+        transition-transform duration-200
+        ${isTilted ? 'transform -rotate-1' : ''}
+        hover:shadow-xl
+        active:transform active:-rotate-1
       `}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => {
-        setIsHovered(false);
-        setIsPressed(false);
-      }}
-      onMouseDown={() => setIsPressed(true)}
-      onMouseUp={() => setIsPressed(false)}
-      onTouchStart={() => setIsHovered(true)}
-      onTouchEnd={() => {
-        setIsHovered(false);
-        setIsPressed(false);
-      }}
+      onMouseEnter={() => setIsTilted(true)}
+      onMouseLeave={() => setIsTilted(false)}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
       style={{
-        transformStyle: 'preserve-3d',
+        transform: isTilted ? 'rotate(-1deg)' : 'rotate(0deg)',
         willChange: 'transform'
       }}
     >
-      {/* Start: Header */}
-      <div className="flex justify-between items-start mb-2">
-        <h3 className={`text-lg font-semibold pixel-font ${priorityStyles.accent}`}>
-          {title}
-        </h3>
-        {priority === 'high' && (
-          <span className="text-xs font-bold uppercase pixel-font bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-400 px-2 py-1 rounded">
-            PENTING
-          </span>
-        )}
+      {/* Start: Card Header */}
+      <div className="retro-card-header bg-gray-100 dark:bg-gray-800 px-3 py-2 border-b border-gray-200 dark:border-gray-700">
+        <div className="flex items-start gap-2">
+          <h3 className="font-bold text-sm text-gray-800 dark:text-gray-200 pixel-font break-words">
+            {title}
+          </h3>
+          {priority === 'high' && (
+            <span className="text-xs font-bold text-red-600 dark:text-red-400 pixel-font">
+              PENTING
+            </span>
+          )}
+        </div>
+        <div className="text-xs text-gray-500 dark:text-gray-400 pixel-font mt-1">
+          Diterbitkan: {formatDate(date)} | Penulis: {author}
+        </div>
       </div>
-      {/* End: Header */}
+      {/* End: Card Header */}
 
-      {/* Start: Content */}
-      <div className="mb-3">
+      {/* Start: Card Content */}
+      <div className="p-3 bg-white dark:bg-gray-900">
         <p className="text-sm text-gray-700 dark:text-gray-300 pixel-font leading-relaxed break-words">
           {content}
         </p>
       </div>
-      {/* End: Content */}
+      {/* End: Card Content */}
 
-      {/* Start: Footer */}
-      <div className="flex justify-between items-center text-xs text-gray-500 dark:text-gray-400 pixel-font">
-        <span>Oleh: {author}</span>
-        {timestamp && (
-          <span>{new Date(timestamp).toLocaleDateString('ms-MY')}</span>
-        )}
+      {/* Start: Card Footer */}
+      <div className="retro-card-footer bg-gray-50 dark:bg-gray-800 px-3 py-2 border-t border-gray-200 dark:border-gray-700 flex justify-between items-center">
+        <span className="text-xs text-gray-500 dark:text-gray-400 pixel-font">
+          #{id}
+        </span>
+        <div className="flex gap-1">
+          <button
+            className="retro-btn-secondary text-xs px-1 py-0.5"
+            title="Kongsi"
+          >
+            📤
+          </button>
+          <button
+            className="retro-btn-secondary text-xs px-1 py-0.5"
+            title="Bookmark"
+          >
+            🔖
+          </button>
+        </div>
       </div>
-      {/* End: Footer */}
+      {/* End: Card Footer */}
 
-      {/* Start: Shake Animation Keyframes */}
+      {/* Start: CSS Styles */}
       <style jsx>{`
-        @keyframes shake {
-          0%, 100% { transform: translateX(0) rotate(0deg); }
-          25% { transform: translateX(-2px) rotate(-2deg); }
-          75% { transform: translateX(2px) rotate(2deg); }
+        .notice-card {
+          transform-origin: center;
+          transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
-        
+
         .notice-card:hover {
-          animation: shake 0.5s ease-in-out;
+          transform: perspective(1000px) rotateX(0deg) rotateY(0deg);
+          box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
         }
-        
+
         @media (hover: none) and (pointer: coarse) {
-          .notice-card:hover {
-            animation: none;
-          }
-          
           .notice-card:active {
-            animation: shake 0.3s ease-in-out;
+            transform: perspective(1000px) rotateX(5deg) rotateY(-5deg) scale(0.98);
           }
+        }
+
+        .retro-card-header {
+          position: relative;
+        }
+
+        .retro-card-header::after {
+          content: '';
+          position: absolute;
+          bottom: -6px;
+          left: 4px;
+          right: 4px;
+          height: 6px;
+          background: linear-gradient(90deg, transparent, rgba(0,0,0,0.1), transparent);
+          border-radius: 50%;
         }
       `}</style>
-      {/* End: Shake Animation Keyframes */}
+      {/* End: CSS Styles */}
     </div>
   );
 }

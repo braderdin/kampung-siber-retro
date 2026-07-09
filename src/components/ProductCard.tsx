@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { useState } from 'react';
 import { useLanguageStore } from '@/store/useLanguageStore';
@@ -29,19 +29,30 @@ export default function ProductCard({
   const [showCode, setShowCode] = useState(false);
   const [copied, setCopied] = useState(false);
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState('');
 
   const handleCopy = async (codeContent: string, cardId: string) => {
     try {
       await navigator.clipboard.writeText(codeContent);
       setCopiedId(cardId);
       setCopied(true);
+      setAlertMessage(language === 'ms' ? 'Berjaya disalin!' : 'Copied successfully!');
+      setShowAlert(true);
       
       setTimeout(() => {
+        setShowAlert(false);
         setCopied(false);
         setCopiedId(null);
       }, 2000);
     } catch (err) {
       console.error('Gagal menyalin kod:', err);
+      setAlertMessage(language === 'ms' ? 'Gagal menyalin' : 'Failed to copy');
+      setShowAlert(true);
+      
+      setTimeout(() => {
+        setShowAlert(false);
+      }, 2000);
     }
   };
 
@@ -66,7 +77,7 @@ export default function ProductCard({
             {title}
           </h3>
           <span className="text-xs text-gray-400 pixel-font">
-            {downloads} ⬇
+            ⬇ {downloads}
           </span>
         </div>
         <span className="text-xs text-gray-500 dark:text-gray-400 pixel-font">
@@ -110,7 +121,7 @@ export default function ProductCard({
           className="retro-btn-secondary text-xs px-2 py-1 flex items-center gap-1"
         >
           {copiedId === id ? '✅' : '📋'}
-          <span>{copiedId === id ? ' Disalin!' : ' Salin Kod'}</span>
+          <span>{copiedId === id ? ' Disalin!' : ' Salin Kod Aset'}</span>
         </button>
         
         <button
@@ -135,14 +146,41 @@ export default function ProductCard({
               ✕
             </button>
           </div>
-          <pre className="p-3 max-h-48 overflow-y-auto">
-            <code className="text-xs font-mono text-gray-800 dark:text-gray-200 pixel-font">
-              {code}
-            </code>
-          </pre>
+          <div className="p-3 max-h-48 overflow-y-auto">
+            <pre className="whitespace-pre-wrap break-all text-xs">
+              <code className="font-mono text-gray-800 dark:text-gray-200 pixel-font">
+                {code}
+              </code>
+            </pre>
+          </div>
         </div>
       )}
       {/* End: Code Preview */}
+
+      {/* Start: Success Alert */}
+      {showAlert && (
+        <div 
+          className="fixed bottom-4 right-4 z-50 retro-alert bg-green-500 text-white pixel-font text-xs px-4 py-2 rounded shadow-lg animate-fade-in"
+          style={{
+            animation: 'fadeIn 0.3s ease-out'
+          }}
+        >
+          {alertMessage}
+        </div>
+      )}
+      {/* End: Success Alert */}
     </div>
   );
+}
+
+// Add CSS for alert animation
+const style = document.createElement('style');
+style.textContent = `
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+`;
+if (typeof document !== 'undefined') {
+  document.head.appendChild(style);
 }

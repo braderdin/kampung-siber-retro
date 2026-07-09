@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { useLanguageStore } from '@/store/useLanguageStore';
 import { enDictionary, msDictionary } from '@/i18n/dictionaries';
 import HydrationGuard from '@/components/HydrationGuard';
-import MuseumExhibitCard from '@/components/MuseumExhibitCard';
 
 interface MuseumExhibit {
   id: string;
@@ -206,6 +205,8 @@ export default function MuziumPage() {
                   key={exhibit.id}
                   exhibit={exhibit}
                   onSelect={() => setSelectedExhibit(exhibit)}
+                  getRarityColor={getRarityColor}
+                  getRarityLabel={getRarityLabel}
                 />
               ))
             )}
@@ -228,9 +229,11 @@ export default function MuziumPage() {
 interface MuseumExhibitCardProps {
   exhibit: MuseumExhibit;
   onSelect: () => void;
+  getRarityColor: (rarity: string) => string;
+  getRarityLabel: (rarity: string) => string;
 }
 
-function MuseumExhibitCard({ exhibit, onSelect }: MuseumExhibitCardProps) {
+function MuseumExhibitCard({ exhibit, onSelect, getRarityColor, getRarityLabel }: MuseumExhibitCardProps) {
   const { language } = useLanguageStore();
   
   return (

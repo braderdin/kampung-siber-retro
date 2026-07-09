@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { useState, useRef, useEffect } from 'react';
 import { CyberICMetadata, formatICNumber } from '@/types/cyberIC';
@@ -128,15 +128,15 @@ export default function CyberICCard({
       className={`
         retro-ic-card 
         bg-gray-100 dark:bg-gray-800 
-        border-2 border-gray-400 dark:border-gray-500 
-        rounded-lg shadow-lg 
-        w-full max-w-sm 
+        border-4 border-gray-400 dark:border-gray-500 
+        rounded-pixel shadow-inner
+        w-full max-w-sm
         ${isMounted ? 'block' : 'invisible'}
         ${className || ''}
       `}
     >
       {/* Start: Header Bar */}
-      <div className="retro-ic-header bg-gray-200 dark:bg-gray-700 px-4 py-2 border-b border-gray-300 dark:border-gray-400">
+      <div className="retro-ic-header bg-gray-200 dark:bg-gray-700 px-4 py-2 border-b-2 border-gray-300 dark:border-gray-400">
         <div className="text-center font-bold text-sm text-gray-800 dark:text-gray-200 pixel-font">
           KAMPUNG SIBER RETRO
         </div>
@@ -160,7 +160,7 @@ export default function CyberICCard({
           <div className="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide pixel-font">
             No. IC
           </div>
-          <div className="text-lg font-mono text-gray-800 dark:text-gray-200 pixel-font">
+          <div className="font-mono text-lg text-gray-800 dark:text-gray-200 pixel-font">
             {formatICNumber(metadata.icNumber)}
           </div>
         </div>
@@ -198,18 +198,26 @@ export default function CyberICCard({
       {/* End: Body Content */}
 
       {/* Start: Footer Bar */}
-      <div className="retro-ic-footer bg-gray-200 dark:bg-gray-700 px-4 py-2 border-t border-gray-300 dark:border-gray-400">
-        <div className="flex justify-between items-center text-xs text-gray-600 dark:text-gray-400 pixel-font">
-          <span>Dicetak: {new Date().toLocaleDateString('ms-MY')}</span>
-          {showDownload && (
+      <div className="retro-ic-footer bg-gray-200 dark:bg-gray-700 px-4 py-2 border-t-2 border-gray-300 dark:border-gray-400 flex justify-between items-center">
+        <div className="text-xs text-gray-600 dark:text-gray-400 pixel-font">
+          Dicetak: {new Date().toLocaleDateString('ms-MY')}
+        </div>
+        {showDownload && (
+          <div className="flex gap-1">
             <button
               onClick={handleDownload}
-              className="retro-btn-secondary text-xs px-2 py-1"
+              className="retro-btn-secondary text-xs px-2 py-1 flex items-center gap-1"
             >
               📥 Muat Turun
             </button>
-          )}
-        </div>
+            <button
+              onClick={handlePrint}
+              className="retro-btn-secondary text-xs px-2 py-1 flex items-center gap-1"
+            >
+              🖨️ Cetak
+            </button>
+          </div>
+        )}
       </div>
       {/* End: Footer Bar */}
     </div>

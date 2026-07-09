@@ -6,7 +6,6 @@ import { enDictionary, msDictionary } from '@/i18n/dictionaries';
 import HydrationGuard from '@/components/HydrationGuard';
 import RetroCalendar from '@/components/RetroCalendar';
 import NoticeCard from '@/components/NoticeCard';
-import { format } from 'date-fns';
 
 interface CommunityEvent {
   id: string;
@@ -90,6 +89,16 @@ const MAINTENANCE_HOURS = [
   { day: 'Cuti Umum', time: '01:00 - 03:00', description: 'Penyelenggaraan Menara' }
 ];
 
+// Simple date formatter without external libraries
+const formatDateSimple = (dateString: string): string => {
+  const date = new Date(dateString);
+  return date.toLocaleDateString('ms-MY', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric'
+  });
+};
+
 export default function BalaiRayaPage() {
   const { language } = useLanguageStore();
   const t = language === 'ms' ? msDictionary : enDictionary;
@@ -108,16 +117,7 @@ export default function BalaiRayaPage() {
   }, []);
 
   const formatDate = (dateString: string): string => {
-    return format(new Date(dateString), 'd MMMM yyyy');
-  };
-
-  const formatTime = (timeString: string): string => {
-    return timeString;
-  };
-
-  const getUpcomingEventsForDate = (date: Date): CommunityEvent[] => {
-    const dateStr = format(date, 'yyyy-MM-dd');
-    return MOCK_EVENTS.filter(event => event.date === dateStr);
+    return formatDateSimple(dateString);
   };
 
   return (

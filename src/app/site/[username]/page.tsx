@@ -139,12 +139,12 @@ export default function SiteProfilePage({ params }: SiteProfileProps) {
                   @{username}
                 </h1>
                 <div className="flex items-center gap-2 mt-1">
-                  <HydrationGuard>
-                    <ProfileStatusBadge 
-                      initialStatus={liveStatus}
-                      onStatusChange={setLiveStatus}
-                    />
-                  </HydrationGuard>
+                    <HydrationGuard>
+                      <ProfileStatusBadge 
+                        initialStatus={liveStatus}
+                        onStatusChange={(status: string) => setLiveStatus(status as 'online' | 'coding' | 'makan')}
+                      />
+                    </HydrationGuard>
                 </div>
               </div>
             </div>

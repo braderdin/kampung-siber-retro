@@ -1,15 +1,12 @@
-// Start: Imports
+"use client";
+
 import { useState, useEffect, useRef } from 'react';
 import { createClient } from '@supabase/supabase-js';
-// End: Imports
 
-// Start: Supabase Client Configuration
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co';
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_KEY || 'placeholder-key';
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
-// End: Supabase Client Configuration
 
-// Start: Type Definitions
 interface GuestbookEntry {
   id: number;
   username: string;
@@ -20,7 +17,6 @@ interface GuestbookEntry {
 interface GuestbookComponentProps {
   className?: string;
 }
-// End: Type Definitions
 
 // Start: Input Sanitization Guardrail - XSS Protection
 function sanitizeInput(input: string): string {
@@ -34,26 +30,43 @@ function sanitizeInput(input: string): string {
   sanitized = sanitized.replace(/javascript:/gi, '');
   
   // Remove on* event handlers
-  sanitized = sanitized.replace(/\non\w+\s*=/gi, '');
+  sanitized = sanitized.replace(/\bon\w+\s*=/gi, '');
   
   // Remove data: URLs that could contain malicious content
   sanitized = sanitized.replace(/data:\s*[^;]+;base64[^"]*/gi, '');
   
+  // Remove vbscript: protocol
+  sanitized = sanitized.replace(/vbscript:/gi, '');
+  
+  // Remove expression() CSS injection
+  sanitized = sanitized.replace(/expression\s*\(/gi, '');
+  
   // Remove any remaining potentially dangerous characters
   sanitized = sanitized.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '');
+  
+  // Remove any URL that might be dangerous
+  sanitized = sanitized.replace(/https?:\/\/[^\s"']*/gi, (url) => {
+    // Only allow safe domains or relative URLs
+    if (url.startsWith('/') || url.startsWith('mailto:')) {
+      return url;
+    }
+    return '';
+  });
   
   return sanitized.trim();
 }
 
 function sanitizeUsername(username: string): string {
-  // Only allow alphanumeric characters, underscores, and hyphens
-  return username.replace(/[^a-zA-Z0-9_-]/g, '').substring(0, 30);
+  // Only allow alphanumeric characters, underscores, hyphens, and spaces
+  let sanitized = username.replace(/[^a-zA-Z0-9_\- ]/g, '');
+  // Remove any HTML-like content
+  sanitized = sanitized.replace(/[<>]/g, '');
+  // Limit length
+  return sanitized.substring(0, 30);
 }
 // End: Input Sanitization Guardrail - XSS Protection
 
-// Start: GuestbookComponent
 export default function GuestbookComponent({ className }: GuestbookComponentProps) {
-  // Start: State Management
   const [entries, setEntries] = useState<GuestbookEntry[]>([]);
   const [username, setUsername] = useState('');
   const [message, setMessage] = useState('');
@@ -62,19 +75,14 @@ export default function GuestbookComponent({ className }: GuestbookComponentProp
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [subscription, setSubscription] = useState<any>(null);
-  // End: State Management
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-  // Start: Ref for auto-scroll
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  // End: Ref for auto-scroll
 
-  // Start: Load Initial Entries
   useEffect(() => {
     fetchEntries();
   }, []);
-  // End: Load Initial Entries
 
-  // Start: Fetch Entries from Supabase
   const fetchEntries = async () => {
     try {
       const { data, error } = await supabase
@@ -90,9 +98,7 @@ export default function GuestbookComponent({ className }: GuestbookComponentProp
       setError('Gagal memuat entri buku pelawat');
     }
   };
-  // End: Fetch Entries from Supabase
 
-  // Start: Realtime Subscription Setup
   useEffect(() => {
     const subscription = supabase
       .channel('guestbook_entries')
@@ -114,15 +120,11 @@ export default function GuestbookComponent({ className }: GuestbookComponentProp
       }
     };
   }, []);
-  // End: Realtime Subscription Setup
 
-  // Start: Auto Scroll to Bottom
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [entries]);
-  // End: Auto Scroll to Bottom
 
-  // Start: Format Timestamp
   const formatTimestamp = (timestamp: string): string => {
     const date = new Date(timestamp);
     return date.toLocaleString('en-US', {
@@ -132,11 +134,16 @@ export default function GuestbookComponent({ className }: GuestbookComponentProp
       minute: '2-digit',
     });
   };
-  // End: Format Timestamp
 
   // Start: Handle Form Submission with XSS Sanitization
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Anti-spam honeypot check
+    if (honeypot) {
+      console.log('Spam bot detected');
+      return;
+    }
     
     if (!username.trim() || !message.trim()) {
       setError('Nama pengguna dan mesej adalah diperlukan');
@@ -147,12 +154,25 @@ export default function GuestbookComponent({ className }: GuestbookComponentProp
     const sanitizedUsername = sanitizeUsername(username);
     const sanitizedMessage = sanitizeInput(message);
     
-    if (sanitizedUsername !== username || sanitizedMessage !== message) {
+    // Log if sanitization changed the input
+    if (sanitizedUsername !== username.trim() || sanitizedMessage !== message.trim()) {
       console.warn('Input was sanitized for security');
+    }
+    
+    // Additional validation after sanitization
+    if (!sanitizedUsername || sanitizedUsername.length === 0) {
+      setError('Nama pengguna tidak sah');
+      return;
+    }
+    
+    if (sanitizedMessage.length < 3) {
+      setError('Mesej mesti sekurang-kurang 3 aksara');
+      return;
     }
     
     setLoading(true);
     setError(null);
+    setSuccessMessage(null);
     
     const newEntry: GuestbookEntry = {
       id: Date.now(),
@@ -168,6 +188,13 @@ export default function GuestbookComponent({ className }: GuestbookComponentProp
       
       if (error) throw error;
       setMessage('');
+      setUsername('');
+      setSuccessMessage('Berjaya menandatangani buku pelawat!');
+      
+      // Auto-hide success message
+      setTimeout(() => {
+        setSuccessMessage(null);
+      }, 3000);
     } catch (err) {
       console.error('Error adding entry:', err);
       setError('Gagal menambah entri');
@@ -177,12 +204,11 @@ export default function GuestbookComponent({ className }: GuestbookComponentProp
   };
   // End: Handle Form Submission with XSS Sanitization
 
-  // Start: Render Guestbook Card
   return (
     <div className={`retro-card ${className || ''}`}>
       {/* Start: Card Header */}
       <div className="retro-card-header">
-        <h3 className="text-lg font-bold text-gray-800 dark:text-gray-200 mb-2">
+        <h3 className="text-lg font-bold text-gray-800 dark:text-gray-200 mb-2 pixel-font">
           🖋️ Buku Pelawat Retro
         </h3>
         <p className="text-xs text-gray-500 dark:text-gray-400">
@@ -191,10 +217,18 @@ export default function GuestbookComponent({ className }: GuestbookComponentProp
       </div>
       {/* End: Card Header */}
 
+      {/* Start: Success Message */}
+      {successMessage && (
+        <div className="mb-3 p-3 bg-green-100 dark:bg-green-900/20 border border-green-400 dark:border-green-500 rounded pixel-font text-sm text-green-800 dark:text-green-300">
+          {successMessage}
+        </div>
+      )}
+      {/* End: Success Message */}
+
       {/* Start: Entries List */}
       <div className="mb-4 max-h-60 overflow-y-auto retroscrollbar">
         {entries.length === 0 ? (
-          <p className="text-center text-gray-500 dark:text-gray-400 text-sm py-4">
+          <p className="text-center text-gray-500 dark:text-gray-400 text-sm py-4 pixel-font">
             Tiada entri lagi. Jadilah yang pertama menandatangani!
           </p>
         ) : (
@@ -204,14 +238,14 @@ export default function GuestbookComponent({ className }: GuestbookComponentProp
               className="retro-entry mb-3 p-3 bg-gray-50 dark:bg-gray-800 rounded border-l-4 border-blue-500"
             >
               <div className="flex items-center justify-between mb-1">
-                <span className="font-mono text-xs font-bold text-blue-600 dark:text-blue-400">
+                <span className="font-mono text-xs font-bold text-blue-600 dark:text-blue-400 pixel-font">
                   {entry.username}
                 </span>
-                <span className="text-xs text-gray-400 dark:text-gray-500">
+                <span className="text-xs text-gray-400 dark:text-gray-500 pixel-font">
                   {formatTimestamp(entry.timestamp)}
                 </span>
               </div>
-              <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
+              <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed pixel-font break-words">
                 {entry.message}
               </p>
             </div>
@@ -232,6 +266,7 @@ export default function GuestbookComponent({ className }: GuestbookComponentProp
             className="retro-input w-full"
             maxLength={30}
             disabled={loading}
+            autoComplete="off"
           />
           <textarea
             placeholder="Mesej anda..."
@@ -244,8 +279,21 @@ export default function GuestbookComponent({ className }: GuestbookComponentProp
           />
         </div>
         
+        {/* Start: Honeypot Field (Hidden from users) */}
+        <div className="hidden">
+          <input
+            type="text"
+            name="website"
+            value={honeypot}
+            onChange={(e) => setHoneypot(e.target.value)}
+            tabIndex={-1}
+            autoComplete="off"
+          />
+        </div>
+        {/* End: Honeypot Field */}
+        
         {error && (
-          <p className="text-xs text-red-500 mt-1">{error}</p>
+          <p className="text-xs text-red-500 mt-1 pixel-font">{error}</p>
         )}
         
         <button
@@ -260,7 +308,7 @@ export default function GuestbookComponent({ className }: GuestbookComponentProp
 
       {/* Start: Footer Controls */}
       <div className="mt-3 pt-2 border-t border-gray-200 dark:border-gray-700 flex justify-between items-center">
-        <div className="text-xs text-gray-400 dark:text-gray-500">
+        <div className="text-xs text-gray-400 dark:text-gray-500 pixel-font">
           {entries.length} {entries.length === 1 ? 'entri' : 'entri'}
         </div>
       </div>

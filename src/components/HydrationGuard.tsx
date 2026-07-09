@@ -42,7 +42,7 @@ export default function HydrationGuard({
 }
 
 // Higher-order component version
-export function withHydrationGuard<P>(Component: React.ComponentType<P>) {
+export function withHydrationGuard<P extends {}>(Component: React.ComponentType<P>) {
   return function HydrationGuardedComponent(props: P) {
     return (
       <HydrationGuard>

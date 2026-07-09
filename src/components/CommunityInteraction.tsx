@@ -259,7 +259,7 @@ export default function CommunityInteraction({ username, className }: CommunityI
                     ))}
                     
                     {/* Reply Input */}
-                    <form onSubmit={(e) => handleSubmitReply(comment.id)} className="mt-2">
+                    <form onSubmit={(e) => handleSubmitReply(comment.id, e)} className="mt-2">
                       <textarea
                         value={replyContent[comment.id] || ''}
                         onChange={(e) => setReplyContent(prev => ({

@@ -29,7 +29,7 @@ export default function RetroTerminalWidget({ title = 'Coretan Terminal', classN
     speed: 50,
     opacity: 0.8,
   });
-  const matrixRef = useRef<RequestAnimationFrameFrameId | null>(null);
+  const matrixRef = useRef<number | null>(null);
   const [isMatrixActive, setIsMatrixActive] = useState(false);
 
   useEffect(() => {

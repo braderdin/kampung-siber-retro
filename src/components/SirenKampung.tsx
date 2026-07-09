@@ -35,10 +35,10 @@ export default function SirenKampung({ className }: SirenKampungProps) {
     const loadRecentSignups = async () => {
       try {
         const { data, error } = await supabase
-          .from<NewUserSignup>('user_signups')
+          .from('user_signups')
           .select('*')
           .order('timestamp', { ascending: false })
-          .limit(5);
+          .limit(5) as { data: NewUserSignup[]; error: any };
 
         if (data && data.length > 0) {
           setNewUsers(data);

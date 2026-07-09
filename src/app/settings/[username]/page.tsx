@@ -7,7 +7,7 @@ import { enDictionary, msDictionary } from '@/i18n/dictionaries';
 import ProfileStatusBadge from '@/components/ProfileStatusBadge';
 import ProfileBioEditor from '@/components/ProfileBioEditor';
 import SettingsTipping from '@/components/SettingsTipping';
-import RetroToast from '@/components/RetroToast';
+import { showSuccess, showError, showWarning, showInfo } from '@/components/RetroToast';
 
 type BackgroundTheme = 'space_neon' | 'windows_gray' | 'retro_matrix' | 'neon_cyan' | 'retro_orange';
 
@@ -114,7 +114,7 @@ export default function SettingsPage({ params }: { params: { username: string } 
     setSelectedTheme(themeId);
     
     // Show success toast
-    const toast = RetroToast.showSuccess(`Tema latar ${THEME_OPTIONS.find(t => t.id === themeId)?.name} telah disemak!`, 3000);
+    showSuccess(`Tema latar ${THEME_OPTIONS.find(t => t.id === themeId)?.name} telah disemak!`, 3000);
     setCustomBio(prev => prev); // Trigger re-render
   };
 
@@ -133,12 +133,6 @@ export default function SettingsPage({ params }: { params: { username: string } 
       min-h-screen transition-all duration-500
       ${getCurrentTheme()?.previewClass || THEME_OPTIONS[0].previewClass}
     `}>
-      {/* Start: Success Toast */}
-      {showSuccessToast && (
-        <RetroToast />
-      )}
-      {/* End: Success Toast */}
-
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Start: Page Header */}
         <div className="mb-6 text-center">
