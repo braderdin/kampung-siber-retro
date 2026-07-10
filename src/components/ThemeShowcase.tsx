@@ -65,7 +65,7 @@ export default function ThemeShowcase() {
 
   const handleThemeSelect = (themeId: string) => {
     setSelectedTheme(themeId);
-    setTheme(themeId);
+    setTheme(themeId as 'space' | 'gray' | 'matrix');
   };
 
   const getThemeCardClasses = (theme: Theme) => {
@@ -156,7 +156,7 @@ export default function ThemeShowcase() {
           CURRENT THEME
         </div>
         <div className="text-lg font-bold text-cyan-400 pixel-font">
-          {themes.find(t => t.id === selectedTheme)?.displayName || 'Space'}
+          {themes.find(t => t.id === currentTheme)?.displayName || 'Space'}
         </div>
       </div>
       {/* End: Current Theme Indicator */}

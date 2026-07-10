@@ -24,7 +24,7 @@ export default function SystemPulseMonitor({
   const [currentLatency, setCurrentLatency] = useState<number>(0);
   const [status, setStatus] = useState<'ok' | 'warning'>('ok');
   const [isClient, setIsClient] = useState(false);
-  const animationRef = useRef<number>();
+  const animationRef = useRef<number | null>(null);
 
   useEffect(() => {
     setIsClient(true);

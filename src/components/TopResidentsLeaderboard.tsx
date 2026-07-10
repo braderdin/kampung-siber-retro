@@ -106,6 +106,21 @@ export default function TopResidentsLeaderboard({
     return '';
   };
 
+  const getRankBadgeClass = (rank: number): string => {
+    const baseClass = 'flex items-center justify-center w-8 h-8 rounded-full font-bold text-sm text-white';
+    const colorClass = getRankColor(rank);
+    const shadowClass = getNeonShadow(rank);
+    return `${baseClass} ${colorClass} ${shadowClass}`;
+  };
+
+  const getResidentItemClass = (rank: number): string => {
+    const baseClass = 'flex items-center gap-3 p-2 rounded border transition-all duration-300';
+    if (rank <= 3) {
+      return `${baseClass} border-yellow-400 bg-yellow-50 dark:bg-yellow-900/20`;
+    }
+    return `${baseClass} border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800`;
+  };
+
   if (isLoading) {
     return (
       <div className={`retro-window ${className || ''}`}>
@@ -139,22 +154,10 @@ export default function TopResidentsLeaderboard({
           {residents.map((resident) => (
             <div
               key={resident.id}
-              className={`
-                flex items-center gap-3 p-2 rounded border
-                ${resident.rank <= 3 
-                  ? 'border-yellow-400 bg-yellow-50 dark:bg-yellow-900/20' 
-                  : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800'
-                }
-                transition-all duration-300
-              `}
+              className={getResidentItemClass(resident.rank)}
             >
               {/* Start: Rank Badge */}
-              <div className={`
-                flex items-center justify-center w-8 h-8 rounded-full font-bold text-sm
-                ${getRankColor(resident.rank)}
-                ${getNeonShadow(resident.rank)}
-                text-white
-              `}}>
+              <div className={getRankBadgeClass(resident.rank)}>
                 {getRankBadge(resident.rank)}
               </div>
               {/* End: Rank Badge */}

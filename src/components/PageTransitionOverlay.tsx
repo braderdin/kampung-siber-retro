@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { usePathname, useNavigationType } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 
 interface PageTransitionOverlayProps {
   children: React.ReactNode;
@@ -11,10 +11,10 @@ export default function PageTransitionOverlay({ children }: PageTransitionOverla
   const [isVisible, setIsVisible] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const pathname = usePathname();
-  const navigationType = useNavigationType();
+  const [previousPathname, setPreviousPathname] = useState<string | null>(null);
 
   useEffect(() => {
-    if (navigationType === 'push' || navigationType === 'replace') {
+    if (previousPathname !== null && previousPathname !== pathname) {
       setIsVisible(true);
       setIsTransitioning(true);
 
@@ -28,7 +28,8 @@ export default function PageTransitionOverlay({ children }: PageTransitionOverla
 
       return () => clearTimeout(timer);
     }
-  }, [pathname, navigationType]);
+    setPreviousPathname(pathname);
+  }, [pathname, previousPathname]);
 
   return (
     <>

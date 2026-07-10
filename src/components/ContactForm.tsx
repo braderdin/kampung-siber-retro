@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from 'react';
-import { z } from 'zod';
+import { z, ZodError } from 'zod';
 
 // Start: ZOD Validation Schema
 const contactFormSchema = z.object({
@@ -30,19 +30,24 @@ export default function ContactForm({ className }: ContactFormProps) {
     message: '',
     email: '',
   });
-  const [errors, setErrors] = useState<Record<keyof ContactFormData, string>>({});
+  const [errors, setErrors] = useState<Record<keyof ContactFormData, string>>({
+    subject: '',
+    message: '',
+    email: '',
+  });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
 
-  const validateField = (field: keyof ContactFormData, value: string) => {
+  const validateField = (field: keyof ContactFormData, value: string): boolean => {
     try {
-      const schema = contactFormSchema.pick({ [field]: true });
+      const schema = contactFormSchema.pick({ [field]: true } as Record<keyof ContactFormData, true>);
       schema.parse({ [field]: value });
       setErrors((prev) => ({ ...prev, [field]: '' }));
       return true;
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        setErrors((prev) => ({ ...prev, [field]: error.errors[0].message }));
+    } catch (error: unknown) {
+      if (error instanceof ZodError) {
+        const zodError = error as ZodError & { errors: Array<{ message: string }> };
+        setErrors((prev) => ({ ...prev, [field]: zodError.errors[0].message }));
       }
       return false;
     }
@@ -57,8 +62,8 @@ export default function ContactForm({ className }: ContactFormProps) {
     e.preventDefault();
 
     // Validate all fields
-    const isValid = Object.keys(formData).every((field) =>
-      validateField(field as keyof ContactFormData, formData[field as keyof ContactFormData])
+    const isValid = (Object.keys(formData) as Array<keyof ContactFormData>).every((field) =>
+      validateField(field, formData[field] ?? '')
     );
 
     if (!isValid) {
