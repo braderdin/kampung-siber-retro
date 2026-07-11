@@ -17,7 +17,7 @@ interface UploadRequest {
   fileName: string;
   mimeType: string;
   userId?: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 interface UploadResponse {
@@ -184,9 +184,5 @@ export async function PUT(req: NextRequest): Promise<NextResponse<UploadResponse
   }
 }
 
-export const config = {
-  api: {
-    bodyParser: false,
-    responseLimit: false,
-  },
-};
+// Note: api.bodyParser config removed - Next.js App Router ignores this export
+// File size validation is handled in POST handler above

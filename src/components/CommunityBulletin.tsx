@@ -158,16 +158,10 @@ export default function CommunityBulletin() {
           </div>
         ) : (
           announcements.map((announcement, index) => (
+            // Start: Announcement Item - Fixed multiline className
             <div
               key={announcement.id}
-              className="
-                retro-announcement
-                bg-white dark:bg-gray-900
-                border-l-4 border-cyan-400
-                rounded
-                p-3
-                animate-fade-in
-              "
+              className="retro-announcement bg-white dark:bg-gray-900 border-l-4 border-cyan-400 rounded p-3 animate-fade-in"
               style={{ animationDelay: `${index * 100}ms` }}
             >
               <div className="flex items-start gap-2">
@@ -183,6 +177,7 @@ export default function CommunityBulletin() {
                 </div>
               </div>
             </div>
+            // End: Announcement Item
           ))
         )}
         <div ref={messagesEndRef} />

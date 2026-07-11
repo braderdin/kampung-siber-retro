@@ -34,13 +34,34 @@ interface ChatUser {
 
 interface WebSocketMessage {
   type: string;
-  data: any;
+  data: Record<string, unknown>;
 }
 
 const DEFAULT_ROOM_NAME = "Kampung Siber BBS";
 const DEFAULT_MAX_MESSAGES = 100;
 const MESSAGE_HISTORY_KEY = "bbs_chat_history";
 const USERS_ONLINE_KEY = "bbs_users_online";
+
+// Start: LocalStorage Helper Functions
+const getLocalStorageItem = (key: string): string | null => {
+  if (typeof window !== "undefined") {
+    return localStorage.getItem(key);
+  }
+  return null;
+};
+
+const setLocalStorageItem = (key: string, value: string): void => {
+  if (typeof window !== "undefined") {
+    localStorage.setItem(key, value);
+  }
+};
+
+const removeLocalStorageItem = (key: string): void => {
+  if (typeof window !== "undefined") {
+    localStorage.removeItem(key);
+  }
+};
+// End: LocalStorage Helper Functions
 
 export default function BbsChatRoom({ 
   roomName = DEFAULT_ROOM_NAME,
@@ -63,30 +84,33 @@ export default function BbsChatRoom({
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const [userId] = useState(`user_${Math.random().toString(36).substr(2, 9)}`);
+  // Start: Fixed localStorage access with client-side check
   const [userName, setUserName] = useState(() => {
-    return localStorage.getItem("bbs_user_name") || `User_${Math.floor(Math.random() * 1000)}`;
+    const saved = getLocalStorageItem("bbs_user_name");
+    return saved || `User_${Math.floor(Math.random() * 1000)}`;
   });
 
   useEffect(() => {
-    const savedName = localStorage.getItem("bbs_user_name");
+    const savedName = getLocalStorageItem("bbs_user_name");
     if (!savedName) {
       const newName = `User_${Math.floor(Math.random() * 1000)}`;
-      localStorage.setItem("bbs_user_name", newName);
+      setLocalStorageItem("bbs_user_name", newName);
       setUserName(newName);
     } else {
       setUserName(savedName);
     }
   }, []);
+  // End: Fixed localStorage access
 
   useEffect(() => {
-    const savedHistory = localStorage.getItem(MESSAGE_HISTORY_KEY);
+    const savedHistory = getLocalStorageItem(MESSAGE_HISTORY_KEY);
     if (savedHistory) {
       try {
         setMessages(JSON.parse(savedHistory));
       } catch (e) {}
     }
 
-    const savedUsers = localStorage.getItem(USERS_ONLINE_KEY);
+    const savedUsers = getLocalStorageItem(USERS_ONLINE_KEY);
     if (savedUsers) {
       try {
         setUsers(JSON.parse(savedUsers));
@@ -103,13 +127,13 @@ export default function BbsChatRoom({
   useEffect(() => {
     if (messages.length > 0) {
       const recentMessages = messages.slice(-maxMessages);
-      localStorage.setItem(MESSAGE_HISTORY_KEY, JSON.stringify(recentMessages));
+      setLocalStorageItem(MESSAGE_HISTORY_KEY, JSON.stringify(recentMessages));
     }
   }, [messages, maxMessages]);
 
   useEffect(() => {
     if (users.length > 0) {
-      localStorage.setItem(USERS_ONLINE_KEY, JSON.stringify(users));
+      setLocalStorageItem(USERS_ONLINE_KEY, JSON.stringify(users));
     }
   }, [users]);
 
@@ -164,24 +188,27 @@ export default function BbsChatRoom({
         try {
           const data: WebSocketMessage = JSON.parse(event.data);
           
+          // Start: Fixed TypeScript strict casting
+          const rawData = data.data as unknown;
+          
           switch (data.type) {
             case "message":
               const msg: ChatMessage = {
-                ...data.data,
-                isOwn: data.data.userId === userId,
+                ...(rawData as ChatMessage),
+                isOwn: (rawData as ChatMessage).userId === userId,
               };
               setMessages(prev => [...prev, msg]);
               onMessageSend?.(msg);
               break;
               
             case "user_join":
-              setUsers(prev => [...prev, data.data]);
-              onUserJoin?.(data.data);
+              setUsers(prev => [...prev, rawData as ChatUser]);
+              onUserJoin?.(rawData as ChatUser);
               break;
               
             case "user_leave":
-              setUsers(prev => prev.filter(u => u.id !== data.data.userId));
-              onUserLeave?.(data.data);
+              setUsers(prev => prev.filter(u => u.id !== (rawData as { userId: string }).userId));
+              onUserLeave?.(rawData as ChatUser);
               break;
               
             case "typing":
@@ -189,6 +216,7 @@ export default function BbsChatRoom({
               setTimeout(() => setIsTyping(false), 2000);
               break;
           }
+          // End: Fixed TypeScript strict casting
         } catch (e) {
           console.error("Error parsing WebSocket message:", e);
         }
@@ -223,7 +251,7 @@ export default function BbsChatRoom({
     
     if (commandResult.shouldDeleteMessages) {
       setMessages([]);
-      localStorage.removeItem(MESSAGE_HISTORY_KEY);
+      removeLocalStorageItem(MESSAGE_HISTORY_KEY);
       return;
     }
     
@@ -332,7 +360,7 @@ export default function BbsChatRoom({
       >
         {showAvatar && (
           <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-emerald-500 to-cyan-500 flex items-center justify-center pixel-font text-sm">
-            {isSystem || isAction ? "C" : message.userName.charAt(0).toUpperCase()}
+            {isSystem || isAction ? "C" : (message.userName?.charAt(0)?.toUpperCase() || "U")}
           </div>
         )}
         
@@ -456,15 +484,14 @@ export default function BbsChatRoom({
           onChange={(e) => setInputValue(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder="Taip mesej anda... (Shift+Enter untuk newline). /help untuk arahan."
-          className="w-full px-3 py-2 rounded-lg bg-gray-800/50 border border-gray-600 
-            focus:outline-none focus:border-emerald-500 resize-none text-sm text-gray-200 pixel-font"
+          className="w-full px-3 py-2 rounded-lg bg-gray-800/50 border border-gray-600 focus:outline-none focus:border-emerald-500 resize-none text-sm text-gray-200 pixel-font"
           rows={2}
           disabled={!isConnected}
         />
         
         <div className="flex items-center justify-between mt-2">
           <div className="text-xs text-gray-500 pixel-font">
-            {inputValue.length < 500 ? `${inputValue.length}/500` : inputValue.length}
+            {inputValue.length < 500 ? `${inputValue.length}/500` : inputValue.length.toString()}
           </div>
           
           <div className="flex items-center gap-2">
@@ -472,8 +499,7 @@ export default function BbsChatRoom({
             <button
               onClick={sendMessage}
               disabled={!isConnected || !inputValue.trim()}
-              className="flex items-center gap-1 px-4 py-1.5 text-sm rounded-lg bg-emerald-500 hover:bg-emerald-400 
-                text-white transition-colors pixel-font disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex items-center gap-1 px-4 py-1.5 text-sm rounded-lg bg-emerald-500 hover:bg-emerald-400 text-white transition-colors pixel-font disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Send className="h-4 w-4" />
               Hantar
@@ -490,7 +516,12 @@ export const useBbsChat = (roomName?: string) => {
   const [users, setUsers] = useState<ChatUser[]>([]);
   const [isConnected, setIsConnected] = useState(false);
   const [userId] = useState(`user_${Math.random().toString(36).substr(2, 9)}`);
-  const [userName] = useState(() => localStorage.getItem("bbs_user_name") || `User_${Math.floor(Math.random() * 1000)}`);
+  // Start: Fixed localStorage access for hook
+  const [userName] = useState(() => {
+    const saved = getLocalStorageItem("bbs_user_name");
+    return saved || `User_${Math.floor(Math.random() * 1000)}`;
+  });
+  // End: Fixed localStorage access
   
   const wsRef = useRef<WebSocket | null>(null);
 
@@ -518,17 +549,21 @@ export const useBbsChat = (roomName?: string) => {
       try {
         const data = JSON.parse(event.data);
         
+        // Start: Fixed TypeScript strict casting
+        const rawData = data.data as unknown;
+        
         switch (data.type) {
           case "message":
-            setMessages(prev => [...prev, data.data]);
+            setMessages(prev => [...prev, rawData as ChatMessage]);
             break;
           case "user_join":
-            setUsers(prev => [...prev, data.data]);
+            setUsers(prev => [...prev, rawData as ChatUser]);
             break;
           case "user_leave":
-            setUsers(prev => prev.filter((u: ChatUser) => u.id !== data.data.userId));
+            setUsers(prev => prev.filter((u: ChatUser) => u.id !== (rawData as { userId: string }).userId));
             break;
         }
+        // End: Fixed TypeScript strict casting
       } catch (e) {}
     };
 
@@ -594,9 +629,11 @@ export const createChatRoom = (name: string) => {
     ws.onmessage = (event) => {
       try {
         const data = JSON.parse(event.data);
+        // Start: Fixed TypeScript strict casting
         if (data.type === "message") {
-          setMessages(prev => [...prev, data.data]);
+          setMessages(prev => [...prev, data.data as unknown as ChatMessage]);
         }
+        // End: Fixed TypeScript strict casting
       } catch (e) {}
     };
 

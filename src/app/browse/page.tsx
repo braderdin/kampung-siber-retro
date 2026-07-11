@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import HumanFeedbackToast from '@/components/HumanFeedbackToast';
 import PaginationButton from '@/components/PaginationButton';
@@ -34,7 +34,7 @@ interface FilterOptions {
   search: string;
 }
 
-export default function BrowsePage({ className }: BrowsePageProps) {
+function BrowseContent({ className }: BrowsePageProps) {
   const [items, setItems] = useState<BrowseItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -229,5 +229,28 @@ export default function BrowsePage({ className }: BrowsePageProps) {
         <HumanFeedbackToast message={toastMessage} type={toastType} duration={3000} onClose={() => setToastMessage(null)} />
       ) : null}
     </div>
+  );
+}
+
+export default function BrowsePage({ className }: BrowsePageProps) {
+  return (
+    <Suspense fallback={
+      <div className="retro-window flex flex-col">
+        <div className="retro-window-header bg-gray-200 dark:bg-gray-700 px-3 py-2 border-b border-gray-300 dark:border-gray-600">
+          <h3 className="text-sm font-bold text-gray-800 dark:text-gray-200 flex items-center">
+            <span className="mr-2">🛒</span>
+            Lihat Sumber
+          </h3>
+        </div>
+        <div className="p-3 flex-1 overflow-y-auto">
+          <div className="text-center py-4">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-2"></div>
+            <p className="text-sm text-gray-500 dark:text-gray-400">Memuat sumber...</p>
+          </div>
+        </div>
+      </div>
+    }>
+      <BrowseContent className={className} />
+    </Suspense>
   );
 }

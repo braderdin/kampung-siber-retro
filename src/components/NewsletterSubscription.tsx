@@ -94,6 +94,7 @@ export default function NewsletterSubscription({
                     <label htmlFor="newsletter-email" className="block text-sm font-bold text-gray-700 dark:text-gray-300 pixel-font mb-2">
                       Email Address
                     </label>
+                    {/* Start: Email Input - Fixed multiline className */}
                     <input
                       type="email"
                       id="newsletter-email"
@@ -101,13 +102,9 @@ export default function NewsletterSubscription({
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="you@example.com"
                       required
-                      className="
-                        w-full px-3 py-2 border-2 border-cyan-400 rounded-none font-mono text-sm
-                        bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100
-                        placeholder-gray-500 dark:placeholder-gray-400
-                        focus:outline-none focus:ring-2 focus:ring-pink-500
-                      "
+                      className="w-full px-3 py-2 border-2 border-cyan-400 rounded-none font-mono text-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-500"
                     />
+                    {/* End: Email Input */}
                   </div>
 
                   <button
