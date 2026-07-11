@@ -1,19 +1,72 @@
 @import "tailwindcss";
 
 :root {
-  --background: #060814;
-  --foreground: #ffffff;
-  --crt-scanline-color: rgba(255, 0, 127, 0.3);
-  --crt-scanline-height: 2px;
-  --crt-scanline-spacing: 4px;
-  --crt-scanline-opacity: 0.25;
-  --crt-flicker-min: 0.95;
-  --crt-flicker-max: 1.05;
-  --crt-flicker-intensity: 0.02;
-  --crt-glow-color: rgba(0, 255, 255, 0.4);
-  --crt-glow-blur: 10px;
   --font-pixel: 'VT323', monospace;
 }
+
+/* Start: Space Neon Theme Bucket */
+:root {
+  --space-neon-blue: #0c102b;
+  --space-neon-pink: #ff007f;
+  --space-neon-cyan: #00ffff;
+  --space-neon-midnight: #060814;
+  --space-neon-space-1: #0e1330;
+  --space-neon-space-2: #121b4a;
+  --space-neon-accent: #ff007f;
+  --space-neon-glow: rgba(0, 255, 255, 0.4);
+}
+
+[data-theme="space-neon"] {
+  --background: var(--space-neon-midnight);
+  --foreground: #ffffff;
+  --border-color: var(--space-neon-pink);
+  --accent-color: var(--space-neon-cyan);
+}
+/* End: Space Neon Theme Bucket */
+
+/* Start: Windows Gray Theme Bucket */
+:root {
+  --windows-gray-100: #f3f4f6;
+  --windows-gray-200: #e5e7eb;
+  --windows-gray-300: #d1d5db;
+  --windows-gray-400: #9ca3af;
+  --windows-gray-500: #6b7280;
+  --windows-gray-600: #4b5563;
+  --windows-gray-700: #374151;
+  --windows-gray-800: #1f2937;
+  --windows-gray-900: #111827;
+  --windows-blue-primary: #2563eb;
+  --windows-blue-secondary: #1d4ed8;
+}
+
+[data-theme="windows-gray"] {
+  --background: var(--windows-gray-100);
+  --foreground: var(--windows-gray-900);
+  --border-color: var(--windows-blue-primary);
+  --accent-color: var(--windows-blue-secondary);
+}
+/* End: Windows Gray Theme Bucket */
+
+/* Start: Retro Matrix Theme Bucket */
+:root {
+  --matrix-green-400: #4ade80;
+  --matrix-green-500: #22c55e;
+  --matrix-green-600: #16a34a;
+  --matrix-green-700: #15803d;
+  --matrix-green-800: #166534;
+  --matrix-green-900: #14532d;
+  --matrix-green-accent: rgba(74, 222, 128, 0.2);
+  --matrix-glow-cyan: #00ffff;
+  --matrix-glow-pink: #ff007f;
+}
+
+[data-theme="retro-matrix"] {
+  --background: #000000;
+  --foreground: var(--matrix-green-400);
+  --border-color: var(--matrix-green-500);
+  --accent-color: var(--matrix-green-400);
+}
+/* End: Retro Matrix Theme Bucket */
 
 @theme inline {
   --color-background: var(--background);
@@ -68,6 +121,46 @@ body.crt-enabled::after {
 
 body.crt-enabled .crt-enabled {
   animation: micro-flicker 0.18s linear infinite;
+}
+
+.crt-scanline-color {
+  rgba(255, 0, 127, 0.3);
+}
+
+.crt-scanline-height {
+  2px;
+}
+
+.crt-scanline-spacing {
+  4px;
+}
+
+.crt-scanline-opacity {
+  0.25;
+}
+
+.crt-flicker-min {
+  0.95;
+}
+
+.crt-flicker-max {
+  1.05;
+}
+
+.crt-flicker-intensity {
+  0.02;
+}
+
+.crt-glow-color {
+  rgba(0, 255, 255, 0.4);
+}
+
+.crt-glow-blur {
+  10px;
+}
+
+.font-pixel {
+  'VT323', monospace;
 }
 
 .crt-scanline-filter {
@@ -171,16 +264,6 @@ body.crt-enabled .crt-enabled {
   font-size: 1rem;
   line-height: 1.2;
   letter-spacing: 0.05em;
-}
-
-/* Cyber Neon Theme - Dark Mode */
-:root {
-  --cyber-blue: #0c102b;
-  --cyber-pink: #ff007f;
-  --cyber-cyan: #00ffff;
-  --cyber-midnight: #060814;
-  --cyber-space-1: #0e1330;
-  --cyber-space-2: #121b4a;
 }
 
 .dark {
@@ -379,6 +462,7 @@ body.dark {
   strokeLinecap: round;
 }
 /* End: Cozy Traditional Malay House SVG Styles */
+
 /* Start: Cyberpunk CodeMirror Editor Styles */
 .cyber-editor-glow {
   --cm-border: #ff007f;
@@ -445,6 +529,7 @@ body.dark {
   animation: cyber-pulse 3s ease-in-out infinite;
 }
 /* End: Cyberpunk CodeMirror Editor Styles */
+
 /* Start: 90s-Style Retro Error Screen Styles */
 .error-screen {
   background: linear-gradient(135deg, #0a0a1a 0%, #1a0a2a 50%, #0a0a1a 100%);

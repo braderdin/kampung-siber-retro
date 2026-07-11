@@ -20,6 +20,7 @@ export default function RetroNavbar() {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mobileMenuHeight, setMobileMenuHeight] = useState(0);
+  const [helpDropdownOpen, setHelpDropdownOpen] = useState(false);
 
   const t = language === 'ms' ? msDictionary : enDictionary;
 
@@ -39,18 +40,21 @@ export default function RetroNavbar() {
     }
   }, []);
 
+  // Start: Mobile Drawer Padding Calculation
   useEffect(() => {
     if (mobileMenuOpen) {
       const menuElement = document.getElementById('mobile-nav');
       if (menuElement) {
-        const itemsCount = navItems.length + 1;
+        const itemsCount = navItems.length + 2; // +2 for Help & Random Explorer
         const itemHeight = 48;
-        const totalHeight = itemsCount * itemHeight + 24;
+        const paddingBase = 24;
+        const totalHeight = itemsCount * itemHeight + paddingBase;
         setMobileMenuHeight(totalHeight);
         menuElement.style.height = `${totalHeight}px`;
       }
     }
   }, [mobileMenuOpen, navItems.length]);
+  // End: Mobile Drawer Padding Calculation
 
   const handleLanguageToggle = (lang: 'en' | 'ms') => {
     setLanguage(lang);
@@ -73,6 +77,13 @@ export default function RetroNavbar() {
     setMobileMenuOpen(false);
     router.push(href);
   };
+
+  const helpLinks = [
+    { name: 'Help Center', href: '/help', icon: '❓' },
+    { name: 'FAQ', href: '/faq', icon: '📋' },
+    { name: 'System Status', href: '/status', icon: '📡' },
+    { name: 'Contact Support', href: '/contact', icon: '📧' },
+  ];
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 retro-nav bg-black/30 backdrop-blur-md border-b border-cyan-500/20 overflow-x-hidden w-full">
@@ -179,6 +190,41 @@ export default function RetroNavbar() {
                 <span className="inline-flex items-center gap-1 align-middle">{item.name}</span>
               </button>
             ))}
+            
+            {/* Start: Help & FAQ Dropdown Controller Button */}
+            <div className="relative">
+              <button
+                onClick={() => setHelpDropdownOpen(!helpDropdownOpen)}
+                className="flex items-center w-full px-3 py-2 rounded-md text-base font-medium transition-colors text-gray-300 hover:text-white hover:bg-cyan-500/10"
+              >
+                <span className="text-lg mr-2 inline-flex items-center justify-center w-5 h-5">❓</span>
+                <span className="inline-flex items-center gap-1 align-middle">Help & FAQ</span>
+                <span className="ml-auto text-xs">{helpDropdownOpen ? '▲' : '▼'}</span>
+              </button>
+              
+              {/* Start: Help Dropdown Menu */}
+              {helpDropdownOpen && (
+                <div className="mt-1 ml-8 space-y-1">
+                  {helpLinks.map((link) => (
+                    <button
+                      key={link.href}
+                      onClick={() => {
+                        setMobileMenuOpen(false);
+                        setHelpDropdownOpen(false);
+                        router.push(link.href);
+                      }}
+                      className="flex items-center w-full px-3 py-2 rounded-md text-sm font-medium transition-colors text-gray-400 hover:text-white hover:bg-cyan-500/10"
+                    >
+                      <span className="text-base mr-2 inline-flex items-center justify-center w-4 h-4">{link.icon}</span>
+                      <span className="inline-flex items-center gap-1 align-middle">{link.name}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
+              {/* End: Help Dropdown Menu */}
+            </div>
+            {/* End: Help & FAQ Dropdown Controller Button */}
+            
             {/* Start: Mobile Random Explorer Button */}
             <button
               onClick={() => {

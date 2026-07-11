@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { useLanguageStore } from '@/store/useLanguageStore';
 import { enDictionary, msDictionary } from '@/i18n/dictionaries';
 import Shoutbox from '@/components/Shoutbox';
@@ -36,6 +37,24 @@ export default function DashboardPage() {
 
   return (
     <main className="min-h-screen bg-gray-50 dark:bg-gray-950 transition-colors duration-300">
+      {/* Start: Navigation Toolbar with Retro Sitemap Button */}
+      <div className="sticky top-0 z-50 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border-b-2 border-dashed border-cyan-500/30">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <h2 className="text-lg font-bold text-gray-800 dark:text-gray-200 pixel-font">
+              {t.dashboardTitle || 'Dashboard'}
+            </h2>
+          </div>
+          {/* Start: Retro Sitemap Access Button */}
+          <Link href="/sitemap" className="retro-btn-secondary flex items-center gap-2 px-4 py-2 pixel-font font-bold">
+            <span className="text-lg">🗺️</span>
+            <span>{t.sitemapTitle || 'Site Sitemap'}</span>
+          </Link>
+          {/* End: Retro Sitemap Access Button */}
+        </div>
+      </div>
+      {/* End: Navigation Toolbar */}
+
       {/* Start: Marquee Ticker */}
       {showMarquee && (
         <div className="fixed top-16 left-0 right-0 z-40">

@@ -46,6 +46,7 @@ const MOCK_ARCADE_SCORES: ArcadeLeaderboardEntry[] = [
   }
 ];
 
+// Start: Arcade Leaderboard Component
 export default function ArcadeLeaderboard({ 
   gameId, 
   className 

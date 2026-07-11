@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { useLanguageStore } from '@/store/useLanguageStore';
 import { enDictionary, msDictionary } from '@/i18n/dictionaries';
 import ProfileStatusBadge from '@/components/ProfileStatusBadge';
@@ -80,6 +81,7 @@ export default function SiteProfilePage({ params }: SiteProfileProps) {
   const [liveStatus, setLiveStatus] = useState<'online' | 'coding' | 'makan'>('online');
   const [publicBio, setPublicBio] = useState('');
   const [isClient, setIsClient] = useState(false);
+  const [activeSection, setActiveSection] = useState<'profile' | 'journal' | 'links' | 'stats'>('profile');
 
   useEffect(() => {
     setIsClient(true);
@@ -150,6 +152,56 @@ export default function SiteProfilePage({ params }: SiteProfileProps) {
             </div>
           </div>
           <div className="p-6">
+            {/* Start: Adaptive Dual-Column Tab Bar */}
+            <div className="grid grid-cols-3 gap-2 mb-4">
+              <Link 
+                href={`/site/${username}/journal`}
+                className={`
+                  flex items-center justify-center gap-2 px-3 py-2 rounded pixel-font font-bold text-center
+                  transition-all duration-200
+                  ${activeSection === 'journal' 
+                    ? 'bg-purple-500 text-white shadow-md' 
+                    : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+                  }
+                `}
+                onClick={() => setActiveSection('journal')}
+              >
+                <span className="text-lg">📖</span>
+                <span className="hidden xs:inline">Jurnal</span>
+              </Link>
+              <Link 
+                href={`/site/${username}/links`}
+                className={`
+                  flex items-center justify-center gap-2 px-3 py-2 rounded pixel-font font-bold text-center
+                  transition-all duration-200
+                  ${activeSection === 'links' 
+                    ? 'bg-purple-500 text-white shadow-md' 
+                    : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+                  }
+                `}
+                onClick={() => setActiveSection('links')}
+              >
+                <span className="text-lg">🔗</span>
+                <span className="hidden xs:inline">Pautan</span>
+              </Link>
+              <Link 
+                href={`/site/${username}/stats`}
+                className={`
+                  flex items-center justify-center gap-2 px-3 py-2 rounded pixel-font font-bold text-center
+                  transition-all duration-200
+                  ${activeSection === 'stats' 
+                    ? 'bg-purple-500 text-white shadow-md' 
+                    : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+                  }
+                `}
+                onClick={() => setActiveSection('stats')}
+              >
+                <span className="text-lg">📊</span>
+                <span className="hidden xs:inline">Statistik</span>
+              </Link>
+            </div>
+            {/* End: Adaptive Dual-Column Tab Bar */}
+
             {/* Start: Live Status Indicator */}
             <div className="flex items-center gap-3 mb-4 p-3 bg-gray-100 dark:bg-gray-800 rounded border border-gray-300 dark:border-gray-600">
               <span className="text-2xl">

@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { useLanguageStore } from '@/store/useLanguageStore';
 import { enDictionary, msDictionary } from '@/i18n/dictionaries';
 import PixelGameCanvas from '@/components/PixelGameCanvas';
@@ -72,6 +73,62 @@ export default function CyberCafePage() {
         </div>
       </div>
       {/* End: Header Section */}
+
+      {/* Start: Pixel Art Canvas Cabinet Buttons - Arcade Anchoring */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+          {/* Start: Retro Snake Cabinet Button */}
+          <Link
+            href="/arcade/retro-snake"
+            className="retro-card border-2 border-dashed border-green-400/50 bg-gradient-to-br from-green-900/40 to-emerald-900/40 hover:from-green-800/60 hover:to-emerald-800/60 transition-all duration-300 group"
+          >
+            <div className="p-6 flex items-center gap-4">
+              <div className="text-6xl group-hover:scale-110 transition-transform">🐍</div>
+              <div className="flex-1">
+                <h3 className="text-xl font-bold text-green-400 pixel-font mb-1">
+                  Retro Snake
+                </h3>
+                <p className="text-xs text-gray-400 pixel-font">
+                  Klasik ular hijau yang menyesuaikan cabang
+                </p>
+                <div className="mt-2 text-xs bg-green-500/20 text-green-300 px-2 py-1 rounded w-fit">
+                  Score: <span className="font-mono">0</span>
+                </div>
+              </div>
+              <div className="text-3xl text-green-400 group-hover:translate-x-1 transition-transform">
+                ▶
+              </div>
+            </div>
+          </Link>
+          {/* End: Retro Snake Cabinet Button */}
+
+          {/* Start: Retro Pong Cabinet Button */}
+          <Link
+            href="/arcade/retro-pong"
+            className="retro-card border-2 border-dashed border-cyan-400/50 bg-gradient-to-br from-cyan-900/40 to-teal-900/40 hover:from-cyan-800/60 hover:to-teal-800/60 transition-all duration-300 group"
+          >
+            <div className="p-6 flex items-center gap-4">
+              <div className="text-6xl group-hover:scale-110 transition-transform">🏓</div>
+              <div className="flex-1">
+                <h3 className="text-xl font-bold text-cyan-400 pixel-font mb-1">
+                  Retro Pong
+                </h3>
+                <p className="text-xs text-gray-400 pixel-font">
+                  Permainan ping-pong klasik era 8-bit
+                </p>
+                <div className="mt-2 text-xs bg-cyan-500/20 text-cyan-300 px-2 py-1 rounded w-fit">
+                  Score: <span className="font-mono">0</span>
+                </div>
+              </div>
+              <div className="text-3xl text-cyan-400 group-hover:translate-x-1 transition-transform">
+                ▶
+              </div>
+            </div>
+          </Link>
+          {/* End: Retro Pong Cabinet Button */}
+        </div>
+      </div>
+      {/* End: Pixel Art Canvas Cabinet Buttons */}
 
       {/* Start: High Scores Table Header */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2">

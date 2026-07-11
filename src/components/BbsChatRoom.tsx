@@ -449,7 +449,8 @@ export default function BbsChatRoom({
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-3 space-y-1">
+      {/* Start: Height Restriction Update - max-h-[350px] */}
+      <div className="flex-1 overflow-y-auto p-3 space-y-1 max-h-[350px]">
         {messages.length === 0 ? (
           <div className="text-center py-8">
             <MessageSquare className="h-8 w-8 text-gray-600 mx-auto mb-2" />
@@ -476,6 +477,7 @@ export default function BbsChatRoom({
         
         <div ref={messagesEndRef} />
       </div>
+      {/* End: Height Restriction Update - max-h-[350px] */}
 
       <div className="p-3 border-t border-gray-700">
         <textarea
