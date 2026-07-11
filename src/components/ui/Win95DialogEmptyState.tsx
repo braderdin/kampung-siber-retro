@@ -3,10 +3,23 @@
 
 interface Win95DialogEmptyStateProps {
   message: string;
+  secondaryActionRoute?: string;
   className?: string;
 }
 
-export default function Win95DialogEmptyState({ message, className }: Win95DialogEmptyStateProps) {
+export default function Win95DialogEmptyState({ 
+  message, 
+  secondaryActionRoute,
+  className 
+}: Win95DialogEmptyStateProps) {
+  // Start: Handle Secondary Action
+  const handleSecondaryAction = () => {
+    if (secondaryActionRoute) {
+      window.location.href = secondaryActionRoute;
+    }
+  };
+  // End: Handle Secondary Action
+
   return (
     // Start: Windows 95 Dialog Container
     <div className={`
@@ -47,9 +60,9 @@ export default function Win95DialogEmptyState({ message, className }: Win95Dialo
           {message}
         </p>
         {/* End: Dialog Message Content */}
-        
-        {/* Start: Dialog OK Button */}
-        <div className="mt-4 flex justify-center">
+
+        {/* Start: Dialog Button Row */}
+        <div className="mt-4 flex items-center justify-center gap-3">
           <button
             className="
               bg-gray-300
@@ -65,8 +78,26 @@ export default function Win95DialogEmptyState({ message, className }: Win95Dialo
           >
             OK
           </button>
+          
+          {secondaryActionRoute && (
+            <button
+              className="
+                bg-gray-300
+                border-t-white border-l-white border-b-gray-700 border-r-gray-700
+                border-2
+                px-4 py-1
+                text-xs font-bold
+                hover:bg-green-200
+                active:border-t-gray-700 active:border-l-gray-700 active:border-b-white active:border-r-white
+                transition-colors
+              "
+              onClick={handleSecondaryAction}
+            >
+              Buka Editor
+            </button>
+          )}
         </div>
-        {/* End: Dialog OK Button */}
+        {/* End: Dialog Button Row */}
       </div>
       {/* End: Authentic Win95 Grey Alert Box */}
     </div>

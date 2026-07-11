@@ -1,3 +1,4 @@
+// Start: Sign-In Page with Google OAuth Integration
 "use client";
 
 import { useState, useEffect, useRef } from 'react';
@@ -130,7 +131,6 @@ export default function SignInPage() {
       }
 
       if (!needsVerification && !error) {
-        // Check if user has accepted terms from localStorage
         const hasAcceptedTerms = localStorage.getItem('terms_accepted') === 'true';
         if (!hasAcceptedTerms) {
           setShowTermsModal(true);
@@ -287,13 +287,21 @@ export default function SignInPage() {
             </div>
           </div>
 
+          {/* Start: Google Login Button with Responsive Padding */}
           <button
             onClick={handleGoogleSignIn}
             disabled={loading}
-            className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="group relative w-full flex justify-center items-center gap-2 py-3 px-4 border border-transparent text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
           >
+            <svg className="w-5 h-5" viewBox="0 0 24 24">
+              <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+              <path fill="currentColor" d="M12 23c2.97 0 5.46-.88 7.49-2.41l-3.57-2.77c-.89.64-1.96 1.06-3.13 1.06-2.41s.42-1.77 1.33-2.43V7.96c0-1.07-.02-2.22-.27-3.31z" />
+              <path fill="currentColor" d="M5.54 8.09c1.13 0 2.13-.38 2.92-1.04l-2.92-2.09C5.69 4.91 7.48 4 10 4c1.66 0 3.14.68 4.18 1.74L15.5 5.34c-.88-.84-2.05-1.34-3.5-1.34-2.34 0-4.31 1.57-4.96 3.7l-.22.12z" />
+              <path fill="currentColor" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.78 1 4.17 3.16 2.18 6.29l3.36 2.62c.8-2.12 2.84-3.73 5.24-3.73z" />
+            </svg>
             {loading ? 'Log Masuk dengan Google...' : 'Log Masuk dengan Google'}
           </button>
+          {/* End: Google Login Button with Responsive Padding */}
           
           {/* Start: Password Recovery Links */}
           <div className="text-center text-sm">

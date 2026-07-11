@@ -42,9 +42,16 @@ export default function MediaEmbedHelper({ onInsertEmbed, className }: MediaEmbe
       </button>
       {/* End: Toggle Drawer Button */}
 
-      {/* Start: Floating Drawer Panel */}
+      {/* Start: Floating Drawer Panel - Responsive Bottom Docking */}
       {isOpen && (
-        <div className="absolute top-full right-0 mt-2 w-64 bg-gray-800 border-2 border-gray-600 rounded-lg shadow-xl z-50 p-3">
+        <div className={`
+          absolute top-full right-0 mt-2 w-64 
+          bg-gray-800 border-2 border-gray-600 rounded-lg shadow-xl z-50 p-3
+          md:w-64
+          max-md:fixed max-md:bottom-0 max-md:left-0 max-md:right-0 max-md:top-auto 
+          max-md:w-auto max-md:mt-0 max-md:mx-2 max-md:mb-2 max-md:max-w-none
+          max-md:rounded-b-none
+        `}>
           {/* Start: Drawer Header */}
           <div className="flex items-center justify-between mb-3 pb-2 border-b border-gray-600">
             <h3 className="text-xs font-bold text-gray-200 pixel-font">

@@ -1,35 +1,15 @@
-// Start: Root Layout with Unified Top Utility Toolbar
+// Start: Root Layout with Provider Optimizations for Next.js 15 App Router
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, VT323 } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
-import "../styles/retro.css";
-import RetroNavbar from "@/components/RetroNavbar";
-import NavigationBar from "@/components/ui/navigation-bar";
-import RetroFooter from "@/components/RetroFooter";
-import KeyboardShortcutOverlay from "@/components/KeyboardShortcutOverlay";
-import PageTransitionOverlay from "@/components/PageTransitionOverlay";
-import QuickLinksSidebar from "@/components/QuickLinksSidebar";
+import { ThemeProvider } from "@/components/theme-provider";
+import { Toaster } from "@/components/ui/toaster";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
-const vt323 = VT323({
-  variable: "--font-pixel",
-  subsets: ["latin"],
-  weight: "400",
-  display: "swap",
-});
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Kampung Siber Retro Workspace",
-  description: "Enterprise-grade modular retro workspace platform",
+  title: "Kampung Siber Retro",
+  description: "Platform komuniti retro dengan Cloudflare R2 storage integration",
 };
 
 export default function RootLayout({
@@ -38,53 +18,28 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} ${vt323.variable} h-full antialiased`}
-    >
-      {/* Start: Inline Pre-Hydration Theme Script */}
-      <script
-        dangerouslySetInnerHTML={{
-          __html: `
-            (function() {
-              try {
-                if (localStorage.getItem('retro-crt-enabled') === 'true') {
-                  document.documentElement.classList.add('crt-enabled');
-                }
-              } catch (e) {}
-            })();
-          `,
-        }}
-      />
-      {/* End: Inline Pre-Hydration Theme Script */}
-      <body className="min-h-full flex flex-col bg-zinc-50 dark:bg-black font-sans">
-        {/* Start: Unified Top Utility Toolbar */}
-        <NavigationBar />
-        {/* End: Unified Top Utility Toolbar */}
-        
-        {/* Start: Retro Navigation Bar */}
-        <RetroNavbar />
-        {/* End: Retro Navigation Bar */}
-        
-        {/* Start: Main Content Area */}
-        <main className="flex-1 flex pt-16">
-          <PageTransitionOverlay>
-            {/* QuickLinksSidebar visible on large screens (lg and up) */}
-            <div className="hidden lg:block">
-              <QuickLinksSidebar />
-            </div>
-            {/* Main content area */}
-            <div className="flex-1">
-              {children}
-            </div>
-          </PageTransitionOverlay>
-        </main>
-        {/* End: Main Content Area */}
-        
-        <RetroFooter />
-        <KeyboardShortcutOverlay />
+    <html lang="en" suppressHydrationWarning>
+      <body className={inter.className}>
+        {/* Start: Global Theme Provider */}
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          {/* Start: Main Application Wrapper */}
+          <div className="min-h-screen bg-background text-foreground antialiased">
+            {children}
+          </div>
+          {/* End: Main Application Wrapper */}
+          
+          {/* Start: Global Toast Notifications */}
+          <Toaster />
+          {/* End: Global Toast Notifications */}
+        </ThemeProvider>
+        {/* End: Global Theme Provider */}
       </body>
     </html>
   );
 }
-// End: Root Layout with Unified Top Utility Toolbar
+// End: Root Layout with Provider Optimizations

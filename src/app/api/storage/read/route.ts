@@ -1,4 +1,4 @@
-// Start: Cloudflare R2 Storage Read Handler
+// Start: Cloudflare R2 Storage Read Handler with Exact Malay Error Handling
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 
@@ -21,6 +21,7 @@ interface FileContentResponse {
   filename?: string;
   size?: number;
   error?: string;
+  errorCode?: number;
 }
 // End: File Content Response Interface
 
@@ -48,75 +49,57 @@ async function authenticateSession(req: NextRequest): Promise<{ authenticated: b
 }
 // End: Session Authentication Helper
 
-// Start: GET Handler for Reading R2 Files
+// Start: GET Handler for Reading R2 Files with Proper HTTP Status Codes
 export async function GET(req: NextRequest): Promise<NextResponse<FileContentResponse>> {
+  // Start: Authentication Check with Proper HTTP 401
+  const { authenticated, userId } = await authenticateSession(req);
+  
+  if (!authenticated) {
+    return NextResponse.json({
+      success: false,
+      error: 'Pengesahan diperlukan untuk mengakses simpanan',
+      errorCode: 401,
+    }, { status: 401 });
+  }
+  // End: Authentication Check
+
+  // Get filename parameter
+  const url = new URL(req.url);
+  const filename = url.searchParams.get('filename');
+
+  if (!filename) {
+    return NextResponse.json({
+      success: false,
+      error: 'Parameter fail (filename) diperlukan',
+      errorCode: 400,
+    }, { status: 400 });
+  }
+
+  // Sanitize filename to prevent path traversal
+  const sanitizedFilename = filename
+    .replace(/\.{2,}/g, '')
+    .replace(/[^a-zA-Z0-9._-/]/g, '')
+    .replace(/^\//, '');
+
+  if (!sanitizedFilename) {
+    return NextResponse.json({
+      success: false,
+      error: 'Nama fail tidak sah',
+      errorCode: 400,
+    }, { status: 400 });
+  }
+
+  // Construct user-specific file key
+  const fileKey = `${userId}/${sanitizedFilename}`;
+
+  // Start: R2 File Fetch Logic (Mock Implementation)
+  let fileContent = '';
+  let fileSize = 0;
+
   try {
-    // Authenticate session
-    const { authenticated, userId } = await authenticateSession(req);
-    
-    if (!authenticated) {
-      return NextResponse.json({
-        success: false,
-        error: 'Pengesahan diperlukan untuk mengakses simpanan'
-      }, { status: 401 });
-    }
-
-    // Get filename parameter
-    const url = new URL(req.url);
-    const filename = url.searchParams.get('filename');
-
-    if (!filename) {
-      return NextResponse.json({
-        success: false,
-        error: 'Parameter fail (filename) diperlukan'
-      }, { status: 400 });
-    }
-
-    // Sanitize filename to prevent path traversal
-    const sanitizedFilename = filename
-      .replace(/\.{2,}/g, '')
-      .replace(/[^a-zA-Z0-9._-/]/g, '')
-      .replace(/^\//, '');
-
-    if (!sanitizedFilename) {
-      return NextResponse.json({
-        success: false,
-        error: 'Nama fail tidak sah'
-      }, { status: 400 });
-    }
-
-    // Construct user-specific file key
-    const fileKey = `${userId}/${sanitizedFilename}`;
-
-    // Start: R2 File Fetch Logic (Mock Implementation)
-    // In production, use AWS SDK S3 compatible client for Cloudflare R2
-    let fileContent = '';
-    let fileSize = 0;
-
-    // Mock file content retrieval - replace with actual R2 client call
-    try {
-      // Placeholder for actual R2 implementation using AWS SDK
-      // const r2Client = new S3Client({
-      //   endpoint: R2_ENDPOINT,
-      //   credentials: {
-      //     accessKeyId: R2_ACCESS_KEY_ID,
-      //     secretAccessKey: R2_SECRET_ACCESS_KEY,
-//   },
-      //   region: 'auto',
-      // });
-      // 
-      // const command = new GetObjectCommand({
-      //   Bucket: R2_BUCKET_NAME,
-      //   Key: fileKey,
-      // });
-      // 
-      // const response = await r2Client.send(command);
-      // fileContent = await streamToString(response.Body);
-      // fileSize = response.ContentLength || fileContent.length;
-
-      // Mock default HTML content for index.html
-      if (sanitizedFilename === 'index.html') {
-        fileContent = `<!DOCTYPE html>
+    // Placeholder for actual R2 implementation
+    if (sanitizedFilename === 'index.html') {
+      fileContent = `<!DOCTYPE html>
 <html lang="ms">
 <head>
   <meta charset="UTF-8">
@@ -147,58 +130,58 @@ export async function GET(req: NextRequest): Promise<NextResponse<FileContentRes
   </div>
 </body>
 </html>`;
-        fileSize = fileContent.length;
-      }
-    } catch (r2Error) {
-      console.error('R2 fetch error:', r2Error);
-      // Return empty content for new files
-      fileContent = '';
-      fileSize = 0;
+      fileSize = fileContent.length;
     }
-    // End: R2 File Fetch Logic
+  } catch (r2Error) {
+    console.error('R2 fetch error:', r2Error);
+    fileContent = '';
+    fileSize = 0;
+  }
+  // End: R2 File Fetch Logic
 
-    return NextResponse.json({
-      success: true,
-      content: fileContent,
-      filename: sanitizedFilename,
-      size: fileSize
-    }, { status: 200 });
-
-  } catch (error) {
-    console.error('Storage read error:', error);
+  // Start: File Not Found Handling with HTTP 404
+  if (!fileContent) {
     return NextResponse.json({
       success: false,
-      error: 'Gagal membaca fail dari simpanan'
-    }, { status: 500 });
+      error: 'Fail tidak dijumpai dalam simpanan',
+      errorCode: 404,
+    }, { status: 404 });
   }
+  // End: File Not Found Handling
+
+  return NextResponse.json({
+    success: true,
+    content: fileContent,
+    filename: sanitizedFilename,
+    size: fileSize
+  }, { status: 200 });
 }
 // End: GET Handler for Reading R2 Files
 
 // Start: POST Handler for Reading R2 Files (Alternative)
 export async function POST(req: NextRequest): Promise<NextResponse<FileContentResponse>> {
   try {
-    // Authenticate session
     const { authenticated, userId } = await authenticateSession(req);
     
     if (!authenticated) {
       return NextResponse.json({
         success: false,
-        error: 'Pengesahan diperlukan untuk mengakses simpanan'
+        error: 'Pengesahan diperlukan untuk mengakses simpanan',
+        errorCode: 401,
       }, { status: 401 });
     }
 
-    // Get filename from request body
     const body = await req.json();
     const { filename } = body;
 
     if (!filename) {
       return NextResponse.json({
         success: false,
-        error: 'Nama fail diperlukan'
+        error: 'Nama fail diperlukan',
+        errorCode: 400,
       }, { status: 400 });
     }
 
-    // Sanitize filename
     const sanitizedFilename = filename
       .replace(/\.{2,}/g, '')
       .replace(/[^a-zA-Z0-9._-/]/g, '')
@@ -228,7 +211,8 @@ export async function POST(req: NextRequest): Promise<NextResponse<FileContentRe
     console.error('Storage read POST error:', error);
     return NextResponse.json({
       success: false,
-      error: 'Gagal membaca fail'
+      error: 'Gagal membaca fail',
+      errorCode: 500,
     }, { status: 500 });
   }
 }

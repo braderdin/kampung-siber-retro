@@ -1,6 +1,4 @@
-"use client";
-
-// Start: Site Profile Page with R2 Dynamic Content
+// Start: Site Profile Page with R2 Dynamic Content and Empty State Handling
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -9,6 +7,7 @@ import { useLanguageStore } from '@/store/useLanguageStore';
 import { enDictionary, msDictionary } from '@/i18n/dictionaries';
 import ProfileStatusBadge from '@/components/ProfileStatusBadge';
 import HydrationGuard from '@/components/HydrationGuard';
+import Win95DialogEmptyState from '@/components/ui/Win95DialogEmptyState';
 
 type BackgroundTheme = 'space_neon' | 'windows_gray' | 'retro_matrix' | 'neon_cyan' | 'retro_orange';
 
@@ -87,8 +86,9 @@ export default function SiteProfilePage({ params }: SiteProfileProps) {
   const [activeSection, setActiveSection] = useState<'profile' | 'journal' | 'links' | 'stats'>('profile');
   const [siteContent, setSiteContent] = useState<string>('');
   const [contentLoading, setContentLoading] = useState<boolean>(true);
+  const [showEmptyState, setShowEmptyState] = useState<boolean>(false);
 
-  // Start: Fetch R2 Index.html Effect
+  // Start: Fetch R2 Index.html Effect with Empty State Handling
   useEffect(() => {
     const fetchSiteContent = async () => {
       setContentLoading(true);
@@ -104,10 +104,18 @@ export default function SiteProfilePage({ params }: SiteProfileProps) {
           const data = await response.json();
           if (data.success && data.content) {
             setSiteContent(data.content);
+            setShowEmptyState(false);
+          } else if (data.error === 'Fail tidak dijumpai' || data.success === false) {
+            // No index.html exists - show empty state
+            setShowEmptyState(true);
           }
+        } else if (response.status === 404) {
+          // No content found - show empty state redirect
+          setShowEmptyState(true);
         }
       } catch (error) {
         console.error('Failed to fetch site content:', error);
+        setShowEmptyState(true);
       } finally {
         setContentLoading(false);
       }
@@ -124,7 +132,7 @@ export default function SiteProfilePage({ params }: SiteProfileProps) {
     
     // Load user's selected theme
     const savedTheme = localStorage.getItem('background_theme') as BackgroundTheme;
-    if (savedTheme && THEME_OPTIONS.some(t => t.id === savedTheme)) {
+    if (savedTheme && THEME_OPTIONS.some(theme => theme.id === savedTheme)) {
       setSelectedTheme(savedTheme);
     }
 
@@ -141,7 +149,13 @@ export default function SiteProfilePage({ params }: SiteProfileProps) {
     }
   }, []);
 
-  const getCurrentTheme = () => THEME_OPTIONS.find(t => t.id === selectedTheme);
+  const getCurrentTheme = () => THEME_OPTIONS.find(theme => theme.id === selectedTheme);
+
+  // Start: Handle Empty State Redirect
+  const handleEmptyStateRedirect = () => {
+    window.location.href = '/site_files/text_editor';
+  };
+  // End: Handle Empty State Redirect
 
   if (!isClient) {
     return (
@@ -153,12 +167,37 @@ export default function SiteProfilePage({ params }: SiteProfileProps) {
     );
   }
 
+  // Start: Show Empty State Dialog when no index.html
+  if (showEmptyState && !contentLoading) {
+    return (
+      <main className={`min-h-screen flex items-center justify-center transition-all duration-500 ${getCurrentTheme()?.previewClass || THEME_OPTIONS[0].previewClass}`}>
+        <Win95DialogEmptyState
+          message="Tiada halaman laman web ditemui. Mulakan kemas kini teratak anda dengan membuka editor!"
+          secondaryActionRoute="/site_files/text_editor"
+        />
+      </main>
+    );
+  }
+  // End: Show Empty State Dialog
+
   return (
     <main className={`
       min-h-screen transition-all duration-500
       ${getCurrentTheme()?.previewClass || THEME_OPTIONS[0].previewClass}
       relative
     `}>
+      {/* Start: Dynamic Meta Tags for SEO */}
+      <head>
+        <title>@{username} - Teratak Siber Retro</title>
+        <meta name="description" content={`Laman web peribadi ${username} di Kampung Siber Retro`} />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta property="og:title" content={`@${username} - Teratak Siber`} />
+        <meta property="og:description" content="Laman web peribadi berasaskan Cloudflare R2" />
+        <meta property="og:type" content="profile" />
+        <meta name="twitter:card" content="summary" />
+      </head>
+      {/* End: Dynamic Meta Tags for SEO */}
+
       {/* Start: Background Wall Skin Overlay */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <div className="absolute -top-20 -right-20 w-64 h-64 bg-purple-500/20 rounded-full filter blur-3xl" />

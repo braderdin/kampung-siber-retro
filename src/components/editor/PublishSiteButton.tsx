@@ -1,4 +1,4 @@
-// Start: Publish Site Button Component
+// Start: Publish Site Button Component with Retro Construction Loading
 import React, { useState } from 'react';
 
 // Start: Publish Site Button Props Interface
@@ -20,6 +20,25 @@ export default function PublishSiteButton({
 }: PublishSiteButtonProps) {
   const [isPublishing, setIsPublishing] = useState(false);
   const [publishStatus, setPublishStatus] = useState<'idle' | 'success' | 'error'>('idle');
+
+  // Start: Retro Construction Loading Frames
+  const loadingFrames = ['🧱', '🧱🧱', '🧱🧱🧱', '🏗️', '🏗️🧱', '🏗️🧱🧱', '✅'];
+  const [loadingFrameIndex, setLoadingFrameIndex] = useState(0);
+  // End: Retro Construction Loading Frames
+
+  // Start: Loading Animation Effect
+  React.useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (isPublishing) {
+      interval = setInterval(() => {
+        setLoadingFrameIndex(prev => (prev + 1) % loadingFrames.length);
+      }, 300);
+    }
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [isPublishing, loadingFrames.length]);
+  // End: Loading Animation Effect
 
   // Start: Handle Publish to R2
   const handlePublish = async () => {
@@ -70,6 +89,7 @@ export default function PublishSiteButton({
       setTimeout(() => setPublishStatus('idle'), 3000);
     } finally {
       setIsPublishing(false);
+      setLoadingFrameIndex(0);
     }
   };
   // End: Handle Publish to R2
@@ -88,9 +108,9 @@ export default function PublishSiteButton({
       `}
       title="Hantar & Kemas Kini Teratak"
     >
-      {/* Start: Button Icon */}
+      {/* Start: Button Icon with Construction Loading Animation */}
       {isPublishing ? (
-        <span className="animate-spin">⏳</span>
+        <span className="animate-pulse">{loadingFrames[loadingFrameIndex]}</span>
       ) : publishStatus === 'success' ? (
         <span className="text-green-300">✅</span>
       ) : publishStatus === 'error' ? (
@@ -98,10 +118,10 @@ export default function PublishSiteButton({
       ) : (
         <span>🚀</span>
       )}
-      {/* End: Button Icon */}
+      {/* End: Button Icon with Construction Loading Animation */}
 
       {/* Start: Button Text */}
-      {isPublishing ? 'MENERBITKAN...' : publishStatus === 'success' ? 'DIKEMAS KINI!' : publishStatus === 'error' ? 'GAGAL!' : 'Hantar & Kemas Kini Teratak'}
+      {isPublishing ? 'MENERBITKAN... ' : publishStatus === 'success' ? 'DIKEMAS KINI!' : publishStatus === 'error' ? 'GAGAL!' : 'Hantar & Kemas Kini Teratak'}
       {/* End: Button Text */}
     </button>
     // End: Retro Publish Button Container

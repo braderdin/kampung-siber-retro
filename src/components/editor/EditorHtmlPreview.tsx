@@ -35,9 +35,26 @@ export default function EditorHtmlPreview({ content, className, onContentChange 
   }, [content]);
   // End: Update Iframe Content Effect
 
-  // Start: Sandbox Security Attributes
-  const sandboxAttributes = 'allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox';
+  // Start: Sandbox Security Attributes - Blocks parent window cookie access
+  const sandboxAttributes = 'allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox allow-downloads';
   // End: Sandbox Security Attributes
+
+  // Start: Sandbox Security CSP Headers
+  const cspHeaders = "default-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline';";
+  // End: Sandbox Security CSP Headers
+
+  // Start: Sandbox Content Security Override
+  const getSecurePreviewContent = (htmlContent: string): string => {
+    // Inject CSP meta tag to prevent cookie access from iframe content
+    const cspMeta = `<meta http-equiv="Content-Security-Policy" content="${cspHeaders}">`;
+    
+    if (htmlContent.includes('<head>')) {
+      return htmlContent.replace('<head>', `<head>\n  ${cspMeta}\n  <base target="_top">`);
+    }
+    
+    return `<head>${cspMeta}</head>\n${htmlContent}`;
+  };
+  // End: Sandbox Content Security Override
 
   return (
     // Start: Preview Container Wrapper
@@ -53,7 +70,7 @@ export default function EditorHtmlPreview({ content, className, onContentChange 
       </div>
       {/* End: Preview Title Bar */}
 
-      {/* Start: Iframe Preview Area */}
+      {/* Start: Iframe Preview Area with Security Isolation */}
       <div className="flex-1 overflow-hidden bg-white relative">
         {previewError ? (
           <div className="flex items-center justify-center h-full">
@@ -65,11 +82,13 @@ export default function EditorHtmlPreview({ content, className, onContentChange 
             title="HTML Preview"
             className="w-full h-full border-none"
             sandbox={sandboxAttributes}
+            csp={cspHeaders}
             style={{ backgroundColor: 'white' }}
+            loading="lazy"
           />
         )}
       </div>
-      {/* End: Iframe Preview Area */}
+      {/* End: Iframe Preview Area with Security Isolation */}
     </div>
     // End: Preview Container Wrapper
   );

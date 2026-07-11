@@ -7,12 +7,15 @@ import { useLanguageStore } from "@/store/useLanguageStore";
 import { enDictionary, msDictionary } from "@/lib/dictionary";
 import EditorHtmlPreview from '@/components/editor/EditorHtmlPreview';
 import MediaEmbedHelper from '@/components/editor/MediaEmbedHelper';
+import PublishSiteButton from '@/components/editor/PublishSiteButton';
+import { useEditorAutosave } from '@/hooks/useEditorAutosave';
+import { getAutosavedContent } from '@/hooks/useEditorAutosave';
 
 interface TextEditorProps {
   className?: string;
 }
 
-// Default HTML template for new files
+// Start: Default HTML Template
 const DEFAULT_HTML_TEMPLATE = `<!DOCTYPE html>
 <html lang="ms">
 <head>
@@ -44,18 +47,42 @@ const DEFAULT_HTML_TEMPLATE = `<!DOCTYPE html>
   </div>
 </body>
 </html>`;
+// End: Default HTML Template
 
 function TextEditorContent({ className }: TextEditorProps) {
   const searchParams = useSearchParams();
   const { language } = useLanguageStore();
   const t = language === 'ms' ? msDictionary : enDictionary;
   
+  // Start: Core State Variables
   const [filename, setFilename] = useState<string>('index.html');
   const [content, setContent] = useState<string>('');
   const [fileLanguage, setFileLanguage] = useState<string>('html');
   const [isSaved, setIsSaved] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [saveError, setSaveError] = useState<string | null>(null);
+  // End: Core State Variables
+
+  // Start: Autosave Hook Integration
+  const { hasAutosavedContent, clearAutosavedContent } = useEditorAutosave({
+    content,
+    filename,
+    enabled: true,
+    intervalMs: 5000,
+  });
+  // End: Autosave Hook Integration
+
+  // Start: Restore Autosaved Content on Mount
+  useEffect(() => {
+    if (hasAutosavedContent()) {
+      const autosaved = getAutosavedContent(filename);
+      if (autosaved) {
+        setContent(autosaved);
+        clearAutosavedContent();
+      }
+    }
+  }, [filename, hasAutosavedContent, clearAutosavedContent]);
+  // End: Restore Autosaved Content on Mount
 
   // Start: Fetch R2 Content Function
   const fetchR2Content = useCallback(async (file: string) => {
@@ -89,6 +116,45 @@ function TextEditorContent({ className }: TextEditorProps) {
     }
   }, []);
   // End: Fetch R2 Content Function
+
+  useEffect(() => {
+    if (!searchParams) return;
+    const filenameParam = searchParams.get('filename');
+    if (filenameParam) {
+      setFilename(filenameParam);
+      fetchR2Content(filenameParam);
+    } else {
+      setFilename('index.html');
+      setContent(DEFAULT_HTML_TEMPLATE);
+    }
+  }, [searchParams, fetchR2Content]);
+
+  // Start: Handle Insert Embed
+  const handleInsertEmbed = (embedCode: string) => {
+    const textarea = document.querySelector('textarea') as HTMLTextAreaElement;
+    if (textarea) {
+      const cursorPos = textarea.selectionStart || content.length;
+      const newContent = content.substring(0, cursorPos) + embedCode + content.substring(cursorPos);
+      setContent(newContent);
+      textarea.focus();
+    }
+  };
+  // End: Handle Insert Embed
+
+  // Start: Handle Save
+  const handleSave = () => {
+    saveToR2();
+  };
+  // End: Handle Save
+
+  // Start: Handle Rename
+  const handleRename = () => {
+    const newFilename = prompt('Sila masukkan nama fail baru:', filename);
+    if (newFilename && newFilename.trim()) {
+      setFilename(newFilename.trim());
+    }
+  };
+  // End: Handle Rename
 
   // Start: Save to R2 Function
   const saveToR2 = useCallback(async () => {
@@ -134,49 +200,32 @@ function TextEditorContent({ className }: TextEditorProps) {
   }, [filename, content, fileLanguage]);
   // End: Save to R2 Function
 
-  useEffect(() => {
-    if (!searchParams) return;
-    const filenameParam = searchParams.get('filename');
-    if (filenameParam) {
-      setFilename(filenameParam);
-      fetchR2Content(filenameParam);
-    } else {
-      setFilename('index.html');
-      setContent(DEFAULT_HTML_TEMPLATE);
-    }
-  }, [searchParams, fetchR2Content]);
-
-  // Start: Handle Insert Embed
-  const handleInsertEmbed = (embedCode: string) => {
-    const textarea = document.querySelector('textarea') as HTMLTextAreaElement;
-    if (textarea) {
-      const cursorPos = textarea.selectionStart || content.length;
-      const newContent = content.substring(0, cursorPos) + embedCode + content.substring(cursorPos);
-      setContent(newContent);
-      textarea.focus();
+  // Start: Handle Publish Complete Callback
+  const handlePublishComplete = (success: boolean) => {
+    if (success) {
+      setIsSaved(true);
+      setTimeout(() => setIsSaved(false), 2000);
     }
   };
-  // End: Handle Insert Embed
-
-  // Start: Handle Save
-  const handleSave = () => {
-    saveToR2();
-  };
-  // End: Handle Save
-
-  // Start: Handle Rename
-  const handleRename = () => {
-    const newFilename = prompt('Sila masukkan nama fail baru:', filename);
-    if (newFilename && newFilename.trim()) {
-      setFilename(newFilename.trim());
-    }
-  };
-  // End: Handle Rename
+  // End: Handle Publish Complete Callback
 
   return (
     <div className={`flex flex-col min-h-screen bg-gray-100 dark:bg-gray-900 ${className || ''}`}>
+      {/* Start: Back Navigation Button */}
+      <div className="absolute top-4 left-4 z-50">
+        <a
+          href="/dashboard"
+          className="flex items-center gap-2 px-3 py-2 bg-gray-800 border-2 border-gray-600 rounded pixel-font text-xs text-gray-300 hover:bg-gray-700 transition-colors"
+          title="Kembali ke Papan Kawalan"
+        >
+          <span className="text-lg">🔙</span>
+          <span>Kembali ke Papan Kawalan</span>
+        </a>
+      </div>
+      {/* End: Back Navigation Button */}
+
       {/* Start: Editor Header Toolbar */}
-      <div className="bg-gray-800 border-b-2 border-gray-300 px-4 py-3 flex items-center justify-between flex-shrink-0">
+      <div className="bg-gray-800 border-b-2 border-gray-300 px-4 py-3 flex items-center justify-between flex-shrink-0 pt-14">
         <div className="flex items-center space-x-3">
           <h2 className="text-lg font-bold text-gray-200 pixel-font">
             {filename || 'Editor Fail'}
@@ -190,6 +239,12 @@ function TextEditorContent({ className }: TextEditorProps) {
         </div>
         <div className="flex items-center space-x-2">
           <MediaEmbedHelper onInsertEmbed={handleInsertEmbed} />
+          <PublishSiteButton
+            filename={filename}
+            content={content}
+            mimeType={fileLanguage === 'html' ? 'text/html' : fileLanguage === 'css' ? 'text/css' : 'text/javascript'}
+            onPublishComplete={handlePublishComplete}
+          />
           <button
             onClick={handleSave}
             disabled={isLoading}
