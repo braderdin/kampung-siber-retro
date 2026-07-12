@@ -18,110 +18,11 @@ interface CyberMuseumArchiveProps {
   onArtifactClick?: (artifact: MuseumArtifact) => void;
 }
 
-const DEFAULT_ARTIFACTS: MuseumArtifact[] = [
-  {
-    id: 'dial-up-1995',
-    title: 'Pautan Dial-Up 56k',
-    era: '1990-an',
-    description: 'Konfigurasi pautan dial-up 56k yang menjadi asas internet domestik pada hari itu.',
-    imagePlaceholder: '🖥️',
-    codeSnippet: `AT&F
-ATZ
-AT&V
-ATDT#944456789;`,
-    historicalSignificance: 'Pautan dial-up 56k membolehkan rumah-rumah mengakses internet pertama kali. Kecepatan 56kbps singkat namun revolusioner.'
-  },
-  {
-    id: 'mirc-slang',
-    title: 'Kumpulan Laluan mIRC',
-    era: '1990-an',
-    description: 'Kumpulan laluan IRC dan slang kaum pada mIRC yang menjadi bahasa digital.',
-    imagePlaceholder: '💬',
-    codeSnippet: `/join #kampung-siber
-/mode #kampung-siber +m
-/topic Selamat datang di kampung siber retro!`,
-    historicalSignificance: 'mIRC dan IRC secara umum memupuk budaya komuniti dalam talian dengan perbualan langsung.'
-  },
-  {
-    id: 'floppy-disk',
-    title: 'Disket 3.5-inch 1.44MB',
-    era: '1980-2000-an',
-    description: 'Media penyimpanan utama untuk data komputer pada zaman sebelum USB.',
-    imagePlaceholder: '💾',
-    codeSnippet: `// Format disket
-FORMAT A: /FS:FAT /V:"KAMPUNG-SIBER"
-COPY *.* A:\
-EJECT A:`,
-    historicalSignificance: 'Disket 3.5-inch 1.44MB adalah standar penyimpanan utama sebelum hard disk keras menjadi murah.'
-  },
-  {
-    id: 'win95-startup',
-    title: 'Layar Masuk Windows 95',
-    era: '1995',
-    description: 'Pengalaman memulakan komputer Windows 95 dengan lagu inspiratif.',
-    imagePlaceholder: '🎵',
-    codeSnippet: `// Start menu sound
-var sound = new Audio('/sounds/start.wav');
-sound.play();`,
-    historicalSignificance: 'Lagu "Start Me Up" Windows 95 menjadi ikon kebangkitan komputer pribadi.'
-  },
-  {
-    id: 'geocities-site',
-    title: 'Laman Geocities',
-    era: '1990-an',
-    description: 'Contoh kod HTML laman web pribadi pada era Geocities.',
-    imagePlaceholder: '🌐',
-    codeSnippet: `<html>
-<head><title>My Homepage</title></head>
-<body bgcolor="#0000FF" text="#FFFFFF">
-<h1>Welcome to My Homepage!</h1>
-<blink>Under Construction...</blink>
-</body>
-</html>`,
-    historicalSignificance: 'Geocities membolehkan pengguna membuat laman web percuma, memupuk kebudayaan web kreatif.'
-  },
-  {
-    id: 'bulletin-board',
-    title: 'Papan Pengumuman BBS',
-    era: '1980-1990-an',
-    description: 'Sistem bulletin board system untuk memuat naik dan menulis mesej.',
-    imagePlaceholder: '📜',
-    codeSnippet: `LOGIN: user
-PASSWORD: ********
-POST:
-Tarikh: 1994-06-15
-Mesej: Selamat datang ke BBS kami!`,
-    historicalSignificance: 'BBS adalah prasyatan utama sebelum internet komersial menjadi terpakai.'
-  },
-  {
-    id: 'nintendo-gameboy',
-    title: 'Nintendo Game Boy',
-    era: '1989',
-    description: 'Permainan handheld pertama yang menjadi ikon kegemaran generasi 90-an.',
-    imagePlaceholder: '🎮',
-    codeSnippet: `// Game Boy Assembly
-LD A, (hl)
-INC hl
-DEC B
-JR NZ, loop`,
-    historicalSignificance: 'Game Boy membuka lazim untuk permainan handheld dengan 4 juta unit terjual.'
-  },
-  {
-    id: 'nokia-3310',
-    title: 'Nokia 3310',
-    era: '2000-an',
-    description: 'Telefon mudah alih yang menjadi ikon kekuatan dan kekalahan dalam permainan Snake.',
-    imagePlaceholder: '📱',
-    codeSnippet: `// Snake Game Logic
-while (gameRunning) {
-  snake.move();
-  if (snake.eatsApple()) {
-    score++;
-  }
-}`,
-    historicalSignificance: 'Nokia 3310 menjadi simbol telefon mudah alih yang tangguh dan andal.'
-  }
-];
+// Start: Dynamic Artifacts Placeholder
+// TODO: Fetch dynamic museum artifacts from API/Zustand store.
+// Static mock records within DEFAULT_ARTIFACTS have been purged to prepare clean database sync hooks.
+const DEFAULT_ARTIFACTS: MuseumArtifact[] = [];
+// End: Dynamic Artifacts Placeholder
 
 export default function CyberMuseumArchive({
   artifacts = DEFAULT_ARTIFACTS,
@@ -193,7 +94,7 @@ export default function CyberMuseumArchive({
         <div className="flex flex-col sm:flex-row gap-3">
           <input
             type="text"
-            placeholder="Cari artefak..."
+            placeholder="Cari artifak..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="retro-input flex-1"
@@ -217,7 +118,9 @@ export default function CyberMuseumArchive({
         {filteredArtifacts.length === 0 ? (
           <div className="retro-card text-center py-8 col-span-full">
             <p className="text-gray-500 dark:text-gray-400 pixel-font mb-4">
-              Tiada artefak yang padu dengan carian anda.
+              {/* Start: Linguistic Cleanup - Tiada artefak yang padu mapped to Tiada artifak yang sepadan */}
+              Tiada artifak yang sepadan dengan carian anda.
+              {/* End: Linguistic Cleanup */}
             </p>
           </div>
         ) : (
@@ -257,7 +160,9 @@ export default function CyberMuseumArchive({
                 {/* Start: Card Footer */}
                 <div className="retro-card-footer bg-gray-50/80 dark:bg-gray-800/80 px-3 py-2 border-t border-gray-200 dark:border-gray-700">
                   <span className="text-xs text-gray-500 dark:text-gray-400 pixel-font">
-                    Klik untuk lihat detail
+                    {/* Start: Linguistic Cleanup - Klik untuk lihat detail mapped to Klik untuk lihat butiran */}
+                    Klik untuk lihat butiran
+                    {/* End: Linguistic Cleanup */}
                   </span>
                 </div>
                 {/* End: Card Footer */}
@@ -270,11 +175,11 @@ export default function CyberMuseumArchive({
 
       {/* Start: Modal Overlay */}
       {showModal && selectedArtifact && (
-        <div 
+        <div
           className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4"
           onClick={closeModal}
         >
-          <div 
+          <div
             className="retro-card max-w-2xl w-full max-h-[90vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
@@ -291,7 +196,7 @@ export default function CyberMuseumArchive({
             </div>
             <div className="p-4 space-y-4">
               <div className="text-4xl text-center">{selectedArtifact.imagePlaceholder}</div>
-              
+
               <div>
                 <h4 className="text-sm font-bold text-gray-700 dark:text-gray-300 pixel-font mb-2">
                   Perihak
@@ -331,13 +236,13 @@ export default function CyberMuseumArchive({
         .masonry-item {
           break-inside: avoid;
         }
-        
+
         @media (hover: none) and (pointer: coarse) {
           .masonry-item {
             break-inside: avoid;
           }
         }
-        
+
         .line-clamp-3 {
           display: -webkit-box;
           -webkit-line-clamp: 3;

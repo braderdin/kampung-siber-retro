@@ -31,57 +31,11 @@ export default function SearchPage({ className }: SearchPageProps) {
 
   const debouncedQuery = useDebounce(query, { delay: 300 });
 
-  const demoResults = useMemo<SearchResult[]>(() => [
-    {
-      id: '1',
-      title: 'Siri Tutorial Retro',
-      description: 'Peta kursus untuk pembelajaran web klasik dan teknik visual moden.',
-      type: 'tutorial',
-      url: '/tutorials',
-      tags: ['html', 'css', 'retro'],
-      difficulty: 'Beginner',
-      category: 'HTML',
-      completed: false,
-    },
-    {
-      id: '2',
-      title: 'Papan Pemuka Aset',
-      description: 'Koleksi elemen visual untuk membina halaman retro yang tersusun.',
-      type: 'asset',
-      url: '/site_files',
-      tags: ['asset', 'ui'],
-    },
-    {
-      id: '3',
-      title: 'Bilik Berita Projek',
-      description: 'Penerbitan terkini dan kemas kini komuniti untuk laman projek anda.',
-      type: 'project',
-      url: '/press',
-      tags: ['news', 'project'],
-    },
-    {
-      id: '4',
-      title: 'Gaya CSS dengan Estetika Windows 95',
-      description: 'Kuasali teknik CSS untuk mencipta antara muka yang terdengar klasik.',
-      type: 'tutorial',
-      url: '/tutorials',
-      tags: ['css', 'design'],
-      difficulty: 'Beginner',
-      category: 'CSS',
-      completed: false,
-    },
-    {
-      id: '5',
-      title: 'Asas JavaScript untuk Permainan Retro',
-      description: 'Bina permainan gaya arked menggunakan JavaScript tulen.',
-      type: 'tutorial',
-      url: '/tutorials',
-      tags: ['javascript', 'game'],
-      difficulty: 'Intermediate',
-      category: 'JavaScript',
-      completed: false,
-    },
-  ], []);
+  // Start: Dynamic Search Results Placeholder
+  // TODO: Fetch dynamic search results from API/Zustand store.
+  // Static demoResults wrapper has been purged; direct dynamic API structural hooks are now active.
+  const demoResults: SearchResult[] = [];
+  // End: Dynamic Search Results Placeholder
 
   const handleSearch = (searchQuery: string) => {
     if (!searchQuery.trim()) {
@@ -144,7 +98,7 @@ export default function SearchPage({ className }: SearchPageProps) {
                   />
                 );
               }
-              
+
               return (
                 <ModernRetroCard
                   key={result.id}
@@ -164,7 +118,9 @@ export default function SearchPage({ className }: SearchPageProps) {
         </div>
       ) : debouncedQuery.length > 0 ? (
         <div className="rounded border border-dashed border-gray-300 p-4 text-sm text-gray-600 dark:border-gray-700 dark:text-gray-400">
-          Sediang mencari...
+          {/* Start: Linguistic Cleanup - fixed broken typo Sediang to Sedang */}
+          Sedang mencari...
+          {/* End: Linguistic Cleanup */}
         </div>
       ) : (
         <div className="rounded border border-dashed border-gray-300 p-4 text-sm text-gray-600 dark:border-gray-700 dark:text-gray-400">

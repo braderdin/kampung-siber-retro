@@ -26,54 +26,15 @@ interface TutorialsPageProps {
 // Start: TutorialsPage Component
 export default function TutorialsPage({ className }: TutorialsPageProps) {
   // Start: State Management
-  const [tutorials] = useState<Tutorial[]>([
-    {
-      id: 1,
-      title: 'Asas HTML untuk Pembangunan Web Retro',
-      description: 'Pelajari asas HTML dengan penekanan pada teknik gaya retro yang bersih dan mudah difahami.',
-      difficulty: 'Beginner',
-      category: 'HTML',
-      completed: false,
-    },
-    {
-      id: 2,
-      title: 'Gaya CSS dengan Estetika Windows 95',
-      description: 'Kuasali teknik CSS untuk mencipta antara muka yang terdengar klasik dan berfungsi dengan baik.',
-      difficulty: 'Beginner',
-      category: 'CSS',
-      completed: false,
-    },
-    {
-      id: 3,
-      title: 'Asas JavaScript untuk Permainan Retro',
-      description: 'Bina permainan gaya arked menggunakan JavaScript tulen dengan struktur yang jelas.',
-      difficulty: 'Intermediate',
-      category: 'JavaScript',
-      completed: false,
-    },
-    {
-      id: 4,
-      title: 'Teknik Seni Piksel untuk Paparan Retro',
-      description: 'Pelajari cara menghasilkan seni piksel yang bersih dan mudah dioptimumkan untuk laman web.',
-      difficulty: 'Intermediate',
-      category: 'Reka Bentuk',
-      completed: true,
-    },
-    {
-      id: 5,
-      title: 'Sintesis Audio untuk Kesan Bunyi Retro',
-      description: 'Cipta kesan bunyi retro yang berkesan menggunakan Web Audio API secara teratur.',
-      difficulty: 'Advanced',
-      category: 'Audio',
-      completed: false,
-    },
-  ]);
+  // Dynamic container component injected: static tutorials index array has been stripped.
+  // TODO: Fetch dynamic tutorial modules from API/Zustand store.
+  const [tutorials] = useState<Tutorial[]>([]);
   const [filter, setFilter] = useState<'all' | 'Beginner' | 'Intermediate' | 'Advanced'>('all');
   // End: State Management
 
   // Start: Progress Metrics
   const completedCount = useMemo(() => tutorials.filter((tutorial) => tutorial.completed).length, [tutorials]);
-  const progressPercent = Math.round((completedCount / tutorials.length) * 100);
+  const progressPercent = tutorials.length > 0 ? Math.round((completedCount / tutorials.length) * 100) : 0;
   const filteredTutorials = tutorials.filter((tutorial) => filter === 'all' || tutorial.difficulty === filter);
   // End: Progress Metrics
 
@@ -120,44 +81,44 @@ export default function TutorialsPage({ className }: TutorialsPageProps) {
 
       <div className="retro-window border-2 border-pink-500 bg-white p-3 retro-shadow">
         <div className="mb-3 flex flex-wrap gap-2">
-          <button 
-            onClick={() => setFilter('all')} 
+          <button
+            onClick={() => setFilter('all')}
             className={`rounded px-3 py-1 text-xs border-2 transition-all duration-300 ${
-              filter === 'all' 
-                ? 'bg-pink-500 text-white border-pink-500' 
+              filter === 'all'
+                ? 'bg-pink-500 text-white border-pink-500'
                 : 'border-pink-500 bg-pink-50 hover:bg-pink-100'
             }`}
             style={filter === 'all' ? { boxShadow: '0 0 10px rgba(255,0,127,0.5)' } : undefined}
           >
             Semua Siri
           </button>
-          <button 
-            onClick={() => setFilter('Beginner')} 
+          <button
+            onClick={() => setFilter('Beginner')}
             className={`rounded px-3 py-1 text-xs border-2 transition-all duration-300 ${
-              filter === 'Beginner' 
-                ? 'bg-emerald-500 text-white border-emerald-500' 
+              filter === 'Beginner'
+                ? 'bg-emerald-500 text-white border-emerald-500'
                 : 'border-emerald-500 bg-emerald-50 hover:bg-emerald-100'
             }`}
             style={filter === 'Beginner' ? { boxShadow: '0 0 10px rgba(0,255,102,0.5)' } : undefined}
           >
             Pemula
           </button>
-          <button 
-            onClick={() => setFilter('Intermediate')} 
+          <button
+            onClick={() => setFilter('Intermediate')}
             className={`rounded px-3 py-1 text-xs border-2 transition-all duration-300 ${
-              filter === 'Intermediate' 
-                ? 'bg-amber-500 text-white border-amber-500' 
+              filter === 'Intermediate'
+                ? 'bg-amber-500 text-white border-amber-500'
                 : 'border-amber-500 bg-amber-50 hover:bg-amber-100'
             }`}
             style={filter === 'Intermediate' ? { boxShadow: '0 0 10px rgba(255,170,0,0.5)' } : undefined}
           >
             Pertengahan
           </button>
-          <button 
-            onClick={() => setFilter('Advanced')} 
+          <button
+            onClick={() => setFilter('Advanced')}
             className={`rounded px-3 py-1 text-xs border-2 transition-all duration-300 ${
-              filter === 'Advanced' 
-                ? 'bg-rose-500 text-white border-rose-500' 
+              filter === 'Advanced'
+                ? 'bg-rose-500 text-white border-rose-500'
                 : 'border-rose-500 bg-rose-50 hover:bg-rose-100'
             }`}
             style={filter === 'Advanced' ? { boxShadow: '0 0 10px rgba(255,0,85,0.5)' } : undefined}

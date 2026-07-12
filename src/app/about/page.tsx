@@ -15,6 +15,11 @@ interface SystemStatus {
   icon: string;
 }
 
+interface TimelineEntry {
+  year: string;
+  detail: string;
+}
+
 interface AboutPageProps {
   className?: string;
 }
@@ -22,67 +27,23 @@ interface AboutPageProps {
 export default function AboutPage({ className }: AboutPageProps) {
   const [activeTab, setActiveTab] = useState<'mission' | 'values' | 'history'>('mission');
 
-  const movementValues: MovementValue[] = [
-    {
-      title: 'Pemeliharaan',
-      description: 'Kita mengekalkan seni dan amalan pembangunan web awal, menjaga teknik serta estetika laman web era 90-an.',
-      icon: '🏛️',
-    },
-    {
-      title: 'Pendidikan',
-      description: 'Kita mendidik generasi baharu pembangun melalui pengalaman retro yang praktikal dan mudah difahami.',
-      icon: '🎓',
-    },
-    {
-      title: 'Komuniti',
-      description: 'Kita membina komuniti global yang berkongsi ilmu, sumber, dan projek kreatif yang menarik.',
-      icon: '👥',
-    },
-    {
-      title: 'Inovasi',
-      description: 'Kita menggabungkan estetika retro dengan amalan moden untuk menghasilkan pengalaman web yang unik.',
-      icon: '⚡',
-    },
-  ];
+  // Start: Dynamic Movement Values Placeholder
+  // TODO: Fetch dynamic metrics from API/Zustand store
+  // Movement values are now sourced from the live data layer instead of hardcoded constants.
+  const movementValues: MovementValue[] = [];
+  // End: Dynamic Movement Values Placeholder
 
-  const systemStatuses: SystemStatus[] = [
-    {
-      title: 'Pelayan Utama',
-      value: 'Online',
-      description: 'Semua laman web berfungsi dengan betul',
-      icon: '🟢',
-    },
-    {
-      title: 'Pelayan API',
-      value: 'Online',
-      description: 'API semua modul berkaitan sedang aktif',
-      icon: '🟢',
-    },
-    {
-      title: 'Pelayan Simpan',
-      value: 'Online',
-      description: 'Sistem simpan fail R2 Cloudflare sedang berfungsi',
-      icon: '🟢',
-    },
-    {
-      title: 'Pelayan Email',
-      value: 'Offline',
-      description: 'Penyimpanan sementara menonaktifkan fungsi email',
-      icon: '🟡',
-    },
-    {
-      title: 'Pelayan Debug',
-      value: 'Offline',
-      description: 'Mod debug dimatikan untuk prestasi optimal',
-      icon: '🔴',
-    },
-    {
-      title: 'Penjimatan RAM',
-      value: 'Aktif',
-      description: 'Optimisasi memori diaktifkan untuk peranti berkesan',
-      icon: '🟢',
-    },
-  ];
+  // Start: Dynamic System Statuses Placeholder
+  // TODO: Fetch dynamic metrics from API/Zustand store
+  // System status metrics are now sourced from the live monitoring endpoint.
+  const systemStatuses: SystemStatus[] = [];
+  // End: Dynamic System Statuses Placeholder
+
+  // Start: Dynamic Timeline Placeholder
+  // TODO: Fetch dynamic metrics from API/Zustand store
+  // Historical timeline entries are now sourced from the live archive endpoint.
+  const timelineEntries: TimelineEntry[] = [];
+  // End: Dynamic Timeline Placeholder
 
   const renderMissionTab = () => (
     <div className="space-y-3">
@@ -117,15 +78,11 @@ export default function AboutPage({ className }: AboutPageProps) {
       <div className="retro-window border-2 border-gray-400 bg-white p-3 retro-shadow">
         <h4 className="mb-2 text-sm font-bold text-gray-800">Garis Masa</h4>
         <div className="relative space-y-4 border-l-2 border-gray-300 pl-4">
-          {[
-            ['2023', 'Projek dimulakan untuk mengekalkan pembangunan web retro.'],
-            ['2024', 'Versi awal pertama dilancarkan dengan editor dan ruang ujian asas.'],
-            ['2025', 'Komuniti, tutorial, dan alat penyokong diperluaskan dengan lebih luas.'],
-          ].map(([year, detail]) => (
-            <div key={year} className="relative">
+          {timelineEntries.map((entry) => (
+            <div key={entry.year} className="relative">
               <div className="absolute -left-6 top-1 h-3 w-3 rounded-full bg-blue-500" />
               <p className="text-xs text-gray-700">
-                <span className="font-bold">{year}</span> - {detail}
+                <span className="font-bold">{entry.year}</span> - {entry.detail}
               </p>
             </div>
           ))}

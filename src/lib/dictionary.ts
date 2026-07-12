@@ -116,7 +116,9 @@ const dictionary = {
       home: "Laman Utama",
       editor: "Penyusun",
       guestbook: "Buku Pelawat",
-      settings: "Set Ringan",
+      // Start: Linguistic Cleanup - Set Ringan mapped to Tetapan
+      settings: "Tetapan",
+      // End: Linguistic Cleanup
     },
     greetings: {
       welcome: "Selamat Datang",
@@ -133,7 +135,9 @@ const dictionary = {
       tierLimitations: "Had tier",
       sizeLimit: "Had saiz",
     },
-    dashboardTitle: "Papan Pengarah",
+    // Start: Linguistic Cleanup - Papan Pengarah mapped to Papan Kawalan
+    dashboardTitle: "Papan Kawalan",
+    // End: Linguistic Cleanup
     dashboardSubtitle: "Pusat utama anda",
     pageInfoTitle: "Info Halaman",
     currentPage: "Halaman Semasa",
@@ -141,8 +145,10 @@ const dictionary = {
     quickActions: "Tindakan Cepat",
     myFiles: "Fail Saya",
     analytics: "Analitik",
-    settings: "Set Ringan",
-    settingsTitle: "Set Ringan",
+    // Start: Linguistic Cleanup - Set Ringan mapped to Tetapan
+    settings: "Tetapan",
+    settingsTitle: "Tetapan",
+    // End: Linguistic Cleanup
     manageProfile: "Kelola profil anda",
     themeSettings: "Latar Belakang Tema",
     liveStatus: "Status Langsung",
@@ -168,7 +174,9 @@ const dictionary = {
     messagePlaceholder: "Taip mesej anda...",
     sendButton: "Hantar",
     allEras: "Semua Era",
-    welcomeMessage: "Selamat datang di papan pengarah retro anda!",
+    // Start: Linguistic Cleanup - papan pengarah mapped to papan kawalan
+    welcomeMessage: "Selamat datang di papan kawalan retro anda!",
+    // End: Linguistic Cleanup
     newPost: "Buat Entri Baru",
     journalTitle: "Jurnal Peribadi",
     linksPage: "Pautan Rakan",
@@ -201,7 +209,9 @@ const dictionary = {
     domainConfigured: "Domain Dikonfigurasikan",
     removeDomain: "Buang Domain",
     domainConfiguration: "Konfigurasi Domain",
-    backToSettings: "Kembali ke Set Ringan",
+    // Start: Linguistic Cleanup - Kembali ke Set Ringan mapped to Kembali ke Tetapan
+    backToSettings: "Kembali ke Tetapan",
+    // End: Linguistic Cleanup
     quickLinks: "Pautan Cepat",
     accessibility: "Aksesibiliti",
     search: "Cari",
