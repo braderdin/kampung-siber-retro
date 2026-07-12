@@ -15,11 +15,5 @@
     "cloudflare-observability": {
       "url": "https://observability.mcp.cloudflare.com/mcp"
     }
-  },
-  "servers": {
-    "vercel": {
-      "type": "http",
-      "url": "https://mcp.vercel.com"
-    }
   }
 }
