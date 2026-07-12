@@ -82,7 +82,7 @@ function sanitizeInput(input: string): string {
   sanitized = sanitized.replace(/data:\s*[^;]+;base64[^"]*/gi, '');
   sanitized = sanitized.replace(/vbscript:/gi, '');
   sanitized = sanitized.replace(/expression\s*\(/gi, '');
-  sanitized = sanitized.replace(/[\x00-\x08\x0B\x0C\xx0E-\x1F\x7F]/g, '');
+  sanitized = sanitized.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '');
   sanitized = sanitized.replace(/https?:\/\/[^\s"']*/gi, (url) => {
     if (url.startsWith('/') || url.startsWith('mailto:')) {
       return url;

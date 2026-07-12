@@ -1,1 +1,7 @@
-use client;\n\nimport {useState} from "react";\nexport default function CLIPage(){return <div>CLI</div>;}
+"use client"
+
+import { useState } from "react";
+
+export default function CLIPage() {
+  return <div>CLI</div>;
+}

@@ -164,13 +164,13 @@ export async function POST(req: NextRequest): Promise<NextResponse<UploadRespons
       fileContentString = Buffer.from(fileContentBuffer).toString('utf8');
       const contentType = getContentTypeForSanitization(validation.mimeType);
       try {
-        const sanitizationResult = contentType === 'html' 
-          ? sanitizeHtmlPayload(fileContentString)
+        const sanitizationResult = contentType === 'html'
+          ? sanitizeHtmlPayload(fileContentString).sanitized
           : contentType === 'css'
           ? sanitizeCssPayload(fileContentString)
           : sanitizeJsPayload(fileContentString); // Assuming JS for other text types if not HTML/CSS
-        fileContentString = sanitizationResult.sanitized || sanitizationResult;
-        fileContentBuffer = Buffer.from(fileContentString, 'utf8'); // Update buffer with sanitized content
+        fileContentString = sanitizationResult;
+        fileContentBuffer = new Uint8Array(Buffer.from(fileContentString, 'utf8')).buffer; // Update buffer with sanitized content
       } catch (sanitizeError) {
         console.error('Sanitization error:', sanitizeError);
         return NextResponse.json({
@@ -272,12 +272,12 @@ export async function PUT(req: NextRequest): Promise<NextResponse<UploadResponse
     
     if (contentType !== 'unknown') {
       try {
-        const sanitizationResult = contentType === 'html' 
-          ? sanitizeHtmlPayload(content || '')
+        const sanitizationResult = contentType === 'html'
+          ? sanitizeHtmlPayload(content || '').sanitized
           : contentType === 'css'
           ? sanitizeCssPayload(content || '')
           : sanitizeJsPayload(content || '');
-        sanitizedContent = sanitizationResult.sanitized || sanitizationResult;
+        sanitizedContent = sanitizationResult;
       } catch (sanitizeError) {
         console.error('Sanitization error:', sanitizeError);
         return NextResponse.json({

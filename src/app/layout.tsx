@@ -2,9 +2,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { ThemeProvider } from "@/components/theme-provider";
-import { Toaster } from "@/components/ui/toaster";
-
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -20,26 +17,11 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
-        {/* Start: Global Theme Provider */}
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          {/* Abangku, ThemeProvider is a client component and correctly wraps children within the client component boundary. */}
-          {/* Start: Main Application Wrapper */}
-          <div className="min-h-screen bg-background text-foreground antialiased">
-            {children}
-          </div>
-          {/* End: Main Application Wrapper */}
-          
-          {/* Abangku, Toaster is also a client component and correctly placed. */}
-          {/* Start: Global Toast Notifications */}
-          <Toaster />
-          {/* End: Global Toast Notifications */}
-        </ThemeProvider>
-        {/* End: Global Theme Provider */}
+        {/* Start: Main Application Wrapper */}
+        <div className="min-h-screen bg-background text-foreground antialiased">
+          {children}
+        </div>
+        {/* End: Main Application Wrapper */}
       </body>
     </html>
   );

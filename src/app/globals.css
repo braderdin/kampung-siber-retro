@@ -124,43 +124,43 @@ body.crt-enabled .crt-enabled {
 }
 
 .crt-scanline-color {
-  rgba(255, 0, 127, 0.3);
+  background-color: rgba(255, 0, 127, 0.3);
 }
 
 .crt-scanline-height {
-  2px;
+  height: 2px;
 }
 
 .crt-scanline-spacing {
-  4px;
+  --crt-scanline-spacing: 4px;
 }
 
 .crt-scanline-opacity {
-  0.25;
+  --crt-scanline-opacity: 0.25;
 }
 
 .crt-flicker-min {
-  0.95;
+  --crt-flicker-min: 0.95;
 }
 
 .crt-flicker-max {
-  1.05;
+  --crt-flicker-max: 1.05;
 }
 
 .crt-flicker-intensity {
-  0.02;
+  --crt-flicker-intensity: 0.02;
 }
 
 .crt-glow-color {
-  rgba(0, 255, 255, 0.4);
+  --crt-glow-color: rgba(0, 255, 255, 0.4);
 }
 
 .crt-glow-blur {
-  10px;
+  --crt-glow-blur: 10px;
 }
 
 .font-pixel {
-  'VT323', monospace;
+  font-family: 'VT323', monospace;
 }
 
 .crt-scanline-filter {

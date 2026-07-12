@@ -1,5 +1,4 @@
 // Start: HTML Payload Sanitizer Utility for R2 Storage Operations
-import DOMPurify from 'dompurify';
 
 // Start: Sanitization Configuration
 interface SanitizeOptions {
@@ -25,7 +24,6 @@ const DEFAULT_ALLOWED_TAGS = [
 
 // Start: Default Allowed Attributes
 const DEFAULT_ALLOWED_ATTRIBUTES: Record<string, string[]> = {
-  '*': ['class', 'id', 'style'],
   '*': ['class', 'id', 'style', 'data-*'], // Start: Added data-* for all elements
   'a': ['href', 'title', 'target', 'rel'], 
   'img': ['src', 'alt', 'width', 'height'],
@@ -55,21 +53,21 @@ export function sanitizeHtmlPayload(
   }
   // End: Length Validation
 
-  // Start: DOMPurify Configuration
-  const config: DOMPurify.Config = {
-    ALLOWED_TAGS: allowedTags,
-    ALLOWED_ATTR: Object.values(allowedAttributes).flat(),
-    ALLOWED_ATTR: Object.keys(allowedAttributes).reduce((acc: string[], tag) => { // Start: Flatten all allowed attributes
-      return acc.concat(allowedAttributes[tag]);
-    }, []),
-    ADD_ATTR: ['target', 'rel'],
-    FORBID_TAGS: ['form'], // Start: Explicitly forbid form tags for security
-    FORBID_ATTR: ['formaction', 'formmethod', 'formtarget', 'formnovalidate', 'formenctype'], // Start: Forbid form-related attributes
-  };
-  // End: DOMPurify Configuration
+  // Start: Flatten Allowed Attributes
+  const allowedAttrList = Object.keys(allowedAttributes).reduce((acc: string[], tag) => {
+    return acc.concat(allowedAttributes[tag]);
+  }, []);
+  // End: Flatten Allowed Attributes
 
-  // Start: Sanitize HTML Content
-  let sanitized = DOMPurify.sanitize(htmlContent, config);
+  // Start: Sanitize HTML Content (lightweight fallback - DOMPurify removed)
+  // Strip forbidden form tags and form-related attributes as a baseline protection.
+  let sanitized = htmlContent
+    .replace(/<form\b[^>]*>[\s\S]*?<\/form>/gi, '')
+    .replace(/\sformaction="[^"]*"/gi, '')
+    .replace(/\sformmethod="[^"]*"/gi, '')
+    .replace(/\sformtarget="[^"]*"/gi, '')
+    .replace(/\sformnovalidate="[^"]*"/gi, '')
+    .replace(/\sformenctype="[^"]*"/gi, '');
   // End: Sanitize HTML Content
 
   // Start: Additional Security Processing

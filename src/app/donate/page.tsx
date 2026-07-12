@@ -1,4 +1,4 @@
-use client;
+"use client"
 
 // Start: Imports
 import { useMemo, useState } from "react";

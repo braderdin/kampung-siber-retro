@@ -1,0 +1,90 @@
+
+> kampung-siber-retro@0.1.0 build
+> next build
+
+ÔÜá turbopack.root should be absolute, using: C:\Users\brade\Videos\Github_Braderdin_VsCode\kampung-siber-retro
+Ôû▓ Next.js 16.2.10 (Turbopack)
+- Environments: .env.local
+
+  Creating an optimized production build ...
+Ô£ô Compiled successfully in 4.8s
+  Running TypeScript ...
+  Finished TypeScript in 10.2s ...
+  Collecting page data using 11 workers ...
+  Generating static pages using 11 workers (0/57) ...
+  Generating static pages using 11 workers (14/57) 
+  Generating static pages using 11 workers (28/57) 
+  Generating static pages using 11 workers (42/57) 
+Ô£ô Generating static pages using 11 workers (57/57) in 648ms
+  Finalizing page optimization ...
+
+Route (app)
+Ôöî Ôùï /
+Ôö£ Ôùï /_not-found
+Ôö£ Ôùï /about
+Ôö£ Ôùï /activity
+Ôö£ Ôùï /admin/moderation
+Ôö£ ãÆ /api/admin/reports/resolve
+Ôö£ ãÆ /api/analytics/profile-views
+Ôö£ ãÆ /api/arcade/scores
+Ôö£ ãÆ /api/assets/download
+Ôö£ ãÆ /api/bulletin/posts
+Ôö£ ãÆ /api/chat/history
+Ôö£ ãÆ /api/cron/cleanup
+Ôö£ ãÆ /api/cron/compile-stats
+Ôö£ ãÆ /api/guestbook/delete
+Ôö£ ãÆ /api/report
+Ôö£ ãÆ /api/storage
+Ôö£ ãÆ /api/storage/read
+Ôö£ ãÆ /api/storage/upload
+Ôö£ ãÆ /api/webring
+Ôö£ ãÆ /api/webring/next
+Ôö£ Ôùï /arcade/retro-pong
+Ôö£ Ôùï /arcade/retro-snake
+Ôö£ Ôùï /asset-store
+Ôö£ Ôùï /audit-log
+Ôö£ ãÆ /auth/callback
+Ôö£ Ôùï /balai_raya
+Ôö£ Ôùï /bbs-room
+Ôö£ Ôùï /browse
+Ôö£ Ôùï /bulletin
+Ôö£ Ôùï /cli
+Ôö£ Ôùï /contact
+Ôö£ Ôùï /cyber-cafe
+Ôö£ Ôùï /cyber-museum
+Ôö£ Ôùï /dashboard
+Ôö£ Ôùï /directory
+Ôö£ Ôùï /donate
+Ôö£ Ôùï /forgot_username
+Ôö£ Ôùï /guestbook
+Ôö£ Ôùï /help
+Ôö£ Ôùï /kedai_runcit
+Ôö£ Ôùï /map
+Ôö£ Ôùï /muzium
+Ôö£ Ôùï /password_reset
+Ôö£ Ôùï /press
+Ôö£ Ôùï /privacy
+Ôö£ Ôùï /search
+Ôö£ ãÆ /settings/[username]
+Ôö£ ãÆ /settings/[username]/custom-domain
+Ôö£ Ôùï /settings/username
+Ôö£ Ôùï /signin
+Ôö£ Ôùï /site_files
+Ôö£ Ôùï /site_files/text_editor
+Ôö£ ãÆ /site/[username]
+Ôö£ ãÆ /site/[username]/journal
+Ôö£ ãÆ /site/[username]/links
+Ôö£ ãÆ /site/[username]/rss
+Ôö£ ãÆ /site/[username]/stats
+Ôö£ Ôùï /sitemap
+Ôö£ Ôùï /status
+Ôö£ Ôùï /supporter
+Ôö£ Ôùï /terms
+Ôö£ Ôùï /themes
+Ôö£ Ôùï /town-hall
+Ôöö Ôùï /tutorials
+
+
+Ôùï  (Static)   prerendered as static content
+ãÆ  (Dynamic)  server-rendered on demand
+

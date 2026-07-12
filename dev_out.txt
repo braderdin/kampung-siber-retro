@@ -1,0 +1,14 @@
+▲ Next.js 16.2.10 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://192.168.1.13:3000
+- Environments: .env.local
+✓ Ready in 921ms
+
+ GET / 200 in 546ms (next.js: 373ms, application-code: 173ms)
+ GET /dashboard 200 in 114ms (next.js: 41ms, application-code: 73ms)
+ GET /dashboard 200 in 60ms (next.js: 12ms, application-code: 48ms)
+ GET /site_files/text_editor 200 in 435ms (next.js: 376ms, application-code: 59ms)
+ GET / 200 in 56ms (next.js: 7ms, application-code: 49ms)
+ GET /dashboard 200 in 43ms (next.js: 6ms, application-code: 37ms)
+ GET /signin 200 in 483ms (next.js: 462ms, application-code: 21ms)
+ GET /signin 200 in 86ms (next.js: 4ms, application-code: 81ms)

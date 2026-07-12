@@ -78,7 +78,7 @@ export async function GET(req: NextRequest): Promise<NextResponse<FileContentRes
   // Sanitize filename to prevent path traversal
   const sanitizedFilename = filename
     .replace(/\.{2,}/g, '')
-    .replace(/[^a-zA-Z0-9._-/]/g, '')
+    .replace(/[^a-zA-Z0-9._\-/]/g, '')
     .replace(/^\//, '');
 
   if (!sanitizedFilename) {
@@ -191,10 +191,10 @@ export async function POST(req: NextRequest): Promise<NextResponse<FileContentRe
 
     const sanitizedFilename = filename
       .replace(/\.{2,}/g, '')
-      .replace(/[^a-zA-Z0-9._-/]/g, '')
+      .replace(/[^a-zA-Z0-9._\-/]/g, '')
       .replace(/^\//, '');
 
-    // Return mock content
+      // Return mock content
     const fileContent = `<!DOCTYPE html>
 <html lang="ms">
 <head>

@@ -1,4 +1,4 @@
-use client;
+"use client"
 
 // Task 25: CLI Help page with terminal tables
 // Start: Imports

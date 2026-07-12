@@ -10,6 +10,7 @@ import MediaEmbedHelper from '@/components/editor/MediaEmbedHelper';
 import PublishSiteButton from '@/components/editor/PublishSiteButton';
 import { useEditorAutosave } from '@/hooks/useEditorAutosave';
 import { getAutosavedContent } from '@/hooks/useEditorAutosave';
+import { getFileTypeFromFilename } from '@/utils/sanitizeHtmlPayload';
 
 interface TextEditorProps {
   className?: string;

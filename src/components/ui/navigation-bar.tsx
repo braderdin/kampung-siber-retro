@@ -43,8 +43,7 @@ export default function NavigationBar({ className }: NavigationBarProps) {
           setIsCrtEnabled(true);
           document.documentElement.classList.add('dark');
         }
-      } catch (e) {}
-      catch (e) {
+      } catch (e) {
         console.error('Failed to load theme from localStorage:', e); // Start: Error logging
       }
     };

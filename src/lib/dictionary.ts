@@ -110,6 +110,8 @@ const dictionary = {
     details: "Details",
     type: "Type",
     noLogs: "No logs found.",
+    sitemapTitle: "Site Sitemap",
+    dashboardReady: "Dashboard is ready to receive user-originated data",
   },
   ms: {
     navigation: {
@@ -221,6 +223,8 @@ const dictionary = {
     details: "Butir",
     type: "Jenis",
     noLogs: "Tiada log yang ditemui.",
+    sitemapTitle: "Peta Laman",
+    dashboardReady: "Dashboard bersedia menerima data berasal daripada pengguna",
   },
 };
 
