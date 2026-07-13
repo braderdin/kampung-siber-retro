@@ -22,6 +22,7 @@ export default function RetroNavbar() {
   const [mobileMenuHeight, setMobileMenuHeight] = useState(0);
   const [helpDropdownOpen, setHelpDropdownOpen] = useState(false);
   const helpContainerRef = useRef<HTMLDivElement | null>(null);
+  const helpMobileContainerRef = useRef<HTMLDivElement | null>(null);
 
   const t = language === 'ms' ? msDictionary : enDictionary;
 
@@ -81,7 +82,9 @@ export default function RetroNavbar() {
 
     const handlePointerDown = (event: MouseEvent | TouchEvent) => {
       const target = event.target as Node;
-      if (helpContainerRef.current && !helpContainerRef.current.contains(target)) {
+      const insideDesktop = helpContainerRef.current?.contains(target) ?? false;
+      const insideMobile = helpMobileContainerRef.current?.contains(target) ?? false;
+      if (!insideDesktop && !insideMobile) {
         setHelpDropdownOpen(false);
       }
     };
@@ -237,7 +240,7 @@ export default function RetroNavbar() {
             ))}
             
             {/* Start: Help & FAQ Dropdown Controller */}
-            <div className="relative">
+            <div className="relative" ref={helpMobileContainerRef}>
               <button
                 onClick={() => setHelpDropdownOpen(!helpDropdownOpen)}
                 className="flex items-center w-full px-3 py-2 rounded-md text-base font-medium transition-colors text-gray-300 hover:text-white hover:bg-cyan-500/10"

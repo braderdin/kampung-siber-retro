@@ -12,7 +12,7 @@ import RetroMarqueeTicker from '@/components/RetroMarqueeTicker';
 import TopResidentsLeaderboard from '@/components/TopResidentsLeaderboard';
 import HydrationGuard from '@/components/HydrationGuard';
 import FeedbackWidget from '@/components/FeedbackWidget';
-import NeocitiesProfileBuilder from '@/components/NeocitiesProfileBuilder';
+import NeocitiesWorkspace from '@/components/editor/NeocitiesWorkspace';
 
 type ActiveTab = 'main' | 'community';
 type BuilderView = 'main' | 'editor';
@@ -89,13 +89,13 @@ export default function DashboardPage() {
           </div>
           {/* End: Editor Access Button with Extreme Pixel Shadow */}
 
-          {/* Start: Live Neocities Profile Builder Sub-View */}
+          {/* Start: Live Neocities Web Interactive Workspace Sub-View */}
           {builderView === 'editor' && (
             <div className="mt-6">
-              <NeocitiesProfileBuilder />
+              <NeocitiesWorkspace />
             </div>
           )}
-          {/* End: Live Neocities Profile Builder Sub-View */}
+          {/* End: Live Neocities Web Interactive Workspace Sub-View */}
         </div>
         {/* End: Editor Link Card Container */}
       </div>
