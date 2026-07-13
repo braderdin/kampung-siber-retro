@@ -48,3 +48,8 @@ build/
 
 # Mengabaikan fail Virtual Environment Python
 venv/
+
+# Corporate Workspace Optimization
+scripts/archive/
+logs/
+*.tsbuildinfo

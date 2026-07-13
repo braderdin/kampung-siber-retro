@@ -1,1 +1,0 @@
-'@\"' > write_files.ps1 && echo use client; >> write_files.ps1 && echo. >> write_files.ps1 && echo // Task 25: Donate page >> write_files.ps1 && echo export default function DonatePage(){return <main>Donate</main>;} >> write_files.ps1 && echo \"@  
