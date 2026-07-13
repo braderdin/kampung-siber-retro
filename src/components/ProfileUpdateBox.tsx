@@ -1,18 +1,13 @@
 // Start: Imports
 'use client';
 import { useEffect, useState } from 'react';
-import { createClient } from '@supabase/supabase-js';
+import { supabase } from '@/lib/supabase';
 // End: Imports
-
-// Start: Supabase Client Configuration
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co';
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_KEY || 'placeholder-key';
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
-// End: Supabase Client Configuration
 
 // Start: Type Definitions
 interface ProfileUpdateBoxProps {
   username: string;
+  userId?: string;
   className?: string;
 }
 
@@ -25,50 +20,87 @@ interface StatusUpdate {
 // End: Type Definitions
 
 // Start: ProfileUpdateBox Component
-export default function ProfileUpdateBox({ username, className }: ProfileUpdateBoxProps) {
+export default function ProfileUpdateBox({ username, userId, className }: ProfileUpdateBoxProps) {
   // Start: State Management
   const [status, setStatus] = useState('');
   const [updates, setUpdates] = useState<StatusUpdate[]>([]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [sessionChecked, setSessionChecked] = useState(false);
+  const [isAuthed, setIsAuthed] = useState(false);
   // End: State Management
 
   // Start: Fetch Status Updates
   const fetchUpdates = async () => {
-    const { data, error } = await supabase
+    const { data, error: fetchErr } = await supabase
       .from('status_updates')
       .select('*')
       .eq('username', username)
       .order('created_at', { ascending: false });
 
+    if (fetchErr) {
+      setError('Gagal memuat khabar terkini.');
+      return;
+    }
     if (data) {
       setUpdates(data as StatusUpdate[]);
     }
   };
+  // End: Fetch Status Updates
 
-  // Start: Load Updates on Mount
+  // Start: Enforce Session Check Before Allowing Inserts
   useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const { data } = await supabase.auth.getSession();
+      if (cancelled) return;
+      const hasSession = Boolean(data.session);
+      setIsAuthed(hasSession);
+      setSessionChecked(true);
+    })();
     fetchUpdates();
+    return () => {
+      cancelled = true;
+    };
   }, [username]);
-  // End: Load Updates on Mount
+  // End: Enforce Session Check Before Allowing Inserts
 
   // Start: Handle Status Submission
   const handleSubmitStatus = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null);
+
+    if (!isAuthed) {
+      setError('Sila log masuk untuk menghantar khabar.');
+      return;
+    }
+
     if (status.trim()) {
       setLoading(true);
       try {
-        const { data, error } = await supabase.from('status_updates').insert({
+        const insertPayload: Record<string, unknown> = {
           username,
           status: status.trim(),
           created_at: new Date().toISOString(),
-        }).select();
+        };
+        if (userId) insertPayload.user_id = userId;
 
-        if (data) {
+        const { data, error: insertErr } = await supabase
+          .from('status_updates')
+          .insert(insertPayload)
+          .select();
+
+        if (insertErr) {
+          setError(insertErr.message || 'Gagal menghantar khabar.');
+          return;
+        }
+
+        if (data && data.length > 0) {
           setUpdates([data[0] as StatusUpdate, ...updates]);
           setStatus('');
         }
       } catch (err) {
-        console.error('Error updating status:', err);
+        setError(err instanceof Error ? err.message : 'Ralat tidak diketahui.');
       } finally {
         setLoading(false);
       }
@@ -90,6 +122,22 @@ export default function ProfileUpdateBox({ username, className }: ProfileUpdateB
 
       {/* Start: Window Content */}
       <div className="p-3">
+        {/* Start: Error Boundary Display */}
+        {error && (
+          <div className="mb-3 p-2 rounded border border-red-500/50 bg-red-500/10 text-xs text-red-400">
+            {error}
+          </div>
+        )}
+        {/* End: Error Boundary Display */}
+
+        {/* Start: Auth Gate */}
+        {sessionChecked && !isAuthed && (
+          <p className="text-xs text-amber-400 mb-2">
+            Log masuk diperlukan untuk menghantar khabar.
+          </p>
+        )}
+        {/* End: Auth Gate */}
+
         {/* Start: Status Input */}
         <form onSubmit={handleSubmitStatus} className="mb-3">
           <div className="flex space-x-2">
@@ -99,11 +147,11 @@ export default function ProfileUpdateBox({ username, className }: ProfileUpdateB
               onChange={(e) => setStatus(e.target.value)}
               placeholder="Berikan khabar terkini anda..."
               className="flex-1 retro-input text-xs"
-              disabled={loading}
+              disabled={loading || (sessionChecked && !isAuthed)}
             />
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || (sessionChecked && !isAuthed)}
               className="retro-btn-primary text-xs"
             >
               {loading ? 'Hantar...' : 'Hantar'}
@@ -119,7 +167,7 @@ export default function ProfileUpdateBox({ username, className }: ProfileUpdateB
             <span className="retro-control-name">Senarai Khabar</span>
           </div>
         </div>
-        
+
         <div className="mt-2 space-y-1 max-h-40 overflow-y-auto">
           {updates.length === 0 ? (
             <p className="text-xs text-gray-500 dark:text-gray-400">Tiada khabar terkini</p>

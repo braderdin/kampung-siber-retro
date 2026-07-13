@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState, useCallback } from "react";
+import React, { useRef, useState, useEffect, useCallback } from "react";
 interface Html2CanvasOptions {
   backgroundColor?: string;
   scale?: number;
@@ -23,6 +23,11 @@ export const ProfileCardExporter: React.FC<ProfileCardExporterProps> = ({
 }) => {
   const cardRef = useRef<HTMLDivElement>(null);
   const [isExporting, setIsExporting] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const captureCard = useCallback(async () => {
     if (!cardRef.current) return;
@@ -74,7 +79,7 @@ export const ProfileCardExporter: React.FC<ProfileCardExporterProps> = ({
           <div>
             <h3 className="font-pixel text-sm text-white">{username}</h3>
             <p className="font-pixel text-xs text-gray-400">
-              {joinDate ? new Date(joinDate).toLocaleDateString("en-US", {
+              {mounted && joinDate ? new Date(joinDate).toLocaleDateString("en-US", {
                 year: "numeric",
                 month: "short",
               }) : "Resident"}

@@ -19,8 +19,10 @@ export default function ProfileBioEditor({
   const [isSaving, setIsSaving] = useState<boolean>(false);
   const [characterCount, setCharacterCount] = useState<number>(0);
   const [isHovered, setIsHovered] = useState<boolean>(false);
+  const [mounted, setMounted] = useState<boolean>(false);
 
   useEffect(() => {
+    setMounted(true);
     setBioContent(initialBio);
     setPreviewContent(initialBio);
     setCharacterCount(initialBio.length);
@@ -140,7 +142,7 @@ export default function ProfileBioEditor({
           </div>
           <div 
             className="retro-terminal-body p-3 font-mono text-xs leading-5 text-green-400"
-            dangerouslySetInnerHTML={{ __html: formatBioForDisplay(previewContent) }}
+            dangerouslySetInnerHTML={{ __html: mounted ? formatBioForDisplay(previewContent) : '' }}
           />
         </div>
         {/* End: Live Preview Terminal */}

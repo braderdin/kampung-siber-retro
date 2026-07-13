@@ -18,14 +18,14 @@ export const GlobalVolumeSlider: React.FC<GlobalVolumeSliderProps> = ({
 
   const getThemeColors = () => {
     switch (currentTheme) {
-      case "matrix":
+      case "retro-matrix":
         return {
           track: "bg-green-800/50",
           fill: "bg-green-400",
           thumb: "bg-green-300",
           mute: "text-green-400",
         };
-      case "gray":
+      case "windows-gray":
         return {
           track: "bg-gray-700/50",
           fill: "bg-gray-300",

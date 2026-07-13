@@ -21,6 +21,12 @@
   --foreground: #ffffff;
   --border-color: var(--space-neon-pink);
   --accent-color: var(--space-neon-cyan);
+  --bg-pitch: #060814;
+  --bg-charcoal: #0e1330;
+  --neon-cyan: #00ffff;
+  --neon-magenta: #ff007f;
+  --neon-volt: #aaff00;
+  --neon-glow: rgba(0, 255, 255, 0.4);
 }
 /* End: Space Neon Theme Bucket */
 
@@ -44,6 +50,12 @@
   --foreground: var(--windows-gray-900);
   --border-color: var(--windows-blue-primary);
   --accent-color: var(--windows-blue-secondary);
+  --bg-pitch: #111827;
+  --bg-charcoal: #1f2937;
+  --neon-cyan: #2563eb;
+  --neon-magenta: #7c3aed;
+  --neon-volt: #059669;
+  --neon-glow: rgba(37, 99, 235, 0.35);
 }
 /* End: Windows Gray Theme Bucket */
 
@@ -65,6 +77,12 @@
   --foreground: var(--matrix-green-400);
   --border-color: var(--matrix-green-500);
   --accent-color: var(--matrix-green-400);
+  --bg-pitch: #000000;
+  --bg-charcoal: #052e16;
+  --neon-cyan: #00ff9c;
+  --neon-magenta: #ff007f;
+  --neon-volt: #4ade80;
+  --neon-glow: rgba(74, 222, 128, 0.35);
 }
 /* End: Retro Matrix Theme Bucket */
 

@@ -20,6 +20,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        {/* Start: Theme Hydration Hook (applies data-theme before paint) */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem('kampung-siber-theme');var id=t?JSON.parse(t).state.currentTheme:'space-neon';document.documentElement.dataset.theme=id;}catch(e){document.documentElement.dataset.theme='space-neon';}})();`,
+          }}
+        />
+        {/* End: Theme Hydration Hook */}
+      </head>
       {/* Start: Application Shell with Mounted Navbar + Footer */}
       <body className={`${inter.className} min-h-full flex flex-col antialiased`}>
         <RetroNavbar />

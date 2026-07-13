@@ -72,7 +72,7 @@ export const ResidentLinkCollection: React.FC<ResidentLinkCollectionProps> = ({
 
   const getThemeColors = () => {
     switch (currentTheme) {
-      case "matrix":
+      case "retro-matrix":
         return {
           bg: "bg-green-900/20",
           border: "border-green-500/30",
@@ -80,7 +80,7 @@ export const ResidentLinkCollection: React.FC<ResidentLinkCollectionProps> = ({
           text: "text-green-300",
           icon: "text-green-400",
         };
-      case "gray":
+      case "windows-gray":
         return {
           bg: "bg-gray-800/30",
           border: "border-gray-600/30",

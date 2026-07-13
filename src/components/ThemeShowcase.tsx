@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { useThemeStore } from '@/store/useThemeStore';
 
 interface Theme {
-  id: string;
+  id: ThemeId;
   name: string;
   displayName: string;
   description: string;
@@ -18,10 +18,12 @@ interface Theme {
   };
 }
 
+type ThemeId = "space-neon" | "windows-gray" | "retro-matrix";
+
 const themes: Theme[] = [
   {
-    id: 'space',
-    name: 'space',
+    id: 'space-neon',
+    name: 'space-neon',
     displayName: 'Space',
     description: 'Deep space aesthetic with cosmic blues and dark backgrounds',
     icon: '🌌',
@@ -33,8 +35,8 @@ const themes: Theme[] = [
     },
   },
   {
-    id: 'gray',
-    name: 'gray',
+    id: 'windows-gray',
+    name: 'windows-gray',
     displayName: 'Gray',
     description: 'Neutral grayscale with clean, professional appearance',
     icon: '⚪',
@@ -46,8 +48,8 @@ const themes: Theme[] = [
     },
   },
   {
-    id: 'matrix',
-    name: 'matrix',
+    id: 'retro-matrix',
+    name: 'retro-matrix',
     displayName: 'Matrix',
     description: 'Classic green code on black terminal style',
     icon: '💚',
@@ -77,12 +79,12 @@ function getThemeHoverStyle(selected: boolean): React.CSSProperties | undefined 
 }
 
 export default function ThemeShowcase() {
-  const [selectedTheme, setSelectedTheme] = useState<string>('space');
+  const [selectedTheme, setSelectedTheme] = useState<ThemeId>('space-neon');
   const { currentTheme, setTheme } = useThemeStore();
 
-  const handleThemeSelect = (themeId: string) => {
+  const handleThemeSelect = (themeId: ThemeId) => {
     setSelectedTheme(themeId);
-    setTheme(themeId as 'space' | 'gray' | 'matrix');
+    setTheme(themeId);
   };
 
   const getThemeCardClasses = (theme: Theme) => {

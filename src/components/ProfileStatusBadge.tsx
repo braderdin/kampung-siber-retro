@@ -49,8 +49,10 @@ export default function ProfileStatusBadge({
 }: ProfileStatusBadgeProps) {
   const [selectedStatus, setSelectedStatus] = useState<UserStatus>(initialStatus);
   const [showOptions, setShowOptions] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     const savedStatus = localStorage.getItem('user_status') as UserStatus;
     if (savedStatus && STATUS_OPTIONS.some(s => s.id === savedStatus)) {
       setSelectedStatus(savedStatus);
@@ -129,13 +131,13 @@ export default function ProfileStatusBadge({
 
           {/* Start: Current Status Indicator */}
           <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-600 flex items-center gap-2">
-            <span className="text-2xl">{getStatusEmoji(selectedStatus)}</span>
+            <span className="text-2xl">{mounted ? getStatusEmoji(selectedStatus) : STATUS_OPTIONS[0].icon}</span>
             <div>
               <div className="text-xs text-gray-500 dark:text-gray-400 pixel-font">
                 Status Anda
               </div>
               <div className="text-sm font-bold text-gray-800 dark:text-gray-200">
-                {getStatusLabel(selectedStatus)}
+                {mounted ? getStatusLabel(selectedStatus) : STATUS_OPTIONS[0].label}
               </div>
             </div>
           </div>

@@ -27,14 +27,14 @@ export const VinylProfilePlayer: React.FC<VinylProfilePlayerProps> = ({
 
   const getThemeColors = () => {
     switch (currentTheme) {
-      case "matrix":
+      case "retro-matrix":
         return {
           label: "bg-green-800",
           text: "text-green-300",
           center: "bg-green-900/50",
           dot: "bg-green-400",
         };
-      case "gray":
+      case "windows-gray":
         return {
           label: "bg-gray-700",
           text: "text-gray-300",
