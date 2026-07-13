@@ -1,0 +1,24 @@
+⚠ turbopack.root should be absolute, using: C:\Users\brade\Videos\Github_Braderdin_VsCode\kampung-siber-retro
+Editor Preview API Error: NoSuchKey: The specified key does not exist.
+    at async readR2Object (src\app\api\editor\preview\route.ts:51:20)
+    at async streamSingleHtml (src\app\api\editor\preview\route.ts:62:10)
+    at async GET (src\app\api\editor\preview\route.ts:203:9)
+  49 |     Key: objectKey,
+  50 |   });
+> 51 |   const response = await s3Client.send(command);
+     |                    ^
+  52 |   if (!response.Body) {
+  53 |     throw new Error(`Objek kosong: ${objectKey}`);
+  54 |   } {
+  '$fault': 'client',
+  '$retryable': undefined,
+  '$metadata': {
+    httpStatusCode: 404,
+    requestId: undefined,
+    extendedRequestId: undefined,
+    cfId: undefined,
+    attempts: 1,
+    totalRetryDelay: 0
+  },
+  Code: 'NoSuchKey'
+}

@@ -25,6 +25,39 @@ const L = {
 };
 // End: Neon label set
 
+// Start: Synthwave Neon Confetti Particle Set (deterministic — zero hydration drift)
+// Colors strictly conform to the Cyber-Village protocol:
+//  - Synthwave Magenta: #ff007f
+//  - Cyber Neon Cyan:    #00ffff
+//  - Retro Volt Green:   #aaff00
+const NEON_COLORS = ["#ff007f", "#00ffff", "#aaff00"] as const;
+
+interface ConfettiParticle {
+  left: number; // vw percentage start
+  delay: number; // s
+  duration: number; // s
+  color: string;
+  size: number; // px
+  rotate: number; // deg drift
+}
+
+// Precomputed particle field (no Math.random at render) so SSR + client match.
+const CONFETTI_PARTICLES: ConfettiParticle[] = Array.from({ length: 28 }, (_, i) => {
+  const seeded = (i * 9301 + 49297) % 233280; // deterministic pseudo-seed
+  const r1 = (seeded / 233280);
+  const r2 = ((seeded * 7 + 13) % 233280) / 233280;
+  const r3 = ((seeded * 11 + 29) % 233280) / 233280;
+  return {
+    left: Math.round(r1 * 100),
+    delay: +(r2 * 1.4).toFixed(2),
+    duration: +(2.4 + r3 * 1.8).toFixed(2),
+    color: NEON_COLORS[i % NEON_COLORS.length],
+    size: 6 + Math.round(r3 * 6),
+    rotate: Math.round(r1 * 360),
+  };
+});
+// End: Synthwave Neon Confetti Particle Set
+
 export default function DeployVictoryModal({
   open,
   siteUrl,
@@ -51,6 +84,10 @@ export default function DeployVictoryModal({
   // End: Escape key closes modal
 
   if (!open) return null;
+
+  // Start: Scoped Neon Confetti Style Block (self-contained, zero layout shift)
+  const confettiStyleId = "neon-confetti-anim";
+  // End: Scoped Neon Confetti Style Block
 
   // Start: Copy to clipboard handler
   const handleCopy = async () => {
@@ -84,9 +121,57 @@ export default function DeployVictoryModal({
       aria-label={L.titleFlash}
       onClick={onClose}
     >
+      {/* Start: Neon Confetti Overlay (pointer-events disabled, GPU-transformed) */}
+      <div
+        className="pointer-events-none absolute inset-0 z-10 overflow-hidden"
+        aria-hidden="true"
+      >
+        {CONFETTI_PARTICLES.map((p, i) => (
+          <span
+            key={i}
+            className="neon-confetti-particle absolute top-[-24px] block rounded-[2px]"
+            style={{
+              left: `${p.left}vw`,
+              width: `${p.size}px`,
+              height: `${p.size * 1.6}px`,
+              background: p.color,
+              boxShadow: `0 0 8px ${p.color}, 0 0 14px ${p.color}`,
+              animationDelay: `${p.delay}s`,
+              animationDuration: `${p.duration}s`,
+              ["--neon-rotate" as string]: `${p.rotate}deg`,
+            }}
+          />
+        ))}
+      </div>
+      {/* End: Neon Confetti Overlay */}
+
+      {/* Start: Scoped Keyframes (injected once per render, deduped by id) */}
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `
+#${confettiStyleId} {}
+@keyframes neon-confetti-fall {
+  0%   { transform: translate3d(0, -10vh, 0) rotate(0deg); opacity: 0; }
+  10%  { opacity: 1; }
+  100% { transform: translate3d(0, 110vh, 0) rotate(var(--neon-rotate, 360deg)); opacity: 0; }
+}
+.neon-confetti-particle {
+  animation-name: neon-confetti-fall;
+  animation-timing-function: cubic-bezier(0.37, 0, 0.63, 1);
+  animation-iteration-count: infinite;
+  will-change: transform, opacity;
+}
+@media (prefers-reduced-motion: reduce) {
+  .neon-confetti-particle { animation: none; opacity: 0; }
+}
+`,
+        }}
+      />
+      {/* End: Scoped Keyframes */}
+
       {/* Start: Modal Card Frame (Share Card Design) */}
       <div
-        className="relative w-full max-w-md rounded-2xl border border-cyan-500/40 bg-[#060814] p-6 shadow-[0_0_60px_rgba(0,255,255,0.25)]"
+        className="relative z-20 w-full max-w-md rounded-2xl border border-cyan-500/40 bg-[#060814] p-6 shadow-[0_0_60px_rgba(0,255,255,0.25)]"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Start: Neon flash indicator */}
