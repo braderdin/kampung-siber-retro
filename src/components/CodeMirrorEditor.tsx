@@ -1,3 +1,4 @@
+// Start: Cyberpunk CodeMirror Editor (Strategy 3 — Zero-DB Local Drafts)
 "use client";
 
 import { useEditorStore } from "@/store/useEditorStore";
@@ -9,6 +10,8 @@ import { vscodeDark } from "@uiw/codemirror-theme-vscode";
 import useDebounce from "@/hooks/useDebounce";
 import { useRef, useState, useEffect } from "react";
 import DraftSyncIndicator from "./DraftSyncIndicator";
+import DraftRecoveryModal from "./DraftRecoveryModal";
+import { getCookie, setCookie, removeCookie, COOKIE_KEYS, SEVEN_DAYS_SECONDS } from "@/lib/cookies";
 
 interface CodeMirrorEditorProps {
   className?: string;
@@ -16,6 +19,16 @@ interface CodeMirrorEditorProps {
   language?: string;
   onChange?: (value: string) => void;
 }
+
+// Start: Strategy 3 — Zero-DB Local Draft Buffer (cookie fallback)
+const DRAFT_DEBOUNCE_MS = 1200;
+
+interface DraftPayload {
+  tab: string;
+  code: string;
+  savedAt: number;
+}
+// End: Strategy 3 — Zero-DB Local Draft Buffer
 
 // Start: Dark Mode Detection Hook
 const useDarkMode = () => {
@@ -50,6 +63,11 @@ export default function CodeMirrorEditor({
   const editorRef = useRef<any>(null);
   const { isDark } = useDarkMode();
 
+  // Start: Strategy 3 — Draft recovery state
+  const [showRecovery, setShowRecovery] = useState(false);
+  const [pendingDraft, setPendingDraft] = useState<DraftPayload | null>(null);
+  // End: Strategy 3 — Draft recovery state
+
   // Start: Local State for Raw Input Value
   const [rawInputValue, setRawInputValue] = useState<string>(() => {
     if (value !== undefined) return value;
@@ -65,6 +83,26 @@ export default function CodeMirrorEditor({
   // Start: Debounced Value for State Synchronization
   const debouncedValue = useDebounce(rawInputValue, { delay: 500 });
   // End: Debounced Value for State Synchronization
+
+  // Start: On mount — detect a stale draft and prompt recovery
+  useEffect(() => {
+    const raw = getCookie(COOKIE_KEYS.EDITOR_DRAFT);
+    if (!raw) return;
+    try {
+      const draft = JSON.parse(raw) as DraftPayload;
+      if (draft && draft.code && draft.code.trim().length > 0) {
+        // Only prompt if it differs from the current default/value
+        const current = value ?? (activeTab === "html" ? htmlCode : activeTab === "css" ? cssCode : jsCode);
+        if (draft.code !== current) {
+          setPendingDraft(draft);
+          setShowRecovery(true);
+        }
+      }
+    } catch {
+      /* corrupt draft — ignore */
+    }
+  }, []);
+  // End: On mount — detect a stale draft
 
   // Start: Determine Current Code
   const getCurrentCode = () => {
@@ -135,6 +173,23 @@ export default function CodeMirrorEditor({
   }, [debouncedValue, activeTab, onChange, setHtmlCode, setCssCode, setJsCode]);
   // End: Sync Debounced Value to Store
 
+  // Start: Strategy 3 — Persist draft to cookie (no DB write) on idle
+  useEffect(() => {
+    if (!rawInputValue) return;
+    const timer = setTimeout(() => {
+      const payload: DraftPayload = {
+        tab: activeTab,
+        code: rawInputValue,
+        savedAt: Date.now(),
+      };
+      setCookie(COOKIE_KEYS.EDITOR_DRAFT, JSON.stringify(payload), {
+        maxAge: SEVEN_DAYS_SECONDS,
+      });
+    }, DRAFT_DEBOUNCE_MS);
+    return () => clearTimeout(timer);
+  }, [rawInputValue, activeTab]);
+  // End: Strategy 3 — Persist draft to cookie
+
   // Start: Simulate Auto-save
   useEffect(() => {
     if (rawInputValue !== getCurrentCode()) {
@@ -147,6 +202,25 @@ export default function CodeMirrorEditor({
   }, [rawInputValue, getCurrentCode, setIsSaving]);
   // End: Simulate Auto-save
 
+  // Start: Strategy 3 — Recovery handlers
+  const handleRecover = () => {
+    if (pendingDraft) {
+      setRawInputValue(pendingDraft.code);
+      if (onChange) onChange(pendingDraft.code);
+      else if (pendingDraft.tab === "html") setHtmlCode(pendingDraft.code);
+      else if (pendingDraft.tab === "css") setCssCode(pendingDraft.code);
+      else if (pendingDraft.tab === "js") setJsCode(pendingDraft.code);
+    }
+    setShowRecovery(false);
+  };
+
+  const handleDiscard = () => {
+    removeCookie(COOKIE_KEYS.EDITOR_DRAFT);
+    setPendingDraft(null);
+    setShowRecovery(false);
+  };
+  // End: Strategy 3 — Recovery handlers
+
   // Start: Cyberpunk Theme Configuration
   const theme = vscodeDark;
   // End: Cyberpunk Theme Configuration
@@ -154,6 +228,9 @@ export default function CodeMirrorEditor({
   return (
     <div className={className || "w-full h-full"} >
       <DraftSyncIndicator />
+      {showRecovery && (
+        <DraftRecoveryModal onRecover={handleRecover} onDiscard={handleDiscard} />
+      )}
       <CodeMirror
         ref={editorRef}
         value={getCurrentCode()}
@@ -172,3 +249,4 @@ export default function CodeMirrorEditor({
     </div>
   );
 }
+// End: Cyberpunk CodeMirror Editor (Strategy 3 — Zero-DB Local Drafts)

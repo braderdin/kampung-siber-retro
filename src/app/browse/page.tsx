@@ -1,9 +1,10 @@
 "use client";
-import { useEffect, useState, Suspense } from 'react';
+import { useEffect, useState, useMemo, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import HumanFeedbackToast from '@/components/HumanFeedbackToast';
 import PaginationButton from '@/components/PaginationButton';
 import SiteDirectoryGrid from '@/components/SiteDirectoryGrid';
+import { getJsonCookie, setJsonCookie, COOKIE_KEYS, SEVEN_DAYS_SECONDS } from '@/lib/cookies';
 
 interface BrowsePageProps {
   className?: string;
@@ -42,8 +43,52 @@ function BrowseContent({ className }: BrowsePageProps) {
   const [totalPages, setTotalPages] = useState(1);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [toastType, setToastType] = useState<'success' | 'error' | 'info' | 'warning'>('info');
+  const [blockedTags, setBlockedTags] = useState<string[]>([]);
+  const [tagInput, setTagInput] = useState("");
   const router = useRouter();
   const searchParams = useSearchParams();
+
+  // Start: Strategy 4 — Dynamic Content Filtering Array (siber_blocked_tags)
+  useEffect(() => {
+    const saved = getJsonCookie<string[]>(COOKIE_KEYS.BLOCKED_TAGS, []);
+    setBlockedTags(Array.isArray(saved) ? saved : []);
+  }, []);
+
+  const addBlockedTag = () => {
+    const v = tagInput.trim().toLowerCase();
+    if (v && !blockedTags.includes(v)) {
+      const next = [...blockedTags, v];
+      setBlockedTags(next);
+      setJsonCookie(COOKIE_KEYS.BLOCKED_TAGS, next, { maxAge: SEVEN_DAYS_SECONDS });
+      setToastMessage(`Tag disekat: #${v}`);
+      setToastType('info');
+    }
+    setTagInput("");
+  };
+
+  const removeBlockedTag = (tag: string) => {
+    const next = blockedTags.filter((t) => t !== tag);
+    setBlockedTags(next);
+    setJsonCookie(COOKIE_KEYS.BLOCKED_TAGS, next, { maxAge: SEVEN_DAYS_SECONDS });
+  };
+
+  // Client-side feed stripping — mirrors the server-side pipeline that should
+  // read the same cookie to programmatically strip unwanted tags/streams.
+  const filteredItems = useMemo(() => {
+    if (blockedTags.length === 0) return items;
+    return items.filter(
+      (item) => !item.tags.some((tag) => blockedTags.includes(tag.toLowerCase()))
+    );
+  }, [items, blockedTags]);
+  // End: Strategy 4 — Dynamic Content Filtering Array
+
+  const directorySites = filteredItems.map((item) => ({
+    id: item.id,
+    title: item.title,
+    description: `${item.description} · ${item.author}`,
+    tags: item.tags.slice(0, 3),
+    href: item.url,
+  }));
 
   const activeCategory = searchParams?.get('category') || 'all';
   const activeSortBy = searchParams?.get('sortBy') || 'popular';
@@ -137,14 +182,6 @@ function BrowseContent({ className }: BrowsePageProps) {
     router.push(item.url);
   };
 
-  const directorySites = items.map((item) => ({
-    id: item.id,
-    title: item.title,
-    description: `${item.description} · ${item.author}`,
-    tags: item.tags.slice(0, 3),
-    href: item.url,
-  }));
-
   return (
     <div className={`retro-window flex flex-col ${className || ''}`}>
       {/* Start: Window Header */}
@@ -193,6 +230,37 @@ function BrowseContent({ className }: BrowsePageProps) {
           </div>
         </div>
         {/* End: Filters */}
+
+        {/* Start: Strategy 4 — Blocked Tags Filter Panel */}
+        <div className="mb-3 p-2 rounded border border-[#00ffff]/20 bg-[#0e1330]/40">
+          <div className="flex flex-wrap items-center gap-2">
+            <input
+              type="text"
+              placeholder="Sekat tag..."
+              value={tagInput}
+              onChange={(e) => setTagInput(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && addBlockedTag()}
+              className="retro-input text-xs flex-1 min-w-[120px]"
+            />
+            <button onClick={addBlockedTag} className="retro-btn-secondary text-xs">
+              Sekat
+            </button>
+          </div>
+          {blockedTags.length > 0 ? (
+            <div className="flex flex-wrap gap-1 mt-2">
+              {blockedTags.map((tag) => (
+                <span
+                  key={tag}
+                  className="inline-flex items-center gap-1 rounded-full border border-pink-400/40 bg-pink-500/10 px-2 py-0.5 text-[10px] text-pink-200"
+                >
+                  #{tag}
+                  <button onClick={() => removeBlockedTag(tag)} className="text-pink-300 hover:text-white">✕</button>
+                </span>
+              ))}
+            </div>
+          ) : null}
+        </div>
+        {/* End: Strategy 4 — Blocked Tags Filter Panel */}
 
         {loading ? (
           <div className="text-center py-4">

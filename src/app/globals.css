@@ -900,3 +900,43 @@ body.dark {
   color: #ef4444;
 }
 /* End: Password Strength Indicator Styles */
+
+/* Start: Kampung Siber Cyber Scrollbar (Rule 31 Neon-Cyan Track) */
+/* Ultra-thin 6px track with sharp neon cyan thumb that blends with the
+   cyber-village grid. Eradicates the thick native browser scrollbar. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #00ffff #060814;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #060814;
+  border: 1px solid rgba(0, 255, 255, 0.08);
+}
+
+::-webkit-scrollbar-thumb {
+  background: #00ffff;
+  border-radius: 3px;
+  box-shadow: 0 0 6px rgba(0, 255, 255, 0.55);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #66ffff;
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.8);
+}
+
+::-webkit-scrollbar-corner {
+  background: #060814;
+}
+/* End: Kampung Siber Cyber Scrollbar */
+
+/* Start: Neon Brand Text Glow Utility (Navbar rebrand) */
+.neon-text-glow {
+  text-shadow: 0 0 6px rgba(0, 255, 255, 0.55), 0 0 12px rgba(0, 255, 255, 0.3);
+}
+/* End: Neon Brand Text Glow Utility */
