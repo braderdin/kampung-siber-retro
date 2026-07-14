@@ -13,6 +13,15 @@ const REQUIRED_SUPABASE_KEYS = [
 
 const SERVICE_ROLE_KEY = "SUPABASE_SERVICE_ROLE_KEY" as const;
 
+// Start: R2 required keys (Cloudflare R2 Storage — Rule 30)
+const R2_KEYS = [
+  "CLOUDFLARE_R2_ACCOUNT_ID",
+  "CLOUDFLARE_R2_ACCESS_KEY_ID",
+  "CLOUDFLARE_R2_SECRET_ACCESS_KEY",
+  "CLOUDFLARE_R2_BUCKET_NAME",
+] as const;
+// End: R2 required keys
+
 // Placeholder values that must NEVER reach production (see .env.example).
 // Extended with the .env.example template defaults so a careless deploy of the
 // template itself is caught by the production hard-fail guard.
@@ -22,6 +31,12 @@ const PLACEHOLDER_VALUES = new Set<string>([
   "your-project.supabase.co",
   "your-anon-public-key",
   "your-service-role-key",
+  // Start: R2 placeholder defaults (Rule 30 / Rule 35)
+  "your-r2-account-id",
+  "your-r2-access-key-id",
+  "your-r2-secret-access-key",
+  "your-r2-bucket-name",
+  // End: R2 placeholder defaults
   "",
 ]);
 
@@ -116,5 +131,44 @@ export function validateServerSupabaseEnv(): void {
   }
 }
 // End: validateServerSupabaseEnv
+
+// Start: validateR2Env — Cloudflare R2 production hard-fail guard (Rule 30 & 35)
+// Call BEFORE instantiating the R2/S3 client. In production, a missing or
+// placeholder R2 key MUST hard-fail to block silent upload failures during
+// deployment. In development, emit a NON-FATAL console.warn only.
+export function validateR2Env(): EnvValidationResult {
+  const warnings: string[] = [];
+  const isProd = isProduction();
+
+  for (const key of R2_KEYS) {
+    const value = process.env[key];
+    if (!value || PLACEHOLDER_VALUES.has(value.trim())) {
+      const msg =
+        `[Kampung Siber R2 GUARD] Required key "${key}" is missing or still ` +
+        `set to a placeholder value. Copy .env.example to .env.local and ` +
+        `supply real Cloudflare R2 credentials before deploying.`;
+      warnings.push(msg);
+
+      // Hard-fail in production to prevent silent storage upload failure.
+      if (isProd) {
+        throw new Error(
+          `[Kampung Siber R2 GUARD] HARD-FAIL: ${msg} ` +
+            `Deployment aborted (NODE_ENV=production).`
+        );
+      }
+    }
+  }
+
+  if (warnings.length > 0 && typeof console !== "undefined") {
+    console.warn(
+      `\n[Kampung Siber R2 GUARD] ${warnings.length} R2 environment issue(s) detected:\n` +
+        warnings.map((w) => `  • ${w}`).join("\n") +
+        `\n  Fix: cp .env.example .env.local\n`
+    );
+  }
+
+  return { isValid: warnings.length === 0, warnings };
+}
+// End: validateR2Env
 
 // End: Kampung Siber Environment Validation Guard (Rule 35 Security Guard)
