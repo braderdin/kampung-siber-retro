@@ -1,61 +1,52 @@
-# ==========================================
-# GIT IGNORE LIST - NEXT.JS 15 SYSTEM CORE
-# ==========================================
+# ===================================================
+# KAMPUNG SIBER RETRO - MASTER PRODUCTION GITIGNORE
+# ===================================================
 
-# Dependencies
+# Dependensi Node & Next.js Core
 /node_modules
 /.pnp
 .pnp.*
 .yarn/*
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/versions
-
-# Testing Outputs
-/coverage
-
-# Next.js 15 App Router & Production Builds
 /.next/
 /out/
 /build
 dist/
 
-# System Configuration & Garbage Files
-.DS_Store
-Thumbs.db
-*.pem
-*.key
+# Konfigurasi Editor & IDE (Menyekat Ralat Folder VS Code)
+/.vscode/
+*.code-workspace
+.history/
+.ionide/
 
-# Runtime Logs
+# Ekosistem AI Ejen & Sub-Ejen (Pembersihan Mutlak Memori Ejen)
+/.cline/
+/.agents/
+.aider*
+CLAUDE.md
+GEMINI.md
+AGENTS.md
+
+# Log Sistem, Output Nyahpepijat & Laporan MCP
 *.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-.pnpm-debug.log*
 devsrv.log
 devsrv.err
+dev-server.log
 tsc_out.txt
+*REPORT.md
 
-# Local Environment Secrets (Dynamic Token Envs)
+# Kunci Rahsia & Kredensial Pangkalan Data (Sangat Kritikal!)
 .env
 .env.local
 .env.development.local
 .env.production.local
 .env.test.local
 .env*.local
+*.pem
+*.key
 
-# Vercel Deployment Configurations
-.vercel
-
-# AI Agents & Automation Workspaces
-.aider*
-.cline/
-
-# Python Virtual Environments
-venv/
-.venv/
-
-# Legacy Corporate Workspaces
-scripts/archive/
-logs/
+# Sistem Operasi & Sampah Tempatan
+.DS_Store
+Thumbs.db
