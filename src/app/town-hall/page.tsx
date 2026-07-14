@@ -1,6 +1,7 @@
 // Start: Town Hall Page with Empty State
 "use client";
 
+import type { Metadata } from "next";
 import { useState, useEffect } from 'react';
 import { useLanguageStore } from '@/store/useLanguageStore';
 import { enDictionary, msDictionary } from '@/i18n/dictionaries';
@@ -9,6 +10,12 @@ import PixelCursorEffect from '@/components/PixelCursorEffect';
 import HydrationGuard from '@/components/HydrationGuard';
 import CommunityBulletin from '@/components/CommunityBulletin';
 import Win95DialogEmptyState from '@/components/ui/Win95DialogEmptyState';
+
+export const metadata: Metadata = {
+  title: "Balai Raya",
+  description: "Pusat komuniti dan acara kampung siber retro.",
+  alternates: { canonical: "/town-hall" },
+};
 
 interface EventRecord {
   id: string;

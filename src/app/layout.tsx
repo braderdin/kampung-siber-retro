@@ -11,8 +11,50 @@ import FloatingAiAssistant from "@/components/FloatingAiAssistant";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Kampung Siber Retro",
-  description: "Platform komuniti retro dengan Cloudflare R2 storage integration",
+  metadataBase: new URL("https://kampung-siber.retro"),
+  title: {
+    default: "Kampung Siber Retro",
+    template: "%s · Kampung Siber Retro",
+  },
+  description:
+    "Platform komuniti retro dengan Cloudflare R2 storage integration. Arkib digital, arcade, dan pusat warga siber kampung.",
+  applicationName: "Kampung Siber Retro",
+  keywords: [
+    "kampung siber",
+    "retro",
+    "arcade",
+    "muzium siber",
+    "komuniti",
+    "neocities",
+  ],
+  authors: [{ name: "Pasukan Kampung Siber" }],
+  creator: "Kampung Siber",
+  publisher: "Kampung Siber",
+  formatDetection: { email: false, address: false, telephone: false },
+  icons: {
+    icon: [{ url: "/icon.svg", type: "image/svg+xml" }],
+    apple: [{ url: "/icon.svg" }],
+  },
+  openGraph: {
+    title: "Kampung Siber Retro",
+    description:
+      "Platform komuniti retro dengan Cloudflare R2 storage integration.",
+    url: "https://kampung-siber.retro",
+    siteName: "Kampung Siber Retro",
+    locale: "ms_MY",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Kampung Siber Retro",
+    description:
+      "Platform komuniti retro dengan Cloudflare R2 storage integration.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true, "max-image-preview": "large" },
+  },
 };
 
 // Start: Strategy 1 — Zero-Flash Theme Persistence (Anti-FOUC)

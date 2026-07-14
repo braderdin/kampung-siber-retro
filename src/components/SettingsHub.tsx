@@ -14,7 +14,7 @@ import SettingsNsfw from "@/components/SettingsNsfw";
 import SettingsApiKey from "@/components/SettingsApiKey";
 import SettingsDeleteAccount from "@/components/SettingsDeleteAccount";
 import CustomDomainSetupForm from "@/components/CustomDomainSetupForm";
-import AccessibilityMenu from "@/components/AccessiblityMenu";
+import AccessibilityMenu from "@/components/AccessibilityMenu";
 
 type ThemeId = "space_neon" | "windows_gray" | "retro_matrix" | "neon_cyan" | "retro_orange";
 

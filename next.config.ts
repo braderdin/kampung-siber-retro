@@ -5,7 +5,7 @@ const nextConfig: NextConfig = {
     root: ".",
   },
   output: 'standalone',
-  // Start: Legacy Path Redirect Patterns
+  // Start: Legacy Path Redirect Patterns (308 permanent — no redirect chains/loops)
   async redirects() {
     return [
       {
@@ -16,11 +16,6 @@ const nextConfig: NextConfig = {
       {
         source: '/kedai_runcit',
         destination: '/asset-store',
-        permanent: true,
-      },
-      {
-        source: '/muzium',
-        destination: '/cyber-museum',
         permanent: true,
       },
     ];

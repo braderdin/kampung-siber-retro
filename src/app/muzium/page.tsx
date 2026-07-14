@@ -20,10 +20,10 @@ const MUSEUM_EXHIBITS: MuseumExhibit[] = [
   {
     id: 'dialup-modem-1995',
     title: 'Pemodem Dial-Up 1995',
-    description: 'Pemoder kompres data asli dari tahun 1990-an, memungkinkan koneksi internet melalui telefon jaringan. Kecepatan maksimum 56kbps.',
+    description: 'Pemodem pemampat data asli dari tahun 1990-an, membolehkan sambungan internet melalui telefon rangkaian. Kelajuan maksimum 56kbps.',
     era: 'Era Dial-Up',
     imagePlaceholder: '🖥️',
-    artifacts: ['Kabel telefon analog', 'Modem 56k', 'Manual penggunaan', 'Catatan log koneksi'],
+    artifacts: ['Kabel telefon analog', 'Modem 56k', 'Manual penggunaan', 'Catatan log sambungan'],
     year: 1995,
     rarity: 'legendary'
   },
@@ -43,14 +43,14 @@ const MUSEUM_EXHIBITS: MuseumExhibit[] = [
     description: 'Gambar latar belakang ikonik "Bilangan" dan "Peacock" yang menjadi saksi kehadiran komputer rumah pada masa itu.',
     era: 'Windows Era',
     imagePlaceholder: '🖼️',
-    artifacts: ['File BMP asli', 'Kode warna palet 256', 'Screengrab', 'Catatan penggunaan'],
+    artifacts: ['File BMP asli', 'Kod warna palet 256', 'Screengrab', 'Catatan penggunaan'],
     year: 1995,
     rarity: 'common'
   },
   {
     id: 'pixel-art-collection',
     title: 'Koleksi Seni Pixel 16-bit',
-    description: 'Karya seni pixel yang ditulis secara manual pada editor teks, menampilkan karakter ASCII dan Unicode untuk mencipta karya seni digital.',
+    description: 'Karya seni pixel yang ditulis secara manual pada editor teks, memaparkan karakter ASCII dan Unicode untuk mencipta karya seni digital.',
     era: 'Pixel Art Golden Age',
     imagePlaceholder: '🎨',
     artifacts: ['Gambar ASCII', 'Generator teks', 'Kamus karakter', 'Dokumentasi proses'],
@@ -59,8 +59,8 @@ const MUSEUM_EXHIBITS: MuseumExhibit[] = [
   },
   {
     id: 'winamp-skin-archive',
-    title: 'Arkib Tampilan Winamp',
-    description: 'Koleksi tampilan kustom untuk pemain audio Winamp populer, termasuk tema neon, futuristik, dan retro.',
+    title: 'Arkib Paparan Winamp',
+    description: 'Koleksi paparan kustom untuk pemain audio Winamp popular, termasuk tema neon, futuristik, dan retro.',
     era: 'Media Player Culture',
     imagePlaceholder: '🎵',
     artifacts: ['File .wsz', 'Pemetaan warna', 'ikon kustom', 'Instruksi pemasangan'],
@@ -80,7 +80,7 @@ const MUSEUM_EXHIBITS: MuseumExhibit[] = [
   {
     id: 'retro-game-cartridge',
     title: 'Kartridge Permainan Retro',
-    description: 'Kartridge game klasik dengan tema kampung dan cyberpunk yang dapat dimuat dalam emulatore.',
+    description: 'Kartridge game klasik dengan tema kampung dan cyberpunk yang dapat dimuat dalam emulater.',
     era: 'Gaming Heritage',
     imagePlaceholder: '🕹️',
     artifacts: ['Kod binari', 'Pemetaan kontrol', 'Skrip permainan', 'Catatan debugging'],
@@ -89,8 +89,8 @@ const MUSEUM_EXHIBITS: MuseumExhibit[] = [
   },
   {
     id: 'neon-badge-collection',
-    title: 'Pengkodean Neon Digital',
-    description: 'Koleksi pengkodean neon dengan efek cahaya yang digunakan untuk antara muka pengguna kampung.',
+    title: 'Pengekodan Neon Digital',
+    description: 'Koleksi pengekodan neon dengan kesan cahaya yang digunakan untuk antara muka pengguna kampung.',
     era: 'Cyberpunk UI',
     imagePlaceholder: '⚡',
     artifacts: ['CSS keyframes', 'CSS variables', 'HTML struktur', 'Demo interaktif'],
@@ -133,7 +133,7 @@ export default function MuziumPage() {
   const getRarityLabel = (rarity: string) => {
     const labels: Record<string, string> = {
       legendary: language === 'ms' ? 'Legendaran' : 'Legendary',
-      rare: language === 'ms' ? 'Langka' : 'Rare',
+      rare: language === 'ms' ? 'Jarang' : 'Rare',
       common: language === 'ms' ? 'Biasa' : 'Common'
     };
     return labels[rarity] || rarity;

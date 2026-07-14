@@ -1,11 +1,18 @@
 // Start: Cyber Museum Page with Empty State
 "use client";
 
+import type { Metadata } from "next";
 import { useState, useEffect } from 'react';
 import CyberMuseumArchive from '@/components/CyberMuseumArchive';
 import PixelCursorEffect from '@/components/PixelCursorEffect';
 import HydrationGuard from '@/components/HydrationGuard';
 import Win95DialogEmptyState from '@/components/ui/Win95DialogEmptyState';
+
+export const metadata: Metadata = {
+  title: "Muzium Siber",
+  description: "Arkib digital dan khazanah warisan kampung siber retro.",
+  alternates: { canonical: "/cyber-museum" },
+};
 
 // Start: Empty Collection Placeholder
 const EMPTY_COLLECTION: MuseumArtifact[] = [];
@@ -97,7 +104,7 @@ export default function CyberMuseumPage() {
           <div className="p-4">
             <div className="text-sm text-gray-700 dark:text-gray-300 pixel-font space-y-3 border-l-2 border-dashed border-cyan-400 pl-4">
               <p>
-                <strong>56k Dial-Up:</strong> Kecepatan pautan dial-up 56k melambatkan muat turun tetapi membuka pintu ke internet global.
+                <strong>56k Dial-Up:</strong> Kelajuan pautan dial-up 56k melambatkan muat turun tetapi membuka pintu ke internet global.
               </p>
               <p>
                 <strong>mIRC & IRC:</strong> Internet Relay Chat membolehkan komunikasi langsung dalam bilik perbincangan.
@@ -109,7 +116,7 @@ export default function CyberMuseumPage() {
                 <strong>BBS & FidoNet:</strong> Sistem bulletin board adalah asas komuniti talian sebelum internet komersial.
               </p>
               <p className="border-t-2 border-dashed border-pink-400/30 pt-3">
-                <strong>Kesedaran:</strong> Klik pada setiap artifak untuk melihat detail sejarahnya dengan moda interaktif.
+                <strong>Kesedaran:</strong> Klik pada setiap artifak untuk melihat detail sejarahnya dengan mod interaktif.
               </p>
             </div>
           </div>
