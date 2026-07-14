@@ -86,4 +86,35 @@ export function validateSupabaseEnv(): EnvValidationResult {
 }
 // End: validateSupabaseEnv
 
+// Start: validateServerSupabaseEnv — Server-only privileged hard-fail (Fasa 2)
+// Guards privileged server pathways (RLS bypass). In production, a missing or
+// placeholder SUPABASE_SERVICE_ROLE_KEY MUST hard-fail so privileged operations
+// never silently fall back to the anon key (silent RLS rejection). In
+// development, emit a NON-FATAL warning to keep local bootstrap available.
+export function validateServerSupabaseEnv(): void {
+  const isProd = isProduction();
+  const serviceKey = process.env[SERVICE_ROLE_KEY];
+
+  if (!serviceKey || PLACEHOLDER_VALUES.has(serviceKey.trim())) {
+    const msg =
+      `[Kampung Siber SERVER GUARD] ${SERVICE_ROLE_KEY} is missing, empty, ` +
+      `or still set to a .env.example placeholder/default. Privileged ` +
+      `server-side RLS bypass is UNAVAILABLE — operating with anon key would ` +
+      `cause silent RLS rejection on admin operations.`;
+
+    if (isProd) {
+      throw new Error(
+        `[Kampung Siber SERVER GUARD] HARD-FAIL: ${msg} ` +
+          `Server bootstrap aborted (NODE_ENV=production). Supply a valid ` +
+          `SUPABASE_SERVICE_ROLE_KEY before deploying.`
+      );
+    }
+
+    if (typeof console !== "undefined") {
+      console.warn(`\n${msg}\n  Fix: cp .env.example .env.local\n`);
+    }
+  }
+}
+// End: validateServerSupabaseEnv
+
 // End: Kampung Siber Environment Validation Guard (Rule 35 Security Guard)

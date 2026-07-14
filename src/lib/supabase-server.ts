@@ -14,7 +14,7 @@ try {
 // End: Force IPv4 DNS resolution
 
 import { createClient, SupabaseClient } from "@supabase/supabase-js";
-import { validateSupabaseEnv } from "./env-validation";
+import { validateSupabaseEnv, validateServerSupabaseEnv } from "./env-validation";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://placeholder.supabase.co";
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || "";
@@ -34,20 +34,12 @@ export function getServerSupabase(): SupabaseClient {
   validateSupabaseEnv();
   // End: Environment Validation Guard (Rule 35)
 
-  // Start: Service Role Key specific warning (separate from generic guard)
-  // Critical for RLS bypass: emit a DISTINCT warning if the server-only key is
-  // missing/invalid so operators notice degraded server privileges immediately.
-  const SERVICE_ROLE_KEY = "SUPABASE_SERVICE_ROLE_KEY";
-  const serviceKey = process.env[SERVICE_ROLE_KEY];
-  const PLACEHOLDER_MARKERS = ["your-service-role-key", "", "placeholder-key"];
-  if (!serviceKey || PLACEHOLDER_MARKERS.includes(serviceKey.trim())) {
-    console.warn(
-      `\n[Kampung Siber SERVER GUARD] ${SERVICE_ROLE_KEY} is missing or ` +
-        `invalid. Server-side RLS bypass is UNAVAILABLE — falling back to ` +
-        `anon key. Privileged server operations will be blocked by RLS.\n`
-    );
-  }
-  // End: Service Role Key specific warning
+  // Start: Service Role Key privileged hard-fail guard (Fasa 2)
+  // In production this THROWS before createClient so privileged server
+  // operations never silently fall back to the anon key (silent RLS
+  // rejection). In development it emits a non-fatal console.warn only.
+  validateServerSupabaseEnv();
+  // End: Service Role Key privileged hard-fail guard
 
   const key = supabaseServiceKey || supabaseAnonKey;
   cachedClient = createClient(supabaseUrl, key, {
