@@ -1,18 +1,11 @@
 // Start: Cyber Museum Page with Empty State
 "use client";
 
-import type { Metadata } from "next";
 import { useState, useEffect } from 'react';
 import CyberMuseumArchive from '@/components/CyberMuseumArchive';
 import PixelCursorEffect from '@/components/PixelCursorEffect';
 import HydrationGuard from '@/components/HydrationGuard';
 import Win95DialogEmptyState from '@/components/ui/Win95DialogEmptyState';
-
-export const metadata: Metadata = {
-  title: "Muzium Siber",
-  description: "Arkib digital dan khazanah warisan kampung siber retro.",
-  alternates: { canonical: "/cyber-museum" },
-};
 
 // Start: Empty Collection Placeholder
 const EMPTY_COLLECTION: MuseumArtifact[] = [];

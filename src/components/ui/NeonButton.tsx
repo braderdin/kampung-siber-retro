@@ -2,6 +2,7 @@
 "use client";
 
 import { ButtonHTMLAttributes, forwardRef } from "react";
+import Link from "next/link";
 
 type NeonVariant = "primary" | "secondary" | "ghost" | "danger";
 type NeonSize = "sm" | "md" | "lg";
@@ -10,6 +11,10 @@ interface NeonButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: NeonVariant;
   size?: NeonSize;
   icon?: string;
+  // Start: Optional href — when provided the primitive renders a semantic
+  // Next.js <Link> (anchor) instead of a <button> for SEO/accessibility.
+  href?: string;
+  // End: Optional href
 }
 
 const VARIANT_CLASSES: Record<NeonVariant, string> = {
@@ -30,19 +35,32 @@ const SIZE_CLASSES: Record<NeonSize, string> = {
 };
 
 const NeonButton = forwardRef<HTMLButtonElement, NeonButtonProps>(
-  ({ variant = "primary", size = "md", icon, className = "", children, ...props }, ref) => {
+  ({ variant = "primary", size = "md", icon, className = "", children, href, ...props }, ref) => {
+    const classes = [
+      "retro-btn font-pixel tracking-wide rounded-md border transition-all duration-200",
+      "focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400/70 focus-visible:ring-offset-0",
+      "active:scale-95 hover:scale-[1.02] inline-flex items-center justify-center gap-2",
+      "disabled:opacity-50 disabled:pointer-events-none",
+      VARIANT_CLASSES[variant],
+      SIZE_CLASSES[size],
+      className,
+    ].join(" ");
+
+    // Start: Render anchor (Link) when href present, else native button
+    if (href) {
+      return (
+        <Link href={href} className={classes} ref={ref as never}>
+          {icon ? <span className="text-base leading-none">{icon}</span> : null}
+          {children}
+        </Link>
+      );
+    }
+    // End: Render anchor (Link) when href present, else native button
+
     return (
       <button
         ref={ref}
-        className={[
-          "retro-btn font-pixel tracking-wide rounded-md border transition-all duration-200",
-          "focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400/70 focus-visible:ring-offset-0",
-          "active:scale-95 hover:scale-[1.02] inline-flex items-center justify-center gap-2",
-          "disabled:opacity-50 disabled:pointer-events-none",
-          VARIANT_CLASSES[variant],
-          SIZE_CLASSES[size],
-          className,
-        ].join(" ")}
+        className={classes}
         {...props}
       >
         {icon ? <span className="text-base leading-none">{icon}</span> : null}

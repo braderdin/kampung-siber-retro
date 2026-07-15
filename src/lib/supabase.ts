@@ -6,8 +6,14 @@ import { validateSupabaseEnv } from './env-validation';
 validateSupabaseEnv();
 // End: Environment Validation Guard (Rule 35)
 
+// Start: Key resolution — accept both legacy NEXT_PUBLIC_SUPABASE_KEY and the
+// newer Supabase "publishable" naming so either env template works.
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co';
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_KEY || 'placeholder-key';
+const supabaseAnonKey =
+  process.env.NEXT_PUBLIC_SUPABASE_KEY ||
+  process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ||
+  'placeholder-key';
+// End: Key resolution
 
 // Start: Strict 7-day expiration threshold (seconds)
 export const SESSION_MAX_AGE_SECONDS = 7 * 24 * 60 * 60; // Exactly 7 days

@@ -6,10 +6,15 @@
 //    (critical for server-side RLS bypass integrity, but non-fatal — server
 //     gracefully falls back to the anon key).
 
+// Start: Required Supabase keys — accept both legacy NEXT_PUBLIC_SUPABASE_KEY
+// and the newer "publishable" naming. URL is mandatory; anon key may come from
+// either env name.
 const REQUIRED_SUPABASE_KEYS = [
   "NEXT_PUBLIC_SUPABASE_URL",
   "NEXT_PUBLIC_SUPABASE_KEY",
+  "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY",
 ] as const;
+// End: Required Supabase keys
 
 const SERVICE_ROLE_KEY = "SUPABASE_SERVICE_ROLE_KEY" as const;
 

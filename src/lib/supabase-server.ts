@@ -16,9 +16,15 @@ try {
 import { createClient, SupabaseClient } from "@supabase/supabase-js";
 import { validateSupabaseEnv, validateServerSupabaseEnv } from "./env-validation";
 
+// Start: Key resolution — accept both legacy NEXT_PUBLIC_SUPABASE_KEY and the
+// newer Supabase "publishable" naming so either env template works.
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://placeholder.supabase.co";
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || "";
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_KEY || "placeholder-key";
+const supabaseAnonKey =
+  process.env.NEXT_PUBLIC_SUPABASE_KEY ||
+  process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ||
+  "placeholder-key";
+// End: Key resolution
 
 // Start: Shared 7-day session TTL parity with browser client (Rule 31 Auth)
 export const SESSION_MAX_AGE_SECONDS = 7 * 24 * 60 * 60; // Exactly 7 days

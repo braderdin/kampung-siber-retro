@@ -145,14 +145,13 @@ export default function RetroNavbar() {
       bodyClassName="p-1.5 space-y-1"
     >
       {helpLinks.map((link) => (
-        <button
+        <Link
           key={link.href}
-          type="button"
+          href={link.href}
           onClick={() => {
             setDesktopHelpOpen(false);
             setMobileHelpOpen(false);
             setMobileMenuOpen(false);
-            router.push(link.href);
           }}
           className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-left text-gray-300 transition-colors hover:bg-[#00ffff]/10 hover:text-white"
         >
@@ -163,7 +162,7 @@ export default function RetroNavbar() {
             <span className="text-sm font-medium">{link.name}</span>
             <span className="text-[11px] leading-tight text-gray-500">{link.desc}</span>
           </span>
-        </button>
+        </Link>
       ))}
     </NeonCard>
   );
@@ -197,9 +196,9 @@ export default function RetroNavbar() {
               {navItems.map((item) => (
                 <NeonButton
                   key={item.href}
+                  href={item.href}
                   variant={pathname === item.href ? "primary" : "ghost"}
                   size="md"
-                  onClick={() => handleNavClick(item.href)}
                   className="!font-pixel"
                 >
                   <span className="inline-flex h-5 w-5 items-center justify-center text-base">{item.icon}</span>
@@ -274,18 +273,18 @@ export default function RetroNavbar() {
           className="border-t border-[#00ffff]/30 bg-[#060814]/90 transition-all duration-300 ease-out md:hidden"
         >
           <div className="space-y-1 px-2 pb-3 pt-2">
-            {navItems.map((item) => (
-              <NeonButton
-                key={item.href}
-                variant={pathname === item.href ? "primary" : "ghost"}
-                size="md"
-                onClick={() => handleNavClick(item.href)}
-                className="w-full !justify-start"
-              >
-                <span className="mr-2 inline-flex h-5 w-5 items-center justify-center text-lg">{item.icon}</span>
-                <span className="inline-flex items-center gap-1 align-middle">{item.name}</span>
-              </NeonButton>
-            ))}
+              {navItems.map((item) => (
+                <NeonButton
+                  key={item.href}
+                  href={item.href}
+                  variant={pathname === item.href ? "primary" : "ghost"}
+                  size="md"
+                  className="w-full !justify-start"
+                >
+                  <span className="mr-2 inline-flex h-5 w-5 items-center justify-center text-lg">{item.icon}</span>
+                  <span className="inline-flex items-center gap-1 align-middle">{item.name}</span>
+                </NeonButton>
+              ))}
 
             {/* Start: Mobile Help & FAQ Dropdown Controller */}
             <div className="relative" ref={mobileHelpRef}>

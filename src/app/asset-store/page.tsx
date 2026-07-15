@@ -1,7 +1,6 @@
 // Start: Asset Store Page with Empty State
 "use client";
 
-import type { Metadata } from "next";
 import { useState, useEffect } from 'react';
 import { useLanguageStore } from '@/store/useLanguageStore';
 import { enDictionary, msDictionary } from '@/i18n/dictionaries';
@@ -9,12 +8,6 @@ import ProductCard from '@/components/ProductCard';
 import PixelCursorEffect from '@/components/PixelCursorEffect';
 import HydrationGuard from '@/components/HydrationGuard';
 import Win95DialogEmptyState from '@/components/ui/Win95DialogEmptyState';
-
-export const metadata: Metadata = {
-  title: "Kedai Runcit",
-  description: "Kedai aset digital dan muat turun kampung siber retro.",
-  alternates: { canonical: "/asset-store" },
-};
 
 // Start: Empty Asset Catalog for Empty State
 const EMPTY_ASSET_CATALOG: AssetItem[] = [];
